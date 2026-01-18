@@ -294,6 +294,11 @@
         border: 1px solid #666666;
       }
 
+      /* Prevent zoom on input focus - must be 16px or larger */
+      .search-input {
+        font-size: 16px;
+      }
+
       .search-button {
         background: #000000;
         border: 1px solid #666666;
@@ -1106,11 +1111,19 @@
             });
 
             if (foundLogo) {
-              // Scroll to the logo's section
+              // For council section, scroll to the specific logo (not just the section)
+              // This ensures the pulsing logo is centered on screen
               const section = foundLogo.closest('.mobile-section');
-              if (section) {
+              const isCouncilSection = section && section.classList.contains('council');
+
+              if (isCouncilSection) {
+                // Scroll to the actual logo element for council
+                foundLogo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              } else if (section) {
+                // For other sections, scroll to section
                 section.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }
+
               // Add pulse animation to the image directly
               setTimeout(() => {
                 const img = foundLogo.querySelector('.mobile-logo-img');
