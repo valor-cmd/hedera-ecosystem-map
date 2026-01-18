@@ -374,14 +374,17 @@ function renderSVG(sectionData) {
 
   svg.append("rect").attr("x", 0).attr("y", 0).attr("width", W).attr("height", H).attr("fill", "#000000");
 
+  // Layout margins - define before use
+  const leftMargin = 50;   // Left margin (shifted left to balance visual perception)
+  const rightMargin = 70;  // Right margin
+
   // Header - aligned with section boxes
   svg.append("text").attr("class", "header-title")
-    .attr("x", 70).attr("y", 65)
+    .attr("x", leftMargin).attr("y", 65)
     .attr("font-size", "30px")
     .text("An Incomplete Map of the Hedera Ecosystem");
 
   const contentY = 110;  // 4x more top padding
-  const panelMargin = 70;  // 4x more padding around edges
   const rowGap = 28;  // Space between rows for titles
   const gap = 8;  // More even spacing between sections
 
@@ -392,10 +395,10 @@ function renderSVG(sectionData) {
   const councilW = 320;  // Wider for 2 columns of council logos
   const coreOrgsW = 180;  // Wider for Core Orgs + Native Services
   const rightSectionW = councilW + coreOrgsW + gap;
-  const leftAreaW = W - panelMargin * 2 - rightSectionW - gap;  // Narrower left area
+  const leftAreaW = W - leftMargin - rightMargin - rightSectionW - gap;  // Left area width
 
   // Right side vertical panels - fill to edge
-  const rightX = W - panelMargin - rightSectionW;
+  const rightX = W - rightMargin - rightSectionW;
   const councilH = H - contentY - footerSpace;  // Full height for Council with bottom padding
   const coreOrgsH = (councilH - rowGap) * 0.65;  // 65% for Core Orgs, using rowGap for title space
   const nativeH = councilH - coreOrgsH - rowGap;  // Rest for Native Services, using rowGap for title space
@@ -440,29 +443,29 @@ function renderSVG(sectionData) {
 
   const panels = [
     // Row 1: Wallets, Custodians, Exchanges (left side)
-    { section: "Wallets", x: panelMargin, y: row1Y, w: r1_wallets, h: row1H, alignLeft: true, alignTop: true },
-    { section: "Custodians", x: panelMargin + r1_wallets + gap, y: row1Y, w: r1_custodians, h: row1H, alignTop: true },
-    { section: "Exchanges", x: panelMargin + r1_wallets + gap + r1_custodians + gap, y: row1Y, w: r1_exchanges, h: row1H, alignTop: true },
+    { section: "Wallets", x: leftMargin, y: row1Y, w: r1_wallets, h: row1H, alignLeft: true, alignTop: true },
+    { section: "Custodians", x: leftMargin + r1_wallets + gap, y: row1Y, w: r1_custodians, h: row1H, alignTop: true },
+    { section: "Exchanges", x: leftMargin + r1_wallets + gap + r1_custodians + gap, y: row1Y, w: r1_exchanges, h: row1H, alignTop: true },
 
     // Row 2: Oracles, Bridges, Services, Onramps, Implementation Partners
-    { section: "Oracles", x: panelMargin, y: row2Y, w: r2_oracles, h: row2H, alignLeft: true, alignTop: true },
-    { section: "Bridges and Interoperability", x: panelMargin + r2_oracles + gap, y: row2Y, w: r2_bridges, h: row2H, alignTop: true },
-    { section: "Services", x: panelMargin + r2_oracles + gap + r2_bridges + gap, y: row2Y, w: r2_services, h: row2H, alignTop: true },
-    { section: "Onramps", x: panelMargin + r2_oracles + gap + r2_bridges + gap + r2_services + gap, y: row2Y, w: r2_onramps, h: row2H, alignTop: true },
-    { section: "Implementation Partners", x: panelMargin + r2_oracles + gap + r2_bridges + gap + r2_services + gap + r2_onramps + gap, y: row2Y, w: r2_partners, h: row2H, alignTop: true },
+    { section: "Oracles", x: leftMargin, y: row2Y, w: r2_oracles, h: row2H, alignLeft: true, alignTop: true },
+    { section: "Bridges and Interoperability", x: leftMargin + r2_oracles + gap, y: row2Y, w: r2_bridges, h: row2H, alignTop: true },
+    { section: "Services", x: leftMargin + r2_oracles + gap + r2_bridges + gap, y: row2Y, w: r2_services, h: row2H, alignTop: true },
+    { section: "Onramps", x: leftMargin + r2_oracles + gap + r2_bridges + gap + r2_services + gap, y: row2Y, w: r2_onramps, h: row2H, alignTop: true },
+    { section: "Implementation Partners", x: leftMargin + r2_oracles + gap + r2_bridges + gap + r2_services + gap + r2_onramps + gap, y: row2Y, w: r2_partners, h: row2H, alignTop: true },
 
     // Row 3: Advisory, Risk, Stablecoin, Tooling, Meme Tokens
-    { section: "Advisory Firms", x: panelMargin, y: row3Y, w: r3_advisory, h: row3H, alignLeft: true, alignTop: true },
-    { section: "Risk and Compliance", x: panelMargin + r3_advisory + gap, y: row3Y, w: r3_risk, h: row3H, alignTop: true },
-    { section: "Stablecoin Infrastructure", x: panelMargin + r3_advisory + gap + r3_risk + gap, y: row3Y, w: r3_stablecoin, h: row3H, alignTop: true },
-    { section: "Tooling and Solutions", x: panelMargin + r3_advisory + gap + r3_risk + gap + r3_stablecoin + gap, y: row3Y, w: r3_tooling, h: row3H, alignTop: true },
-    { section: "Meme Tokens", x: panelMargin + r3_advisory + gap + r3_risk + gap + r3_stablecoin + gap + r3_tooling + gap, y: row3Y, w: r3_meme, h: row3H, alignTop: true },
+    { section: "Advisory Firms", x: leftMargin, y: row3Y, w: r3_advisory, h: row3H, alignLeft: true, alignTop: true },
+    { section: "Risk and Compliance", x: leftMargin + r3_advisory + gap, y: row3Y, w: r3_risk, h: row3H, alignTop: true },
+    { section: "Stablecoin Infrastructure", x: leftMargin + r3_advisory + gap + r3_risk + gap, y: row3Y, w: r3_stablecoin, h: row3H, alignTop: true },
+    { section: "Tooling and Solutions", x: leftMargin + r3_advisory + gap + r3_risk + gap + r3_stablecoin + gap, y: row3Y, w: r3_tooling, h: row3H, alignTop: true },
+    { section: "Meme Tokens", x: leftMargin + r3_advisory + gap + r3_risk + gap + r3_stablecoin + gap + r3_tooling + gap, y: row3Y, w: r3_meme, h: row3H, alignTop: true },
 
     // Row 4: DeFi, NFTs, Gaming & ENT, Real World Assets
-    { section: "DeFi", x: panelMargin, y: row4Y, w: r4_defi, h: row4H, alignLeft: true, alignTop: true },
-    { section: "NFT Markets", x: panelMargin + r4_defi + gap, y: row4Y, w: r4_nfts, h: row4H, alignTop: true },
-    { section: "Gaming & ENT", x: panelMargin + r4_defi + gap + r4_nfts + gap, y: row4Y, w: r4_gaming, h: row4H, alignTop: true },
-    { section: "Real World Assets", x: panelMargin + r4_defi + gap + r4_nfts + gap + r4_gaming + gap, y: row4Y, w: r4_rwas, h: row4H, alignTop: true },
+    { section: "DeFi", x: leftMargin, y: row4Y, w: r4_defi, h: row4H, alignLeft: true, alignTop: true },
+    { section: "NFT Markets", x: leftMargin + r4_defi + gap, y: row4Y, w: r4_nfts, h: row4H, alignTop: true },
+    { section: "Gaming & ENT", x: leftMargin + r4_defi + gap + r4_nfts + gap, y: row4Y, w: r4_gaming, h: row4H, alignTop: true },
+    { section: "Real World Assets", x: leftMargin + r4_defi + gap + r4_nfts + gap + r4_gaming + gap, y: row4Y, w: r4_rwas, h: row4H, alignTop: true },
 
     // Right side vertical panels - fill to right edge
     // Hedera Council - tall vertical strip (2 columns, big logos)
@@ -477,8 +480,8 @@ function renderSVG(sectionData) {
 
   // Define boundaries for hover expansion
   // All sections should expand to fill the content area but not beyond
-  const leftBoundary = panelMargin;  // 70
-  const rightBoundary = W - panelMargin;  // 1850 (aligns with right edge of Independent Core Organizations)
+  const leftBoundary = leftMargin;  // 60
+  const rightBoundary = W - rightMargin;  // 1850 (aligns with right edge of Independent Core Organizations)
   const topBoundary = contentY - 15;  // 95 (a bit above content for title)
   const bottomBoundary = H - footerSpace + 10;  // 1005
 
@@ -1007,10 +1010,10 @@ function renderSVG(sectionData) {
   const today = new Date();
   const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  svg.append("text").attr("class", "footer-text").attr("x", 70).attr("y", H - 43)
+  svg.append("text").attr("class", "footer-text").attr("x", leftMargin).attr("y", H - 43)
     .attr("font-size", "10px").text(`Data as of: ${dateStr}`);
 
-  svg.append("text").attr("class", "footer-note").attr("x", 70).attr("y", H - 31)
+  svg.append("text").attr("class", "footer-note").attr("x", leftMargin).attr("y", H - 31)
     .attr("font-size", "9px").text("Note: The list of projects is not comprehensive.");
 
   // Genfinity branding logo - 50% larger, aligned with section boxes
@@ -1018,7 +1021,7 @@ function renderSVG(sectionData) {
   const genfinityLogo = imageToDataUri(genfinityLogoPath);
   const logoWidth = 180;  // 50% bigger (was 120)
   const logoHeight = 29;  // 50% bigger (was 19)
-  const logoX = W - panelMargin - logoWidth; // Right edge aligns with section boxes (W - 70)
+  const logoX = W - rightMargin - logoWidth; // Right edge aligns with section boxes (W - 70)
   const logoY = H - 35 - logoHeight;
 
   if (genfinityLogo?.type === "svg") {
