@@ -270,7 +270,7 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   display: block;
 }
 
-/* SVG Logo Pulse Animation - scale only, no glow */
+/* SVG Logo Pulse Animation - scale only, no glow, pulse in place */
 @keyframes svg-logo-pulse {
   0%, 100% {
     transform: scale(1);
@@ -282,4 +282,6 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
 
 .logo-pulsing {
   animation: svg-logo-pulse 0.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center center;
 }

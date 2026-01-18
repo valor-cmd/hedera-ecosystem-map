@@ -373,9 +373,9 @@ function renderSVG(sectionData) {
 
   svg.append("rect").attr("x", 0).attr("y", 0).attr("width", W).attr("height", H).attr("fill", "#000000");
 
-  // Header - 50% smaller
+  // Header - 50% smaller, moved up to make room for search bar
   svg.append("text").attr("class", "header-title")
-    .attr("x", 40).attr("y", 64)
+    .attr("x", 40).attr("y", 50)
     .attr("font-size", "18px")
     .text("An Incomplete Map of the Hedera Ecosystem");
 

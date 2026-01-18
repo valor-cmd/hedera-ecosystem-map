@@ -148,11 +148,15 @@
     .logo-pulsing {
       animation: logo-pulse 0.8s ease-in-out infinite;
       z-index: 100;
+      transform-box: fill-box;
+      transform-origin: center center;
     }
 
-    /* SVG image pulse */
+    /* SVG image pulse - needs transform-box to pulse in place */
     svg image.logo-pulsing {
       animation: logo-pulse 0.8s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: center center;
     }
 
     /* Footer logo pulse */
@@ -514,7 +518,7 @@
     .top-link {
       position: fixed;
       top: 20px;
-      right: 30px;
+      right: 55px; /* Moved 25px left from 30px */
       color: #ffffff;
       text-decoration: none;
       font-size: 14px;
@@ -1112,9 +1116,9 @@
       const offsetX = (svgRect.width - scaledWidth) / 2;
       const offsetY = (svgRect.height - scaledHeight) / 2;
 
-      // Position in SVG coordinates: x=40, y=90 (well below the 18px title at y=64)
+      // Position in SVG coordinates: x=40, y=70 (below title at y=50)
       const svgX = 40;
-      const svgY = 90;
+      const svgY = 70;
 
       // Convert to screen coordinates (svgRect already includes container position)
       const screenX = svgRect.left + offsetX + (svgX * scale);
@@ -1125,28 +1129,28 @@
       searchContainer.style.left = screenX + 'px';
       searchContainer.style.top = screenY + 'px';
 
-      // Set fixed width that scales with the map
-      const baseWidth = 160;
+      // Set fixed width that scales with the map - restored to larger size
+      const baseWidth = 220;
       const scaledBarWidth = baseWidth * scale;
 
       const searchBar = searchContainer.querySelector('.search-bar');
       if (searchBar) {
         searchBar.style.width = scaledBarWidth + 'px';
-        searchBar.style.height = (24 * scale) + 'px';
-        searchBar.style.fontSize = (10 * scale) + 'px';
-        searchBar.style.padding = `${3 * scale}px ${3 * scale}px ${3 * scale}px ${10 * scale}px`;
+        searchBar.style.height = (32 * scale) + 'px';
+        searchBar.style.fontSize = (12 * scale) + 'px';
+        searchBar.style.padding = `${4 * scale}px ${4 * scale}px ${4 * scale}px ${14 * scale}px`;
       }
 
       const searchButton = searchContainer.querySelector('.search-button');
       if (searchButton) {
-        const btnSize = 18 * scale;
+        const btnSize = 24 * scale;
         searchButton.style.width = btnSize + 'px';
         searchButton.style.height = btnSize + 'px';
       }
 
       const searchInput = searchContainer.querySelector('.search-input');
       if (searchInput) {
-        searchInput.style.fontSize = (10 * scale) + 'px';
+        searchInput.style.fontSize = (12 * scale) + 'px';
       }
     }
 

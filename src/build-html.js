@@ -170,6 +170,7 @@ function findLogoFile(entityName) {
     "Turtle Moon": path.join(LOGOS_PATH, "Tooling and Solutions", "Turtle Moon.png"),
     "Neuron": path.join(LOGOS_PATH, "iot", "Neuron World.jpg"),
     "HashNames": path.join(LOGOS_PATH, "DEXs", "HashNames.jpg"),
+    "Hashgraph.Name": path.join(LOGOS_PATH, "DEXs", "HashNames.jpg"),
     // DeFi
     "SaucerSwap": path.join(LOGOS_PATH, "defi", "saucerswap.jpg"),
     "Pangolin": path.join(LOGOS_PATH, "defi", "Pangolin.jpg"),
