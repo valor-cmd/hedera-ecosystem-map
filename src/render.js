@@ -374,10 +374,10 @@ function renderSVG(sectionData) {
 
   svg.append("rect").attr("x", 0).attr("y", 0).attr("width", W).attr("height", H).attr("fill", "#000000");
 
-  // Header - 1.3x larger, moved up to make room for search bar
+  // Header - 50% larger than previous, aligned with section boxes
   svg.append("text").attr("class", "header-title")
-    .attr("x", 40).attr("y", 30)
-    .attr("font-size", "24px")
+    .attr("x", 70).attr("y", 30)
+    .attr("font-size", "36px")
     .text("An Incomplete Map of the Hedera Ecosystem");
 
   const contentY = 110;  // 4x more top padding
