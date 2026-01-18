@@ -376,7 +376,7 @@ function renderSVG(sectionData) {
 
   // Header - 50% larger than previous, aligned with section boxes
   svg.append("text").attr("class", "header-title")
-    .attr("x", 70).attr("y", 30)
+    .attr("x", 70).attr("y", 65)
     .attr("font-size", "36px")
     .text("An Incomplete Map of the Hedera Ecosystem");
 
