@@ -660,6 +660,17 @@ function renderSVG(sectionData) {
         .style("font-size", "18px")
         .attr("data-section", panel.section)
         .text(panel.section);
+
+      // Add invisible hit area covering the expanded hover bounds
+      // This ensures hover state stays active when mouse is over the expanded content
+      sectionGroup.append("rect")
+        .attr("class", "council-hit-area")
+        .attr("x", hoverPanelX)
+        .attr("y", hoverPanelY - 20)  // Include title area
+        .attr("width", hoverPanelW)
+        .attr("height", hoverPanelH + 20)
+        .attr("fill", "transparent")
+        .style("pointer-events", "all");
     } else if (panel.isCoreOrgs) {
       // Independent Core Organizations - vertical or horizontal layout
       const allItems = activeSubcats.flatMap(([_, items]) => items);

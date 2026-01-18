@@ -1054,6 +1054,15 @@
                 }
               }
             });
+
+            // If not found by label text, try finding by website URL (for Core Orgs which have no text labels)
+            if (!foundImage && match.website) {
+              const linkByUrl = svgElement.querySelector(`a.logo-link[href="${match.website}"]`);
+              if (linkByUrl) {
+                foundImage = linkByUrl.querySelector('image');
+                foundSection = linkByUrl.closest('.section-group');
+              }
+            }
           }
 
           // Activate section hover state
