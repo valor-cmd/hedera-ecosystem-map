@@ -109,12 +109,18 @@
 
     .search-result {
       position: absolute;
-      left: 20px;
-      right: 52px;
+      left: 16px;
+      right: 44px;
       color: #10b981;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       display: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .search-result.not-found {
@@ -123,6 +129,10 @@
 
     .search-result.visible {
       display: block;
+    }
+
+    .search-result.visible + .search-input {
+      visibility: hidden;
     }
 
     /* Pulse Animation for found logos */
@@ -137,9 +147,25 @@
       }
     }
 
+    @keyframes svg-logo-pulse {
+      0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0));
+      }
+      50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px rgba(139, 92, 246, 1)) drop-shadow(0 0 30px rgba(139, 92, 246, 0.8));
+      }
+    }
+
     .logo-pulsing {
       animation: logo-pulse 1s ease-in-out infinite;
       z-index: 100;
+    }
+
+    /* SVG image pulse */
+    svg image.logo-pulsing {
+      animation: svg-logo-pulse 1s ease-in-out infinite;
     }
 
     /* Desktop styles */
@@ -171,9 +197,8 @@
       /* Desktop Search Bar */
       .desktop-search-container {
         position: fixed;
-        top: 58px;
-        left: 50%;
-        transform: translateX(-50%);
+        top: 75px;
+        left: 40px;
         z-index: 1000;
       }
     }
@@ -963,24 +988,33 @@
             }, 500); // Wait for scroll to complete
           }
         } else {
-          // Desktop: find the logo in SVG
-          const logoImages = document.querySelectorAll('.logo-image');
-          logoImages.forEach(logo => {
-            const title = logo.querySelector('title');
-            if (title && title.textContent.toLowerCase().includes(match.entity.toLowerCase())) {
-              logo.classList.add('logo-pulsing');
-              // Remove pulse after 10 seconds
-              setTimeout(() => {
-                logo.classList.remove('logo-pulsing');
-              }, 10000);
+          // Desktop: find the logo in SVG by searching logo-link elements
+          const logoLinks = document.querySelectorAll('.logo-link');
+          let foundLink = null;
+          logoLinks.forEach(link => {
+            // Check text content within the link (logo-label, logo-text, etc.)
+            const textContent = link.textContent.toLowerCase();
+            if (textContent.includes(match.entity.toLowerCase())) {
+              foundLink = link;
             }
           });
+
+          if (foundLink) {
+            // Add pulse animation to the link's image
+            const image = foundLink.querySelector('image');
+            if (image) {
+              image.classList.add('logo-pulsing');
+              // Remove pulse after 10 seconds
+              setTimeout(() => {
+                image.classList.remove('logo-pulsing');
+              }, 10000);
+            }
+          }
         }
 
         // Reset after 5 seconds
         setTimeout(() => {
           resultElement.classList.remove('visible');
-          inputElement.style.display = '';
           inputElement.value = '';
         }, 5000);
       } else {
@@ -988,12 +1022,10 @@
         resultElement.textContent = 'Not on the map yet';
         resultElement.classList.add('not-found');
         resultElement.classList.add('visible');
-        inputElement.style.display = 'none';
 
         // Reset after 3 seconds
         setTimeout(() => {
           resultElement.classList.remove('visible', 'not-found');
-          inputElement.style.display = '';
           inputElement.value = '';
         }, 3000);
       }
