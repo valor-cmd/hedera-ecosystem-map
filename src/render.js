@@ -1013,13 +1013,13 @@ function renderSVG(sectionData) {
   svg.append("text").attr("class", "footer-note").attr("x", 70).attr("y", H - 31)
     .attr("font-size", "9px").text("Note: The list of projects is not comprehensive.");
 
-  // Genfinity branding logo - moved up and left 25px from original text position
+  // Genfinity branding logo - 50% larger, aligned with section boxes
   const genfinityLogoPath = path.join(LOGOS_PATH, "branding", "genfinity-logo.svg");
   const genfinityLogo = imageToDataUri(genfinityLogoPath);
-  const logoWidth = 120;
-  const logoHeight = 19; // Aspect ratio ~6.4:1 from viewBox 641.2 x 100
-  const logoX = W - 35 - logoWidth; // Right edge at W - 35 (moved left 25px)
-  const logoY = H - 35 - logoHeight; // Bottom at H - 35 (moved up 25px)
+  const logoWidth = 180;  // 50% bigger (was 120)
+  const logoHeight = 29;  // 50% bigger (was 19)
+  const logoX = W - panelMargin - logoWidth; // Right edge aligns with section boxes (W - 70)
+  const logoY = H - 35 - logoHeight;
 
   if (genfinityLogo?.type === "svg") {
     const genfinityLink = svg.append("a")
