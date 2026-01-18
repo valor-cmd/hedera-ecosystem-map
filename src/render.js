@@ -195,6 +195,7 @@ function findLogoFile(entityName) {
     "StegX": path.join(LOGOS_PATH, "Tooling and Solutions", "StegX-CircleLogo.png"),
     "Tuum": path.join(LOGOS_PATH, "Tooling and Solutions", "Tuum-CircleLogo.svg"),
     "Turtle Moon": path.join(LOGOS_PATH, "Tooling and Solutions", "Turtle Moon.png"),
+    "TierBot": path.join(LOGOS_PATH, "Tooling and Solutions", "TierBot AI.png"),
     "Neuron": path.join(LOGOS_PATH, "iot", "Neuron World.jpg"),
     // DeFi
     "SaucerSwap": path.join(LOGOS_PATH, "defi", "saucerswap.jpg"),
@@ -661,16 +662,17 @@ function renderSVG(sectionData) {
         .attr("data-section", panel.section)
         .text(panel.section);
 
-      // Add invisible hit area covering the expanded hover bounds
-      // This ensures hover state stays active when mouse is over the expanded content
-      sectionGroup.append("rect")
-        .attr("class", "council-hit-area")
-        .attr("x", hoverPanelX)
-        .attr("y", hoverPanelY - 20)  // Include title area
-        .attr("width", hoverPanelW)
-        .attr("height", hoverPanelH + 20)
-        .attr("fill", "transparent")
-        .style("pointer-events", "all");
+      // Store expanded hover bounds as data attributes for JavaScript hover tracking
+      // Don't use a hit area that blocks other sections - use JS coordinate checking instead
+      sectionGroup
+        .attr("data-hover-x", hoverPanelX)
+        .attr("data-hover-y", hoverPanelY - 20)
+        .attr("data-hover-w", hoverPanelW)
+        .attr("data-hover-h", hoverPanelH + 20)
+        .attr("data-normal-x", panel.x)
+        .attr("data-normal-y", panel.y)
+        .attr("data-normal-w", panel.w)
+        .attr("data-normal-h", panel.h);
     } else if (panel.isCoreOrgs) {
       // Independent Core Organizations - vertical or horizontal layout
       const allItems = activeSubcats.flatMap(([_, items]) => items);

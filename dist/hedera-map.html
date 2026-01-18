@@ -789,28 +789,45 @@
               group.style.transform = `scale(${maxScale})`;
             }
 
-            // Capture the HOVERED bounds after scale animation completes (300ms transition)
-            // Use the PANEL element's bounds, not the entire group (which may include extended elements)
+            // Set up bound checking after animation completes
             setTimeout(() => {
               if (state.isHovered) {
-                const panel = group.querySelector('.panel');
-                if (panel) {
-                  state.hoveredRect = panel.getBoundingClientRect();
-                } else {
-                  state.hoveredRect = group.getBoundingClientRect();
-                }
+                if (isCouncil) {
+                  // For council, use SVG coordinates and EXPANDED hover bounds from data attributes
+                  const hoverX = parseFloat(group.getAttribute('data-hover-x'));
+                  const hoverY = parseFloat(group.getAttribute('data-hover-y'));
+                  const hoverW = parseFloat(group.getAttribute('data-hover-w'));
+                  const hoverH = parseFloat(group.getAttribute('data-hover-h'));
 
-                // Start checking if mouse leaves HOVERED bounds
-                state.boundChecker = (e) => {
-                  if (state.isHovered && state.hoveredRect) {
-                    const x = e.clientX;
-                    const y = e.clientY;
-                    const rect = state.hoveredRect;
-                    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-                      deactivateHover();
+                  state.boundChecker = (e) => {
+                    if (state.isHovered) {
+                      const svgPoint = screenToSVG(e.clientX, e.clientY);
+                      if (svgPoint && !isWithinBounds(svgPoint, hoverX, hoverY, hoverW, hoverH)) {
+                        deactivateHover();
+                      }
                     }
+                  };
+                  state.hoveredRect = { council: true }; // Mark as active
+                } else {
+                  // For other sections, use screen coordinates and panel bounds
+                  const panel = group.querySelector('.panel');
+                  if (panel) {
+                    state.hoveredRect = panel.getBoundingClientRect();
+                  } else {
+                    state.hoveredRect = group.getBoundingClientRect();
                   }
-                };
+
+                  state.boundChecker = (e) => {
+                    if (state.isHovered && state.hoveredRect) {
+                      const x = e.clientX;
+                      const y = e.clientY;
+                      const rect = state.hoveredRect;
+                      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+                        deactivateHover();
+                      }
+                    }
+                  };
+                }
                 document.addEventListener('mousemove', state.boundChecker);
               }
             }, 350); // Wait for 300ms transition + small buffer
@@ -848,9 +865,46 @@
           group.style.transform = 'scale(1)';
         }
 
-        group.addEventListener('mouseenter', () => {
+        // Helper to convert screen coordinates to SVG coordinates
+        function screenToSVG(screenX, screenY) {
+          const svg = document.querySelector('.map-container svg');
+          if (!svg) return null;
+          const svgRect = svg.getBoundingClientRect();
+          const viewBoxWidth = 1920;
+          const viewBoxHeight = 1080;
+          const scaleX = svgRect.width / viewBoxWidth;
+          const scaleY = svgRect.height / viewBoxHeight;
+          const scale = Math.min(scaleX, scaleY);
+          const scaledWidth = viewBoxWidth * scale;
+          const scaledHeight = viewBoxHeight * scale;
+          const offsetX = (svgRect.width - scaledWidth) / 2;
+          const offsetY = (svgRect.height - scaledHeight) / 2;
+          const svgX = (screenX - svgRect.left - offsetX) / scale;
+          const svgY = (screenY - svgRect.top - offsetY) / scale;
+          return { x: svgX, y: svgY };
+        }
+
+        // For council section, check if point is within specified bounds
+        function isWithinBounds(svgPoint, x, y, w, h) {
+          return svgPoint.x >= x && svgPoint.x <= x + w &&
+                 svgPoint.y >= y && svgPoint.y <= y + h;
+        }
+
+        group.addEventListener('mouseenter', (e) => {
           if (isMobile()) return;
           const state = hoverState.get(group);
+
+          // For council section, only activate if mouse is within NORMAL panel bounds
+          if (isCouncil) {
+            const normalX = parseFloat(group.getAttribute('data-normal-x'));
+            const normalY = parseFloat(group.getAttribute('data-normal-y'));
+            const normalW = parseFloat(group.getAttribute('data-normal-w'));
+            const normalH = parseFloat(group.getAttribute('data-normal-h'));
+            const svgPoint = screenToSVG(e.clientX, e.clientY);
+            if (!svgPoint || !isWithinBounds(svgPoint, normalX, normalY, normalW, normalH)) {
+              return; // Don't activate - mouse is not in normal panel area
+            }
+          }
 
           // Delay hover activation by 0.75 seconds
           state.timeout = setTimeout(activateHover, 750);
@@ -941,8 +995,27 @@
 
     // Search functionality
     function searchEntity(searchTerm, isMobileSearch) {
-      const term = searchTerm.trim().toLowerCase();
+      let term = searchTerm.trim().toLowerCase();
       if (!term) return;
+
+      // Search aliases for common alternative names
+      const searchAliases = {
+        'aberdeen': 'abrdn',
+        'aberdeen standard': 'abrdn',
+        'aberdeen standard investments': 'abrdn',
+        'hash name service': 'HNS',
+        'hashname': 'Hashgraph.Name',
+        'hash names': 'Hashgraph.Name',
+        'hashnames': 'Hashgraph.Name',
+        'hedera name service': 'HNS',
+        'hns domains': 'HNS'
+      };
+
+      // Check if the search term matches an alias
+      const aliasMatch = searchAliases[term];
+      if (aliasMatch) {
+        term = aliasMatch.toLowerCase();
+      }
 
       // Build list of all entities from sectionData
       const allEntities = [];
@@ -959,10 +1032,25 @@
         });
       });
 
-      // Find matching entity - use exact match (case insensitive)
-      const match = allEntities.find(item =>
+      // Find matching entity - try exact match first, then partial matching
+      let match = allEntities.find(item =>
         item.entity.toLowerCase() === term
       );
+
+      // If no exact match and term is 3+ chars, try partial matching
+      if (!match && term.length >= 3) {
+        // Try starts-with match (e.g., "zain" -> "Zain Group")
+        match = allEntities.find(item =>
+          item.entity.toLowerCase().startsWith(term)
+        );
+
+        // Try contains match (e.g., "telekom" -> "Deutsche Telekom")
+        if (!match) {
+          match = allEntities.find(item =>
+            item.entity.toLowerCase().includes(term)
+          );
+        }
+      }
 
       const resultElement = isMobileSearch
         ? document.getElementById('mobile-search-result')
@@ -1002,9 +1090,18 @@
             }
           } else {
             mobileLogos.forEach(logo => {
+              // First try the text name element
               const nameEl = logo.querySelector('.mobile-logo-name');
               if (nameEl && nameEl.textContent.trim().toLowerCase() === match.entity.toLowerCase()) {
                 foundLogo = logo;
+              }
+
+              // For council/core-orgs, check the img alt attribute (names are hidden)
+              if (!foundLogo) {
+                const img = logo.querySelector('.mobile-logo-img');
+                if (img && img.alt && img.alt.toLowerCase() === match.entity.toLowerCase()) {
+                  foundLogo = logo;
+                }
               }
             });
 
@@ -1014,10 +1111,16 @@
               if (section) {
                 section.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }
-              // Add pulse animation
+              // Add pulse animation to the image directly
               setTimeout(() => {
-                foundLogo.classList.add('logo-pulsing');
-                setTimeout(() => foundLogo.classList.remove('logo-pulsing'), 10000);
+                const img = foundLogo.querySelector('.mobile-logo-img');
+                if (img) {
+                  img.classList.add('logo-pulsing');
+                  setTimeout(() => img.classList.remove('logo-pulsing'), 10000);
+                } else {
+                  foundLogo.classList.add('logo-pulsing');
+                  setTimeout(() => foundLogo.classList.remove('logo-pulsing'), 10000);
+                }
               }, 500);
             }
           }
@@ -1070,6 +1173,17 @@
             activateSectionHover(foundSection);
             // Deactivate after 10 seconds
             setTimeout(() => deactivateSectionHover(foundSection), 10000);
+          }
+
+          // For Council section, find the logo in council-hover group (not council-normal)
+          if (foundSection && foundSection.classList.contains('council-section') && match.website) {
+            const hoverGroup = foundSection.querySelector('.council-hover');
+            if (hoverGroup) {
+              const hoverLink = hoverGroup.querySelector(`a.logo-link[href="${match.website}"]`);
+              if (hoverLink) {
+                foundImage = hoverLink.querySelector('image');
+              }
+            }
           }
 
           // Pulse the logo
@@ -1214,12 +1328,6 @@
       const parent = sectionGroup.parentNode;
       parent.appendChild(sectionGroup);
 
-      // Set panel to solid black background
-      const panel = sectionGroup.querySelector('.panel');
-      if (panel) {
-        panel.style.fill = '#000000';
-      }
-
       requestAnimationFrame(() => {
         if (isCouncil) {
           const normalGroup = sectionGroup.querySelector('.council-normal');
@@ -1228,7 +1336,18 @@
           if (normalGroup) normalGroup.classList.add('hidden');
           if (hoverGroup) hoverGroup.classList.add('visible');
           if (mainTitle) mainTitle.classList.add('hidden');
+
+          // Set the hover group's panel to solid black (it's inside council-hover)
+          const hoverPanel = hoverGroup ? hoverGroup.querySelector('.panel') : null;
+          if (hoverPanel) {
+            hoverPanel.style.fill = '#000000';
+          }
         } else {
+          // Set panel to solid black background for non-council sections
+          const panel = sectionGroup.querySelector('.panel');
+          if (panel) {
+            panel.style.fill = '#000000';
+          }
           const maxScale = parseFloat(sectionGroup.getAttribute('data-max-scale')) || 1.8;
           sectionGroup.style.transform = `scale(${maxScale})`;
         }
@@ -1241,19 +1360,26 @@
 
       const isCouncil = sectionGroup.classList.contains('council-section');
 
-      // Reset panel background
-      const panel = sectionGroup.querySelector('.panel');
-      if (panel) {
-        panel.style.fill = '';
-      }
-
       if (isCouncil) {
         const normalGroup = sectionGroup.querySelector('.council-normal');
         const hoverGroup = sectionGroup.querySelector('.council-hover');
         const mainTitle = sectionGroup.querySelector(':scope > .section-title');
+
+        // Reset the hover group's panel background
+        const hoverPanel = hoverGroup ? hoverGroup.querySelector('.panel') : null;
+        if (hoverPanel) {
+          hoverPanel.style.fill = '';
+        }
+
         if (normalGroup) normalGroup.classList.remove('hidden');
         if (hoverGroup) hoverGroup.classList.remove('visible');
         if (mainTitle) mainTitle.classList.remove('hidden');
+      } else {
+        // Reset panel background for non-council sections
+        const panel = sectionGroup.querySelector('.panel');
+        if (panel) {
+          panel.style.fill = '';
+        }
       }
       sectionGroup.style.transform = 'scale(1)';
     }
