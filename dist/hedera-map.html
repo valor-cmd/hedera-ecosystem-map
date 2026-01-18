@@ -662,16 +662,6 @@
 <body>
   <a href="https://hedera-data-app.vercel.app" target="_blank" rel="noopener noreferrer" class="top-link">Hedera Data Dashboard</a>
 
-  <!-- Desktop Search Bar -->
-  <div class="desktop-search-container" id="desktop-search-container">
-    <div class="search-bar">
-      <input type="text" class="search-input" id="desktop-search-input" placeholder="Search for an entity...">
-      <span class="search-result" id="desktop-search-result"></span>
-      <button class="search-button" id="desktop-search-button">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-      </button>
-    </div>
-  </div>
 
   <!-- Desktop SVG Map -->
   <div class="map-container" id="map-container">
@@ -948,10 +938,10 @@
 
       const resultElement = isMobileSearch
         ? document.getElementById('mobile-search-result')
-        : document.getElementById('desktop-search-result');
+        : document.getElementById('svg-search-result');
       const inputElement = isMobileSearch
         ? document.getElementById('mobile-search-input')
-        : document.getElementById('desktop-search-input');
+        : document.getElementById('svg-search-input');
 
       // Clear previous pulse animations
       document.querySelectorAll('.logo-pulsing').forEach(el => {
@@ -1004,43 +994,48 @@
             }
           }
         } else {
-          // Desktop: find the logo in SVG
+          // Desktop: find the logo in SVG and activate section hover
+          const svgElement = document.querySelector('.map-container svg');
+          let foundImage = null;
+          let foundSection = null;
+
           if (isGenfinity) {
             // Find Genfinity logo
             const genfinityLink = document.querySelector('a[href="https://genfinity.io"]');
             if (genfinityLink) {
-              const image = genfinityLink.querySelector('image');
-              if (image) {
-                image.classList.add('logo-pulsing');
-                setTimeout(() => image.classList.remove('logo-pulsing'), 10000);
-              }
+              foundImage = genfinityLink.querySelector('image');
             }
-          } else {
-            // Search all logo-link elements and also section groups with images
-            const svgElement = document.querySelector('.map-container svg');
-            if (svgElement) {
-              // Find all text elements and images in the SVG
-              const allTexts = svgElement.querySelectorAll('text');
-              let foundImage = null;
+          } else if (svgElement) {
+            // Search all text elements to find matching entity
+            const allTexts = svgElement.querySelectorAll('text');
 
-              allTexts.forEach(textEl => {
-                if (textEl.textContent.toLowerCase().includes(match.entity.toLowerCase())) {
-                  // Found matching text, look for nearby image in same parent group
-                  const parent = textEl.closest('a') || textEl.closest('g');
-                  if (parent) {
-                    const image = parent.querySelector('image');
-                    if (image) {
-                      foundImage = image;
-                    }
+            allTexts.forEach(textEl => {
+              if (textEl.textContent.toLowerCase().includes(match.entity.toLowerCase())) {
+                // Found matching text, look for nearby image in same parent
+                const logoLink = textEl.closest('a.logo-link') || textEl.closest('g');
+                if (logoLink) {
+                  const image = logoLink.querySelector('image');
+                  if (image) {
+                    foundImage = image;
+                    // Find the section group containing this logo
+                    foundSection = logoLink.closest('.section-group');
                   }
                 }
-              });
-
-              if (foundImage) {
-                foundImage.classList.add('logo-pulsing');
-                setTimeout(() => foundImage.classList.remove('logo-pulsing'), 10000);
               }
-            }
+            });
+          }
+
+          // Activate section hover state
+          if (foundSection) {
+            activateSectionHover(foundSection);
+            // Deactivate after 10 seconds
+            setTimeout(() => deactivateSectionHover(foundSection), 10000);
+          }
+
+          // Pulse the logo
+          if (foundImage) {
+            foundImage.classList.add('logo-pulsing');
+            setTimeout(() => foundImage.classList.remove('logo-pulsing'), 10000);
           }
         }
 
@@ -1068,17 +1063,17 @@
 
     // Set up search event listeners
     function initSearch() {
-      // Desktop search
-      const desktopInput = document.getElementById('desktop-search-input');
-      const desktopButton = document.getElementById('desktop-search-button');
+      // Desktop search (embedded in SVG)
+      const svgInput = document.getElementById('svg-search-input');
+      const svgButton = document.getElementById('svg-search-button');
 
-      if (desktopInput && desktopButton) {
-        desktopButton.addEventListener('click', () => {
-          searchEntity(desktopInput.value, false);
+      if (svgInput && svgButton) {
+        svgButton.addEventListener('click', () => {
+          searchEntity(svgInput.value, false);
         });
-        desktopInput.addEventListener('keypress', (e) => {
+        svgInput.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
-            searchEntity(desktopInput.value, false);
+            searchEntity(svgInput.value, false);
           }
         });
       }
@@ -1097,6 +1092,48 @@
           }
         });
       }
+    }
+
+    // Function to activate hover state on a section
+    function activateSectionHover(sectionGroup) {
+      if (!sectionGroup) return;
+
+      const isCouncil = sectionGroup.classList.contains('council-section');
+
+      // Move to end of parent to render on top
+      const parent = sectionGroup.parentNode;
+      parent.appendChild(sectionGroup);
+
+      requestAnimationFrame(() => {
+        if (isCouncil) {
+          const normalGroup = sectionGroup.querySelector('.council-normal');
+          const hoverGroup = sectionGroup.querySelector('.council-hover');
+          const mainTitle = sectionGroup.querySelector(':scope > .section-title');
+          if (normalGroup) normalGroup.classList.add('hidden');
+          if (hoverGroup) hoverGroup.classList.add('visible');
+          if (mainTitle) mainTitle.classList.add('hidden');
+        } else {
+          const maxScale = parseFloat(sectionGroup.getAttribute('data-max-scale')) || 1.8;
+          sectionGroup.style.transform = `scale(${maxScale})`;
+        }
+      });
+    }
+
+    // Function to deactivate hover state on a section
+    function deactivateSectionHover(sectionGroup) {
+      if (!sectionGroup) return;
+
+      const isCouncil = sectionGroup.classList.contains('council-section');
+
+      if (isCouncil) {
+        const normalGroup = sectionGroup.querySelector('.council-normal');
+        const hoverGroup = sectionGroup.querySelector('.council-hover');
+        const mainTitle = sectionGroup.querySelector(':scope > .section-title');
+        if (normalGroup) normalGroup.classList.remove('hidden');
+        if (hoverGroup) hoverGroup.classList.remove('visible');
+        if (mainTitle) mainTitle.classList.remove('hidden');
+      }
+      sectionGroup.style.transform = 'scale(1)';
     }
 
     // Start the app

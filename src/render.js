@@ -379,6 +379,25 @@ function renderSVG(sectionData) {
     .attr("font-size", "18px")
     .text("An Incomplete Map of the Hedera Ecosystem");
 
+  // Search bar embedded in SVG using foreignObject
+  const searchFO = svg.append("foreignObject")
+    .attr("x", 40)
+    .attr("y", 72)
+    .attr("width", 200)
+    .attr("height", 32);
+
+  searchFO.append("xhtml:div")
+    .attr("class", "svg-search-container")
+    .html(`
+      <div class="svg-search-bar" id="svg-search-bar">
+        <input type="text" class="svg-search-input" id="svg-search-input" placeholder="Search for an entity...">
+        <span class="svg-search-result" id="svg-search-result"></span>
+        <button class="svg-search-button" id="svg-search-button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path fill="#888" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </button>
+      </div>
+    `);
+
   const contentY = 110;  // 4x more top padding
   const panelMargin = 70;  // 4x more padding around edges
   const rowGap = 28;  // Space between rows for titles
