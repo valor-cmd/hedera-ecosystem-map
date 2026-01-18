@@ -224,6 +224,7 @@ function findLogoFile(entityName) {
     "EcoGuard": path.join(LOGOS_PATH, "rwas", "Ecogard.jpg"),
     "Verra Guardian": path.join(LOGOS_PATH, "rwas", "Verra Guardian.jpg"),
     "Isle Finance": path.join(LOGOS_PATH, "rwas", "Isle Finance.jpg"),
+    "Gilmore Estates": path.join(LOGOS_PATH, "rwas", "Gilmore Estates.jpg"),
     // Gaming and Entertainment
     "Moonscape": path.join(LOGOS_PATH, "entertainment", "Moonscape.jpg"),
     "Tune.fm": path.join(LOGOS_PATH, "entertainment", "Tune.fm.jpg"),
