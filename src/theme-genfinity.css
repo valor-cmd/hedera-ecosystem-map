@@ -270,16 +270,16 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   display: block;
 }
 
-/* SVG Logo Pulse Animation */
+/* SVG Logo Pulse Animation - scale only, no glow */
 @keyframes svg-logo-pulse {
   0%, 100% {
-    filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0));
+    transform: scale(1);
   }
   50% {
-    filter: drop-shadow(0 0 12px rgba(139, 92, 246, 1)) drop-shadow(0 0 24px rgba(139, 92, 246, 0.8));
+    transform: scale(1.2);
   }
 }
 
 .logo-pulsing {
-  animation: svg-logo-pulse 1s ease-in-out infinite;
+  animation: svg-logo-pulse 0.8s ease-in-out infinite;
 }

@@ -135,42 +135,29 @@
       visibility: hidden;
     }
 
-    /* Pulse Animation for found logos */
+    /* Pulse Animation for found logos - scale only, no glow */
     @keyframes logo-pulse {
       0%, 100% {
         transform: scale(1);
-        filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0));
       }
       50% {
-        transform: scale(1.15);
-        filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
-      }
-    }
-
-    @keyframes svg-logo-pulse {
-      0%, 100% {
-        opacity: 1;
-        filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0));
-      }
-      50% {
-        opacity: 1;
-        filter: drop-shadow(0 0 15px rgba(139, 92, 246, 1)) drop-shadow(0 0 30px rgba(139, 92, 246, 0.8));
+        transform: scale(1.2);
       }
     }
 
     .logo-pulsing {
-      animation: logo-pulse 1s ease-in-out infinite;
+      animation: logo-pulse 0.8s ease-in-out infinite;
       z-index: 100;
     }
 
     /* SVG image pulse */
     svg image.logo-pulsing {
-      animation: svg-logo-pulse 1s ease-in-out infinite;
+      animation: logo-pulse 0.8s ease-in-out infinite;
     }
 
     /* Footer logo pulse */
     .mobile-footer img.logo-pulsing {
-      animation: logo-pulse 1s ease-in-out infinite;
+      animation: logo-pulse 0.8s ease-in-out infinite;
     }
 
     /* Desktop styles */
@@ -968,10 +955,9 @@
         });
       });
 
-      // Find matching entity
+      // Find matching entity - use exact match (case insensitive)
       const match = allEntities.find(item =>
-        item.entity.toLowerCase().includes(term) ||
-        term.includes(item.entity.toLowerCase())
+        item.entity.toLowerCase() === term
       );
 
       const resultElement = isMobileSearch
@@ -1109,10 +1095,9 @@
 
       if (!svg || !searchContainer) return;
 
-      // SVG viewBox is 1920x1080, title is at x=40, y=64
-      // We want search bar below title, at approximately x=40, y=72 in SVG coordinates
+      // SVG viewBox is 1920x1080, title is at x=40, y=64 (18px font)
+      // We want search bar below title, at approximately x=40, y=80 in SVG coordinates
       const svgRect = svg.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
 
       // Calculate scale factor (how much the SVG is scaled from its viewBox)
       const viewBoxWidth = 1920;
@@ -1121,33 +1106,47 @@
       const scaleY = svgRect.height / viewBoxHeight;
       const scale = Math.min(scaleX, scaleY); // object-fit: contain uses min scale
 
-      // Calculate offset (centering within container)
+      // Calculate offset (centering due to object-fit: contain)
       const scaledWidth = viewBoxWidth * scale;
       const scaledHeight = viewBoxHeight * scale;
       const offsetX = (svgRect.width - scaledWidth) / 2;
       const offsetY = (svgRect.height - scaledHeight) / 2;
 
-      // Position in SVG coordinates: x=40, y=72
+      // Position in SVG coordinates: x=40, y=90 (well below the 18px title at y=64)
       const svgX = 40;
-      const svgY = 72;
+      const svgY = 90;
 
-      // Convert to screen coordinates relative to container
-      const screenX = containerRect.left + offsetX + (svgX * scale);
-      const screenY = containerRect.top + offsetY + (svgY * scale);
+      // Convert to screen coordinates (svgRect already includes container position)
+      const screenX = svgRect.left + offsetX + (svgX * scale);
+      const screenY = svgRect.top + offsetY + (svgY * scale);
 
-      // Set search bar position and size
+      // Set search bar position
+      searchContainer.style.position = 'fixed';
       searchContainer.style.left = screenX + 'px';
       searchContainer.style.top = screenY + 'px';
 
-      // Scale the search bar width proportionally
-      const baseWidth = 180; // Base width in SVG coordinates
-      searchContainer.style.width = (baseWidth * scale) + 'px';
+      // Set fixed width that scales with the map
+      const baseWidth = 160;
+      const scaledBarWidth = baseWidth * scale;
 
-      // Scale font sizes and padding
       const searchBar = searchContainer.querySelector('.search-bar');
       if (searchBar) {
-        searchBar.style.transform = `scale(${scale})`;
-        searchBar.style.transformOrigin = 'top left';
+        searchBar.style.width = scaledBarWidth + 'px';
+        searchBar.style.height = (24 * scale) + 'px';
+        searchBar.style.fontSize = (10 * scale) + 'px';
+        searchBar.style.padding = `${3 * scale}px ${3 * scale}px ${3 * scale}px ${10 * scale}px`;
+      }
+
+      const searchButton = searchContainer.querySelector('.search-button');
+      if (searchButton) {
+        const btnSize = 18 * scale;
+        searchButton.style.width = btnSize + 'px';
+        searchButton.style.height = btnSize + 'px';
+      }
+
+      const searchInput = searchContainer.querySelector('.search-input');
+      if (searchInput) {
+        searchInput.style.fontSize = (10 * scale) + 'px';
       }
     }
 
@@ -1198,6 +1197,12 @@
       const parent = sectionGroup.parentNode;
       parent.appendChild(sectionGroup);
 
+      // Set panel to solid black background
+      const panel = sectionGroup.querySelector('.panel');
+      if (panel) {
+        panel.style.fill = '#000000';
+      }
+
       requestAnimationFrame(() => {
         if (isCouncil) {
           const normalGroup = sectionGroup.querySelector('.council-normal');
@@ -1218,6 +1223,12 @@
       if (!sectionGroup) return;
 
       const isCouncil = sectionGroup.classList.contains('council-section');
+
+      // Reset panel background
+      const panel = sectionGroup.querySelector('.panel');
+      if (panel) {
+        panel.style.fill = '';
+      }
 
       if (isCouncil) {
         const normalGroup = sectionGroup.querySelector('.council-normal');

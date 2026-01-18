@@ -167,6 +167,7 @@ function findLogoFile(entityName) {
     "Demia": path.join(LOGOS_PATH, "Tooling and Solutions", "Demia-CircleLogo.png.webp"),
     "StegX": path.join(LOGOS_PATH, "Tooling and Solutions", "StegX-CircleLogo.png"),
     "Tuum": path.join(LOGOS_PATH, "Tooling and Solutions", "Tuum-CircleLogo.svg"),
+    "Turtle Moon": path.join(LOGOS_PATH, "Tooling and Solutions", "Turtle Moon.png"),
     "Neuron": path.join(LOGOS_PATH, "iot", "Neuron World.jpg"),
     "HashNames": path.join(LOGOS_PATH, "DEXs", "HashNames.jpg"),
     // DeFi
