@@ -529,10 +529,13 @@ function renderSVG(sectionData) {
       .attr("data-max-scale", maxScale.toFixed(2))
       .style("transform-origin", `${originX}px ${originY}px`);
 
-    // Panel background (box starts below title)
-    sectionGroup.append("rect").attr("class", "panel")
-      .attr("x", panel.x).attr("y", panel.y)
-      .attr("width", panel.w).attr("height", panel.h).attr("rx", 12);
+    // Panel background (box starts below title) - for non-Council sections
+    // Council sections have panels inside their normal/hover groups
+    if (!panel.isCouncil) {
+      sectionGroup.append("rect").attr("class", "panel")
+        .attr("x", panel.x).attr("y", panel.y)
+        .attr("width", panel.w).attr("height", panel.h).attr("rx", 12);
+    }
 
     const activeSubcats = Object.entries(secData.subcategories).filter(([_, items]) => items.length > 0);
 
@@ -620,9 +623,9 @@ function renderSVG(sectionData) {
         });
       };
 
-      // Normal state: 2 columns within original panel bounds
+      // Normal state: 2 columns within original panel bounds (with its own panel)
       const normalGroup = sectionGroup.append("g").attr("class", "council-normal");
-      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h, false);
+      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h, true);
 
       // Hover state: 5 columns with 2x bigger logos, expanded panel
       // Calculate expanded dimensions: grow left from the right edge

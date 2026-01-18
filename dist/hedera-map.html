@@ -1034,20 +1034,23 @@
               foundImage = genfinityLink.querySelector('image');
             }
           } else if (svgElement) {
-            // Search all text elements to find matching entity
-            const allTexts = svgElement.querySelectorAll('text');
+            // Search all logo-link elements and combine their label texts for full name match
+            const allLogoLinks = svgElement.querySelectorAll('a.logo-link');
 
-            allTexts.forEach(textEl => {
-              if (textEl.textContent.trim().toLowerCase() === match.entity.toLowerCase()) {
-                // Found matching text, look for nearby image in same parent
-                const logoLink = textEl.closest('a.logo-link') || textEl.closest('g');
-                if (logoLink) {
-                  const image = logoLink.querySelector('image');
-                  if (image) {
-                    foundImage = image;
-                    // Find the section group containing this logo
-                    foundSection = logoLink.closest('.section-group');
-                  }
+            allLogoLinks.forEach(logoLink => {
+              // Get all logo-label text elements and combine them
+              const labelTexts = logoLink.querySelectorAll('.logo-label');
+              const fullName = Array.from(labelTexts)
+                .map(t => t.textContent.trim())
+                .join('')
+                .toLowerCase();
+
+              if (fullName === match.entity.toLowerCase()) {
+                const image = logoLink.querySelector('image');
+                if (image) {
+                  foundImage = image;
+                  // Find the section group containing this logo
+                  foundSection = logoLink.closest('.section-group');
                 }
               }
             });
