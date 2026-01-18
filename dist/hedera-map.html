@@ -28,8 +28,7 @@
       border: 2px solid #8b5cf6;
       border-radius: 50px;
       padding: 8px 8px 8px 20px;
-      width: 100%;
-      max-width: 320px;
+      width: 280px;
       position: relative;
     }
 
@@ -41,6 +40,7 @@
       color: #ffffff;
       font-size: 14px;
       font-family: inherit;
+      min-width: 0;
     }
 
     .search-input::placeholder {
@@ -76,7 +76,7 @@
       .search-bar {
         border: 1px solid #666666;
         padding: 4px 4px 4px 16px;
-        max-width: 280px;
+        width: 220px;
       }
 
       .search-button {
@@ -168,6 +168,11 @@
       animation: svg-logo-pulse 1s ease-in-out infinite;
     }
 
+    /* Footer logo pulse */
+    .mobile-footer img.logo-pulsing {
+      animation: logo-pulse 1s ease-in-out infinite;
+    }
+
     /* Desktop styles */
     @media (min-width: 769px) {
       html, body {
@@ -197,8 +202,8 @@
       /* Desktop Search Bar */
       .desktop-search-container {
         position: fixed;
-        top: 75px;
-        left: 40px;
+        top: 46px;
+        left: 65px;
         z-index: 1000;
       }
     }
@@ -953,61 +958,88 @@
         el.classList.remove('logo-pulsing');
       });
 
-      if (match) {
+      // Special case: check for Genfinity
+      let isGenfinity = term.includes('genfinity') || 'genfinity'.includes(term);
+
+      if (match || isGenfinity) {
         // Found
         resultElement.textContent = 'Confirmed on the Map';
         resultElement.classList.remove('not-found');
         resultElement.classList.add('visible');
-        inputElement.style.display = 'none';
+        inputElement.style.visibility = 'hidden';
 
         // Find and pulse the logo
         if (isMobileSearch) {
           // Mobile: find the logo in mobile sections
           const mobileLogos = document.querySelectorAll('.mobile-logo');
           let foundLogo = null;
-          mobileLogos.forEach(logo => {
-            const nameEl = logo.querySelector('.mobile-logo-name');
-            if (nameEl && nameEl.textContent.toLowerCase().includes(match.entity.toLowerCase())) {
-              foundLogo = logo;
-            }
-          });
 
-          if (foundLogo) {
-            // Scroll to the logo's section
-            const section = foundLogo.closest('.mobile-section');
-            if (section) {
-              section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (isGenfinity) {
+            // Find Genfinity logo in footer
+            const genfinityImg = document.querySelector('.mobile-footer img[alt="Genfinity"]');
+            if (genfinityImg) {
+              genfinityImg.closest('.mobile-footer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+              genfinityImg.classList.add('logo-pulsing');
+              setTimeout(() => genfinityImg.classList.remove('logo-pulsing'), 10000);
             }
-            // Add pulse animation
-            setTimeout(() => {
-              foundLogo.classList.add('logo-pulsing');
-              // Remove pulse after 10 seconds
+          } else {
+            mobileLogos.forEach(logo => {
+              const nameEl = logo.querySelector('.mobile-logo-name');
+              if (nameEl && nameEl.textContent.toLowerCase().includes(match.entity.toLowerCase())) {
+                foundLogo = logo;
+              }
+            });
+
+            if (foundLogo) {
+              // Scroll to the logo's section
+              const section = foundLogo.closest('.mobile-section');
+              if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+              // Add pulse animation
               setTimeout(() => {
-                foundLogo.classList.remove('logo-pulsing');
-              }, 10000);
-            }, 500); // Wait for scroll to complete
+                foundLogo.classList.add('logo-pulsing');
+                setTimeout(() => foundLogo.classList.remove('logo-pulsing'), 10000);
+              }, 500);
+            }
           }
         } else {
-          // Desktop: find the logo in SVG by searching logo-link elements
-          const logoLinks = document.querySelectorAll('.logo-link');
-          let foundLink = null;
-          logoLinks.forEach(link => {
-            // Check text content within the link (logo-label, logo-text, etc.)
-            const textContent = link.textContent.toLowerCase();
-            if (textContent.includes(match.entity.toLowerCase())) {
-              foundLink = link;
+          // Desktop: find the logo in SVG
+          if (isGenfinity) {
+            // Find Genfinity logo
+            const genfinityLink = document.querySelector('a[href="https://genfinity.io"]');
+            if (genfinityLink) {
+              const image = genfinityLink.querySelector('image');
+              if (image) {
+                image.classList.add('logo-pulsing');
+                setTimeout(() => image.classList.remove('logo-pulsing'), 10000);
+              }
             }
-          });
+          } else {
+            // Search all logo-link elements and also section groups with images
+            const svgElement = document.querySelector('.map-container svg');
+            if (svgElement) {
+              // Find all text elements and images in the SVG
+              const allTexts = svgElement.querySelectorAll('text');
+              let foundImage = null;
 
-          if (foundLink) {
-            // Add pulse animation to the link's image
-            const image = foundLink.querySelector('image');
-            if (image) {
-              image.classList.add('logo-pulsing');
-              // Remove pulse after 10 seconds
-              setTimeout(() => {
-                image.classList.remove('logo-pulsing');
-              }, 10000);
+              allTexts.forEach(textEl => {
+                if (textEl.textContent.toLowerCase().includes(match.entity.toLowerCase())) {
+                  // Found matching text, look for nearby image in same parent group
+                  const parent = textEl.closest('a') || textEl.closest('g');
+                  if (parent) {
+                    const image = parent.querySelector('image');
+                    if (image) {
+                      foundImage = image;
+                    }
+                  }
+                }
+              });
+
+              if (foundImage) {
+                foundImage.classList.add('logo-pulsing');
+                setTimeout(() => foundImage.classList.remove('logo-pulsing'), 10000);
+              }
             }
           }
         }
@@ -1015,6 +1047,7 @@
         // Reset after 5 seconds
         setTimeout(() => {
           resultElement.classList.remove('visible');
+          inputElement.style.visibility = 'visible';
           inputElement.value = '';
         }, 5000);
       } else {
@@ -1022,10 +1055,12 @@
         resultElement.textContent = 'Not on the map yet';
         resultElement.classList.add('not-found');
         resultElement.classList.add('visible');
+        inputElement.style.visibility = 'hidden';
 
         // Reset after 3 seconds
         setTimeout(() => {
           resultElement.classList.remove('visible', 'not-found');
+          inputElement.style.visibility = 'visible';
           inputElement.value = '';
         }, 3000);
       }
