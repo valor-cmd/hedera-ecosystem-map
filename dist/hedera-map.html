@@ -1116,9 +1116,9 @@
       const offsetX = (svgRect.width - scaledWidth) / 2;
       const offsetY = (svgRect.height - scaledHeight) / 2;
 
-      // Position in SVG coordinates: x=40, y=70 (below title at y=50)
+      // Position in SVG coordinates: x=40, y=50 (below title at y=30)
       const svgX = 40;
-      const svgY = 70;
+      const svgY = 50;
 
       // Convert to screen coordinates (svgRect already includes container position)
       const screenX = svgRect.left + offsetX + (svgX * scale);
@@ -1129,14 +1129,14 @@
       searchContainer.style.left = screenX + 'px';
       searchContainer.style.top = screenY + 'px';
 
-      // Set fixed width that scales with the map - restored to larger size
-      const baseWidth = 220;
+      // Set fixed width that scales with the map - 1.5x longer, 10% taller
+      const baseWidth = 330;
       const scaledBarWidth = baseWidth * scale;
 
       const searchBar = searchContainer.querySelector('.search-bar');
       if (searchBar) {
         searchBar.style.width = scaledBarWidth + 'px';
-        searchBar.style.height = (32 * scale) + 'px';
+        searchBar.style.height = (35 * scale) + 'px';
         searchBar.style.fontSize = (12 * scale) + 'px';
         searchBar.style.padding = `${4 * scale}px ${4 * scale}px ${4 * scale}px ${14 * scale}px`;
       }
