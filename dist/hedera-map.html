@@ -199,12 +199,40 @@
         display: none !important;
       }
 
-      /* Desktop Search Bar */
+      /* Desktop Search Bar - positioned dynamically via JS */
       .desktop-search-container {
-        position: fixed;
-        top: 46px;
-        left: 65px;
+        position: absolute;
         z-index: 1000;
+        pointer-events: auto;
+      }
+
+      .desktop-search-container .search-bar {
+        border: 1px solid #666666;
+        padding: 4px 4px 4px 12px;
+        background: #000000;
+      }
+
+      .desktop-search-container .search-button {
+        width: 20px;
+        height: 20px;
+        background: #000000;
+        border: 1px solid #666666;
+      }
+
+      .desktop-search-container .search-button svg {
+        width: 10px;
+        height: 10px;
+        fill: #888888;
+      }
+
+      .desktop-search-container .search-input {
+        font-size: 11px;
+      }
+
+      .desktop-search-container .search-result {
+        font-size: 10px;
+        right: 28px;
+        left: 12px;
       }
     }
 
@@ -662,6 +690,16 @@
 <body>
   <a href="https://hedera-data-app.vercel.app" target="_blank" rel="noopener noreferrer" class="top-link">Hedera Data Dashboard</a>
 
+  <!-- Desktop Search Bar (positioned dynamically via JavaScript) -->
+  <div class="desktop-search-container" id="desktop-search-container">
+    <div class="search-bar" id="desktop-search-bar">
+      <input type="text" class="search-input" id="desktop-search-input" placeholder="Search for an entity...">
+      <span class="search-result" id="desktop-search-result"></span>
+      <button class="search-button" id="desktop-search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </button>
+    </div>
+  </div>
 
   <!-- Desktop SVG Map -->
   <div class="map-container" id="map-container">
@@ -938,10 +976,10 @@
 
       const resultElement = isMobileSearch
         ? document.getElementById('mobile-search-result')
-        : document.getElementById('svg-search-result');
+        : document.getElementById('desktop-search-result');
       const inputElement = isMobileSearch
         ? document.getElementById('mobile-search-input')
-        : document.getElementById('svg-search-input');
+        : document.getElementById('desktop-search-input');
 
       // Clear previous pulse animations
       document.querySelectorAll('.logo-pulsing').forEach(el => {
@@ -1061,19 +1099,71 @@
       }
     }
 
+    // Position desktop search bar relative to SVG
+    function positionDesktopSearch() {
+      if (isMobile()) return;
+
+      const container = document.getElementById('map-container');
+      const searchContainer = document.getElementById('desktop-search-container');
+      const svg = container ? container.querySelector('svg') : null;
+
+      if (!svg || !searchContainer) return;
+
+      // SVG viewBox is 1920x1080, title is at x=40, y=64
+      // We want search bar below title, at approximately x=40, y=72 in SVG coordinates
+      const svgRect = svg.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+
+      // Calculate scale factor (how much the SVG is scaled from its viewBox)
+      const viewBoxWidth = 1920;
+      const viewBoxHeight = 1080;
+      const scaleX = svgRect.width / viewBoxWidth;
+      const scaleY = svgRect.height / viewBoxHeight;
+      const scale = Math.min(scaleX, scaleY); // object-fit: contain uses min scale
+
+      // Calculate offset (centering within container)
+      const scaledWidth = viewBoxWidth * scale;
+      const scaledHeight = viewBoxHeight * scale;
+      const offsetX = (svgRect.width - scaledWidth) / 2;
+      const offsetY = (svgRect.height - scaledHeight) / 2;
+
+      // Position in SVG coordinates: x=40, y=72
+      const svgX = 40;
+      const svgY = 72;
+
+      // Convert to screen coordinates relative to container
+      const screenX = containerRect.left + offsetX + (svgX * scale);
+      const screenY = containerRect.top + offsetY + (svgY * scale);
+
+      // Set search bar position and size
+      searchContainer.style.left = screenX + 'px';
+      searchContainer.style.top = screenY + 'px';
+
+      // Scale the search bar width proportionally
+      const baseWidth = 180; // Base width in SVG coordinates
+      searchContainer.style.width = (baseWidth * scale) + 'px';
+
+      // Scale font sizes and padding
+      const searchBar = searchContainer.querySelector('.search-bar');
+      if (searchBar) {
+        searchBar.style.transform = `scale(${scale})`;
+        searchBar.style.transformOrigin = 'top left';
+      }
+    }
+
     // Set up search event listeners
     function initSearch() {
-      // Desktop search (embedded in SVG)
-      const svgInput = document.getElementById('svg-search-input');
-      const svgButton = document.getElementById('svg-search-button');
+      // Desktop search
+      const desktopInput = document.getElementById('desktop-search-input');
+      const desktopButton = document.getElementById('desktop-search-button');
 
-      if (svgInput && svgButton) {
-        svgButton.addEventListener('click', () => {
-          searchEntity(svgInput.value, false);
+      if (desktopInput && desktopButton) {
+        desktopButton.addEventListener('click', () => {
+          searchEntity(desktopInput.value, false);
         });
-        svgInput.addEventListener('keypress', (e) => {
+        desktopInput.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
-            searchEntity(svgInput.value, false);
+            searchEntity(desktopInput.value, false);
           }
         });
       }
@@ -1092,6 +1182,10 @@
           }
         });
       }
+
+      // Position desktop search bar
+      positionDesktopSearch();
+      window.addEventListener('resize', positionDesktopSearch);
     }
 
     // Function to activate hover state on a section
