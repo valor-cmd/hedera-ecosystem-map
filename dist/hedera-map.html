@@ -104,6 +104,8 @@
         border-radius: 12px;
         padding: 16px;
         margin-bottom: 16px;
+        overflow: hidden;
+        box-sizing: border-box;
       }
 
       .mobile-section-title {
@@ -118,7 +120,9 @@
       .mobile-logos {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 12px;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .mobile-logo {
@@ -127,20 +131,25 @@
         align-items: center;
         text-decoration: none;
         padding: 4px;
+        min-width: 0;
+        overflow: hidden;
       }
 
       .mobile-logo-img {
         width: 48px;
+        max-width: 100%;
         height: 48px;
         border-radius: 50%;
         object-fit: cover;
         border: 1.5px solid #8b5cf6;
         background: rgba(0, 0, 0, 0.6);
         margin-bottom: 6px;
+        flex-shrink: 0;
       }
 
       .mobile-logo-placeholder {
         width: 48px;
+        max-width: 100%;
         height: 48px;
         border-radius: 50%;
         border: 1.5px solid #8b5cf6;
@@ -466,8 +475,7 @@
   <!-- Mobile Layout -->
   <div class="mobile-container" id="mobile-container">
     <div class="mobile-header">
-      <div style="margin-bottom: 8px;"><a href="https://hedera.com" target="_blank" rel="noopener noreferrer"><img src="HEDERA_LOGO_PLACEHOLDER" alt="Hedera" style="height: 96px;"></a></div>
-      <h1>Ecosystem Map</h1>
+      <h1><a href="https://hedera.com" target="_blank" rel="noopener noreferrer" style="color: #ffffff; text-decoration: none;">Hedera</a> Ecosystem Map</h1>
       <p>An Incomplete Map of the Hedera Ecosystem</p>
     </div>
     MOBILE_SECTIONS_PLACEHOLDER

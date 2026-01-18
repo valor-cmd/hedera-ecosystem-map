@@ -219,7 +219,7 @@ function findLogoFile(entityName) {
     "Tokeny": path.join(LOGOS_PATH, "rwas", "tokeny.jpg"),
     "Zoniqx": path.join(LOGOS_PATH, "rwas", "zoniqx.jpg"),
     "Archax": path.join(LOGOS_PATH, "rwas", "archax.jpg"),
-    "Ecogard": path.join(LOGOS_PATH, "rwas", "Ecogard.jpg"),
+    "EcoGuard": path.join(LOGOS_PATH, "rwas", "Ecogard.jpg"),
     "Verra Guardian": path.join(LOGOS_PATH, "rwas", "Verra Guardian.jpg"),
     "Isle Finance": path.join(LOGOS_PATH, "rwas", "Isle Finance.jpg"),
     // Gaming and Entertainment
@@ -245,7 +245,7 @@ function findLogoFile(entityName) {
     "Smackm": path.join(LOGOS_PATH, "meme", "Smackm.jpg"),
     "Soot": path.join(LOGOS_PATH, "meme", "Soot.jpg"),
     // Tooling (additional)
-    "HashNames": path.join(LOGOS_PATH, "DEXs", "HashNames.jpg"),
+    "Hashgraph.Name": path.join(LOGOS_PATH, "DEXs", "HashNames.jpg"),
     // Additional Services (infrastructure folder)
     "EQTY Lab": path.join(LOGOS_PATH, "infrastructure", "EQTY Lab.jpg"),
     "Tashi Network": path.join(LOGOS_PATH, "infrastructure", "Tashi Network.jpg"),

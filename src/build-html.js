@@ -486,11 +486,6 @@ function main() {
     mobileSectionsHtml
   );
 
-  // Add Hedera logo to header
-  const hederaLogoPath = path.join(LOGOS_PATH, "Hedera-wordmark.png");
-  const hederaLogoDataUri = imageToDataUri(hederaLogoPath);
-  html = html.replace('HEDERA_LOGO_PLACEHOLDER', hederaLogoDataUri);
-
   // Add Genfinity logo to footer
   const genfinityLogoPath = path.join(LOGOS_PATH, "Genfinity-logo.svg");
   const genfinityLogoDataUri = imageToDataUri(genfinityLogoPath);
