@@ -1007,10 +1007,10 @@ function renderSVG(sectionData) {
   const today = new Date();
   const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  svg.append("text").attr("class", "footer-text").attr("x", 35).attr("y", H - 43)
+  svg.append("text").attr("class", "footer-text").attr("x", 70).attr("y", H - 43)
     .attr("font-size", "10px").text(`Data as of: ${dateStr}`);
 
-  svg.append("text").attr("class", "footer-note").attr("x", 35).attr("y", H - 31)
+  svg.append("text").attr("class", "footer-note").attr("x", 70).attr("y", H - 31)
     .attr("font-size", "9px").text("Note: The list of projects is not comprehensive.");
 
   // Genfinity branding logo - moved up and left 25px from original text position
