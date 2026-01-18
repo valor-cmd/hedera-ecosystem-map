@@ -1,0 +1,196 @@
+:root{
+  --bg0:#000000;
+  --bg1:#000000;
+
+  --purple:#8b5cf6;
+  --panel:rgba(139,92,246,0.05);
+  --panel2:rgba(139,92,246,0.1);
+  --stroke:#8b5cf6;
+
+  --text:#ffffff;
+  --muted:#c4b5fd;
+  --accent:#8b5cf6;
+
+  --badgeOfficial:#2a7fff;
+  --badgeCommunity:#6b7cff;
+  --badgeMeme:#8b6cff;
+
+  --radius:22px;
+  --shadow:0 18px 40px rgba(0,0,0,0.45);
+
+  --titleSize:24px;
+  --subtitleSize:16px;
+  --sectionTitleSize:10px;
+  --subcategorySize:8px;
+  --itemSize:7px;
+
+  --logoSize:56px;
+  --logoRadius:28px;
+}
+
+svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+.bg {
+  fill: url(#bgGrad);
+}
+
+.header-title{
+  font-size: var(--titleSize);
+  font-weight: 800;
+  fill: var(--text);
+}
+
+.header-subtitle{
+  font-size: var(--subtitleSize);
+  font-weight: 500;
+  fill: var(--muted);
+}
+
+.panel{
+  fill: var(--panel);
+  stroke: var(--stroke);
+  stroke-width: 1;
+  rx: 12;
+  ry: 12;
+}
+
+.section-group:hover .panel{
+  fill: #000000 !important;
+}
+
+.section-title{
+  font-size: var(--sectionTitleSize);
+  font-weight: 700;
+  fill: var(--accent);
+  cursor: pointer;
+  transition: fill 0.2s ease;
+}
+
+.section-title:hover{
+  fill: #ffffff;
+}
+
+.section-group:hover .section-title{
+  fill: #ffffff;
+  filter: drop-shadow(0px 2px 0px #000000) drop-shadow(0px 2px 2px #000000);
+}
+
+.subcategory-title{
+  font-size: var(--subcategorySize);
+  font-weight: 600;
+  fill: var(--muted);
+}
+
+.logo-circle{
+  fill: rgba(0,0,0,0.6);
+  stroke: var(--purple);
+  stroke-width: 1;
+  cursor: pointer;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.logo-circle:hover{
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.logo-link{
+  cursor: pointer;
+}
+
+.logo-link:hover .logo-circle{
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.logo-link:hover .logo-label{
+  fill: #ffffff;
+}
+
+.logo-text{
+  font-size: 14px;
+  fill: var(--text);
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.logo-label{
+  font-size: var(--itemSize);
+  fill: var(--text);
+  font-weight: 500;
+  text-anchor: middle;
+}
+
+.footer-text{
+  font-size: 13px;
+  fill: var(--muted);
+}
+
+.footer-note{
+  font-size: 12px;
+  fill: rgba(180, 197, 216, 0.7);
+}
+
+.branding{
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--text);
+}
+
+.divider{
+  stroke: var(--stroke);
+  stroke-width: 1;
+}
+
+.council-logo-bg{
+  fill: rgba(0,0,0,0.5);
+  stroke: var(--purple);
+  stroke-width: 1.5;
+}
+
+.council-logo-text{
+  font-size: 10px;
+  fill: var(--text);
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+/* Section hover effects */
+.section-group {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Council section layout transitions */
+.council-normal,
+.council-hover {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.council-normal {
+  opacity: 1;
+}
+
+.council-hover {
+  opacity: 0;
+}
+
+.council-normal.hidden {
+  opacity: 0;
+}
+
+.council-hover.visible {
+  opacity: 1;
+  transform: scale(1) !important;
+}
+
+/* Council title visibility is controlled via JavaScript to sync with hover delay */
+.council-section > .section-title {
+  transition: opacity 0.3s ease;
+}
+
+.council-section > .section-title.hidden {
+  opacity: 0;
+}
+
+/* Scale is applied dynamically via JavaScript based on data-max-scale attribute */

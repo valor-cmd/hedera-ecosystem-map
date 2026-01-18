@@ -1,0 +1,185 @@
+Entity,Section,Type_or_Role,Tier,Status,Primary_Source,Website
+Google,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://google.com
+IBM,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ibm.com
+Boeing,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://boeing.com
+Deutsche Telekom,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://telekom.com
+LG Electronics,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lg.com
+Nomura,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://nomura.com
+Ubisoft,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ubisoft.com
+UCL,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ucl.ac.uk
+Shinhan Bank,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://shinhan.com
+Dell,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dell.com
+DLA Piper,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dlapiper.com
+EDF,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://edf.fr
+eftpos,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://eftposaustralia.com.au
+Hitachi,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://hitachi.com
+Mondelez,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://mondelezinternational.com
+ServiceNow,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://servicenow.com
+Swirlds Labs,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://swirldslabs.com
+Tata Communications,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://tatacommunications.com
+Worldpay,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://worldpay.com
+Zain Group,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://zain.com
+LSE,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lse.ac.uk
+abrdn,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://abrdn.com
+Arrow,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://arrow.com
+Cofra,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://cofraholding.com
+Dentons,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dentons.com
+IIT Madras,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://iitm.ac.in
+Magalu,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://magazineluiza.com.br
+Repsol,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://repsol.com
+Blockchain for Energy,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://blockchainforenergy.org
+GBBC,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://gbbcouncil.org
+Hashgraph,Independent Core Organizations,Core Organization,Tier 1,Active,hashgraph.com,https://www.hashgraph.com
+Hedera Council,Independent Core Organizations,Core Organization,Tier 1,Active,hedera.com,https://hedera.com/council
+Hedera Foundation,Independent Core Organizations,Core Organization,Tier 1,Active,hedera.foundation,https://hedera.foundation
+The Hashgraph Association,Independent Core Organizations,Core Organization,Tier 1,Active,hashgraph.swiss,https://hashgraph.swiss
+Exponential Science,Independent Core Organizations,Core Organization,Tier 1,Active,exp.science,https://exp.science
+Hedera Token Service,Native Services,Native Service,Tier 1,Active,hedera.com,https://hedera.com/token-service
+Hedera Consensus Service,Native Services,Native Service,Tier 1,Active,hedera.com,https://hedera.com/consensus-service
+Hedera Smart Contract Service,Native Services,Native Service,Tier 1,Active,hedera.com,https://hedera.com/smart-contract
+HashPack,Wallets,Wallet,Tier 1,Active,hashpack.app,https://hashpack.app
+Kabila,Wallets,Wallet,Tier 2,Active,kabila.app,https://kabila.app
+Wallawallet,Wallets,Wallet,Tier 2,Active,wallawallet.com,https://wallawallet.com
+Citadel Wallet,Wallets,Wallet,Tier 2,Active,citadelwallet.com,https://citadelwallet.com
+Exodus,Wallets,Wallet,Tier 2,Active,exodus.com,https://exodus.com
+D'CENT,Wallets,Wallet,Tier 2,Active,dcentwallet.com,https://dcentwallet.com
+Atomic Wallet,Wallets,Wallet,Tier 2,Active,atomicwallet.io,https://atomicwallet.io
+Guarda,Wallets,Wallet,Tier 2,Active,guarda.com,https://guarda.com
+Dfns,Wallets,Wallet,Tier 2,Active,dfns.co,https://dfns.co
+MetaMask Wallet Snap,Wallets,Wallet,Tier 2,Active,metamask.io,https://metamask.io
+Venly,Wallets,Wallet,Tier 2,Active,venly.io,https://venly.io
+WalletConnect,Wallets,Wallet,Tier 2,Active,walletconnect.com,https://walletconnect.com
+BitGo,Custodians,Custodian,Tier 1,Active,bitgo.com,https://bitgo.com
+Fireblocks,Custodians,Custodian,Tier 1,Active,fireblocks.com,https://fireblocks.com
+Hex Trust,Custodians,Custodian,Tier 2,Active,hextrust.com,https://hextrust.com
+Ledger,Custodians,Custodian,Tier 1,Active,ledger.com,https://ledger.com
+Anchorage Digital,Custodians,Custodian,Tier 1,Active,anchorage.com,https://anchorage.com
+Copper,Custodians,Custodian,Tier 2,Active,copper.co,https://copper.co
+Binance,Exchanges,Exchange,Tier 1,Active,binance.com,https://binance.com
+Coinbase,Exchanges,Exchange,Tier 1,Active,coinbase.com,https://coinbase.com
+Kraken,Exchanges,Exchange,Tier 1,Active,kraken.com,https://kraken.com
+KuCoin,Exchanges,Exchange,Tier 1,Active,kucoin.com,https://kucoin.com
+Bybit,Exchanges,Exchange,Tier 1,Active,bybit.com,https://bybit.com
+Gate.io,Exchanges,Exchange,Tier 1,Active,gate.io,https://gate.io
+Crypto.com,Exchanges,Exchange,Tier 1,Active,crypto.com,https://crypto.com
+HTX,Exchanges,Exchange,Tier 2,Active,htx.com,https://htx.com
+MEXC,Exchanges,Exchange,Tier 2,Active,mexc.com,https://mexc.com
+Bitvavo,Exchanges,Exchange,Tier 2,Active,bitvavo.com,https://bitvavo.com
+Robinhood,Exchanges,Exchange,Tier 1,Active,robinhood.com,https://robinhood.com
+BitMart,Exchanges,Exchange,Tier 2,Active,bitmart.com,https://bitmart.com
+LBank,Exchanges,Exchange,Tier 2,Active,lbank.com,https://lbank.com
+WhiteBit,Exchanges,Exchange,Tier 2,Active,whitebit.com,https://whitebit.com
+BTCC,Exchanges,Exchange,Tier 2,Active,btcc.com,https://btcc.com
+Bingx,Exchanges,Exchange,Tier 2,Active,bingx.com,https://bingx.com
+Bit2Me,Exchanges,Exchange,Tier 2,Active,bit2me.com,https://bit2me.com
+BitGet,Exchanges,Exchange,Tier 2,Active,bitget.com,https://bitget.com
+Bithumb,Exchanges,Exchange,Tier 2,Active,bithumb.com,https://bithumb.com
+Bitrue,Exchanges,Exchange,Tier 2,Active,bitrue.com,https://bitrue.com
+DigiFinex,Exchanges,Exchange,Tier 2,Active,digifinex.com,https://digifinex.com
+FMFW,Exchanges,Exchange,Tier 2,Active,fmfw.io,https://fmfw.io
+HiBT,Exchanges,Exchange,Tier 3,Active,hibt.com,https://hibt.com
+HitBTC,Exchanges,Exchange,Tier 2,Active,hitbtc.com,https://hitbtc.com
+Hotcoin,Exchanges,Exchange,Tier 3,Active,hotcoin.com,https://hotcoin.com
+KCEX,Exchanges,Exchange,Tier 3,Active,kcex.com,https://kcex.com
+TooBit,Exchanges,Exchange,Tier 3,Active,toobit.com,https://toobit.com
+XT,Exchanges,Exchange,Tier 2,Active,xt.com,https://xt.com
+Chainlink,Oracles,Oracle,Tier 1,Active,chain.link,https://chain.link
+Pyth,Oracles,Oracle,Tier 1,Active,pyth.network,https://pyth.network
+Supra,Oracles,Oracle,Tier 2,Active,supra.com,https://supra.com
+Hashport,Bridges and Interoperability,Bridge,Tier 1,Active,hashport.network,https://hashport.network
+Axelar,Bridges and Interoperability,Bridge,Tier 1,Active,axelar.network,https://axelar.network
+LayerZero,Bridges and Interoperability,Bridge,Tier 1,Active,layerzero.network,https://layerzero.network
+Stargate Finance,Bridges and Interoperability,Bridge,Tier 2,Active,stargate.finance,https://stargate.finance
+Ownera,Bridges and Interoperability,Interoperability,Tier 2,Active,ownera.io,https://ownera.io
+XP Network,Bridges and Interoperability,Bridge,Tier 2,Active,xp.network,https://xp.network
+Arkhia,Services,Infrastructure,Tier 1,Active,arkhia.io,https://arkhia.io
+Hgraph,Services,API Provider,Tier 2,Active,hgraph.io,https://hgraph.io
+Validation Cloud,Services,Infrastructure,Tier 2,Active,validationcloud.io,https://validationcloud.io
+QuickNode,Services,Infrastructure,Tier 1,Active,quicknode.com,https://quicknode.com
+LinkPool,Services,Infrastructure,Tier 2,Active,linkpool.io,https://linkpool.io
+Buidler Labs,Services,Infrastructure,Tier 2,Active,bfrenz.studio,https://bfrenz.studio
+Envision Blockchain,Services,Infrastructure,Tier 2,Active,envisionblockchain.com,https://envisionblockchain.com
+The Binary Holdings,Services,Infrastructure,Tier 2,Active,thebinaryholdings.com,https://thebinaryholdings.com
+EQTY Lab,Services,Infrastructure,Tier 2,Active,eqtylab.io,https://eqtylab.io
+Tashi Network,Services,Infrastructure,Tier 2,Active,tashi.network,https://tashi.network
+HNS,Services,Infrastructure,Tier 2,Active,hns.domains,https://hns.domains
+The Hashgraph Group,Services,Infrastructure,Tier 1,Active,hashgraph-group.com,https://hashgraph-group.com
+Banxa,Onramps,Onramp,Tier 1,Active,banxa.com,https://banxa.com
+MoonPay,Onramps,Onramp,Tier 1,Active,moonpay.com,https://moonpay.com
+Transak,Onramps,Onramp,Tier 1,Active,transak.com,https://transak.com
+C14,Onramps,Onramp,Tier 2,Active,c14.money,https://c14.money
+Metallicius,Onramps,Onramp,Tier 2,Active,metallicius.com,https://metallicius.com
+LimeChain,Implementation Partners,Partner,Tier 1,Active,limechain.tech,https://limechain.tech
+ioBuilders,Implementation Partners,Partner,Tier 1,Active,io.builders,https://io.builders
+IntellectEU,Implementation Partners,Partner,Tier 2,Active,intellecteu.com,https://intellecteu.com
+Lab49,Implementation Partners,Partner,Tier 2,Active,lab49.com,https://lab49.com
+Object Computing,Implementation Partners,Partner,Tier 2,Active,objectcomputing.com,https://objectcomputing.com
+BCW,Implementation Partners,Partner,Tier 2,Active,bcw.group,https://bcw.group
+Seisan,Implementation Partners,Partner,Tier 2,Active,seisan.io,https://seisan.io
+Unicsoft,Implementation Partners,Partner,Tier 2,Active,unicsoft.com,https://unicsoft.com
+VMO Holdings,Implementation Partners,Partner,Tier 2,Active,vmoholdings.com,https://vmoholdings.com
+Varmeta,Implementation Partners,Partner,Tier 2,Active,varmeta.co,https://varmeta.co
+Web3Genes,Implementation Partners,Partner,Tier 2,Active,web3genes.com,https://web3genes.com
+Accenture,Advisory Firms,Advisor,Tier 1,Active,accenture.com,https://accenture.com
+NTT Data,Advisory Firms,Advisor,Tier 1,Active,nttdata.com,https://nttdata.com
+TRM Labs,Risk and Compliance,Compliance,Tier 1,Active,trmlabs.com,https://trmlabs.com
+Elliptic,Risk and Compliance,Compliance,Tier 1,Active,elliptic.co,https://elliptic.co
+Merkle Science,Risk and Compliance,Compliance,Tier 2,Active,merklescience.com,https://merklescience.com
+Chainabuse,Risk and Compliance,Compliance,Tier 2,Active,chainabuse.com,https://chainabuse.com
+Fortress,Risk and Compliance,Compliance,Tier 2,Active,fortress.io,https://fortress.io
+Brale,Stablecoin Infrastructure,Stablecoin,Tier 2,Active,brale.xyz,https://brale.xyz
+Ichi,Stablecoin Infrastructure,Stablecoin,Tier 2,Active,ichi.org,https://ichi.org
+Ubyx,Stablecoin Infrastructure,Stablecoin,Tier 2,Active,ubyx.io,https://ubyx.io
+The Graph,Tooling and Solutions,Tooling,Tier 1,Active,thegraph.com,https://thegraph.com
+Joget,Tooling and Solutions,Tooling,Tier 2,Active,joget.com,https://joget.com
+KiloScribe,Tooling and Solutions,Tooling,Tier 2,Active,kiloscribe.com,https://kiloscribe.com
+Hashgraph Online,Tooling and Solutions,Tooling,Tier 2,Active,hashgraphonline.com,https://hashgraphonline.com
+Demia,Tooling and Solutions,Tooling,Tier 2,Active,demia.io,https://demia.io
+StegX,Tooling and Solutions,Tooling,Tier 2,Active,stegx.io,https://stegx.io
+Tuum,Tooling and Solutions,Tooling,Tier 2,Active,tuum.com,https://tuum.com
+Neuron,Tooling and Solutions,Tooling,Tier 2,Active,neuron.world,https://neuron.world
+HashNames,Tooling and Solutions,Tooling,Tier 2,Active,hashnames.io,https://hashnames.io
+SaucerSwap,DeFi,DEX,Tier 1,Active,saucerswap.finance,https://saucerswap.finance
+HeliSwap,DeFi,DEX,Tier 2,Active,heliswap.io,https://heliswap.io
+Pangolin,DeFi,DEX,Tier 2,Active,pangolin.exchange,https://pangolin.exchange
+Bonzo Finance,DeFi,Lending,Tier 2,Active,bonzo.finance,https://bonzo.finance
+Stader Labs,DeFi,Staking,Tier 2,Active,staderlabs.com,https://staderlabs.com
+Swarm Markets,DeFi,DEX,Tier 2,Active,swarm.markets,https://swarm.markets
+Hsuite,DeFi,Suite,Tier 2,Active,hsuite.finance,https://hsuite.finance
+Diffuse Labs,DeFi,DEX,Tier 2,Active,diffuselabs.io,https://diffuselabs.io
+ETA Swap,DeFi,DEX,Tier 2,Active,etaswap.com,https://etaswap.com
+Memejob,DeFi,DEX,Tier 2,Active,memejob.io,https://memejob.io
+Orbit,DeFi,DEX,Tier 2,Active,orbit.hedera,https://orbit.hedera
+Silk Suite,DeFi,Suite,Tier 2,Active,silksuite.io,https://silksuite.io
+Hashinals,NFTs,NFT Platform,Tier 2,Active,hashinals.com,https://hashinals.com
+SentX,NFTs,NFT Marketplace,Tier 2,Active,sentx.io,https://sentx.io
+Altlantis,NFTs,NFT Marketplace,Tier 2,Active,altlantis.market,https://altlantis.market
+Diamond Standard,Real World Assets,Commodities,Tier 2,Active,diamondstandard.co,https://diamondstandard.co
+RedSwan,Real World Assets,Real Estate,Tier 2,Active,redswan.io,https://redswan.io
+Dovu,Real World Assets,Carbon Credits,Tier 2,Active,dovu.earth,https://dovu.earth
+Tokeny,Real World Assets,Security Tokens,Tier 2,Active,tokeny.com,https://tokeny.com
+Zoniqx,Real World Assets,RWA DeFi,Tier 2,Active,zoniqx.com,https://zoniqx.com
+Archax,Real World Assets,Exchange,Tier 1,Active,archax.com,https://archax.com
+Ecogard,Real World Assets,Environmental,Tier 2,Active,ecogard.com,https://ecogard.com
+Verra Guardian,Real World Assets,Carbon Credits,Tier 2,Active,verra.org,https://verra.org
+Isle Finance,Real World Assets,RWA DeFi,Tier 2,Active,islefinance.xyz,https://islefinance.xyz
+Moonscape,Gaming and Entertainment,Gaming,Tier 2,Active,moonscape.io,https://moonscape.io
+Tune.fm,Gaming and Entertainment,Music,Tier 2,Active,tune.fm,https://tune.fm
+Earthlings Land,Gaming and Entertainment,Gaming,Tier 2,Active,earthlings.land,https://earthlings.land
+Angry Roll,Gaming and Entertainment,Gaming,Tier 2,Active,angryroll.io,https://angryroll.io
+Hedera Coin Flip,Gaming and Entertainment,Gaming,Tier 2,Active,hederacoinflip.com,https://hederacoinflip.com
+Legends of the Past,Gaming and Entertainment,Gaming,Tier 2,Active,legendsofthepast.io,https://legendsofthepast.io
+Shibar,Gaming and Entertainment,Gaming,Tier 2,Active,shibar.io,https://shibar.io
+The Barking Game,Gaming and Entertainment,Gaming,Tier 2,Active,thebarkinggame.com,https://thebarkinggame.com
+Trade Games,Gaming and Entertainment,Gaming,Tier 2,Active,tradegames.io,https://tradegames.io
+Skelly Bets,Gaming and Entertainment,Gaming,Tier 2,Active,skellybets.com,https://skellybets.com
+Boring,Meme Tokens,Meme Token,Tier 3,Active,community,https://boring.meme
+Dino,Meme Tokens,Meme Token,Tier 3,Active,community,https://dino.meme
+Dosa,Meme Tokens,Meme Token,Tier 3,Active,community,https://dosa.meme
+Gib,Meme Tokens,Meme Token,Tier 3,Active,community,https://gib.meme
+Grelf,Meme Tokens,Meme Token,Tier 3,Active,community,https://grelf.meme
+Hert,Meme Tokens,Meme Token,Tier 3,Active,community,https://hert.meme
+Leemon,Meme Tokens,Meme Token,Tier 3,Active,community,https://leemon.meme
+Sara,Meme Tokens,Meme Token,Tier 3,Active,community,https://sara.meme
+Smackm,Meme Tokens,Meme Token,Tier 3,Active,community,https://smackm.meme
+Soot,Meme Tokens,Meme Token,Tier 3,Active,community,https://soot.meme

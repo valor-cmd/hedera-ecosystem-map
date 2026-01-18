@@ -1,0 +1,19 @@
+{
+  "name": "hedera-ecosystem-map",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node src/render.js",
+    "export": "node src/export.js",
+    "build-html": "node src/build-html.js",
+    "build": "npm run render && npm run export && npm run build-html"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "jsdom": "^24.0.0",
+    "papaparse": "^5.4.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

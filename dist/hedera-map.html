@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hedera Ecosystem Map</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      background: #000000;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Desktop styles */
+    @media (min-width: 769px) {
+      html, body {
+        overflow: hidden;
+      }
+
+      .map-container {
+        width: 100vw;
+        height: 100vh;
+        padding: 20px 45px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .map-container svg {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .mobile-container {
+        display: none !important;
+      }
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      html, body {
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: auto;
+      }
+
+      .map-container {
+        display: none !important;
+      }
+
+      .modal-overlay {
+        display: none !important;
+      }
+
+      .top-link {
+        position: relative !important;
+        display: block;
+        text-align: center;
+        padding: 12px;
+        top: auto !important;
+        right: auto !important;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      }
+
+      .mobile-container {
+        display: block;
+        padding: 16px;
+        padding-bottom: 40px;
+      }
+
+      .mobile-header {
+        text-align: center;
+        padding: 20px 0 24px;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+        margin-bottom: 20px;
+      }
+
+      .mobile-header h1 {
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .mobile-header p {
+        color: #c4b5fd;
+        font-size: 12px;
+      }
+
+      .mobile-section {
+        background: rgba(139, 92, 246, 0.05);
+        border: 1px solid #8b5cf6;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .mobile-section-title {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+      }
+
+      .mobile-logos {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+      }
+
+      .mobile-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        padding: 4px;
+      }
+
+      .mobile-logo-img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.5px solid #8b5cf6;
+        background: rgba(0, 0, 0, 0.6);
+        margin-bottom: 6px;
+      }
+
+      .mobile-logo-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 1.5px solid #8b5cf6;
+        background: rgba(0, 0, 0, 0.6);
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: #8b5cf6;
+        font-weight: 600;
+      }
+
+      .mobile-logo-name {
+        color: #ffffff;
+        font-size: 9px;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.2;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      /* Council section - 3 logos per row, no text labels, vertically centered */
+      .mobile-section.council .mobile-logos {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        align-items: center;
+      }
+
+      .mobile-section.council .mobile-logo {
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 50px;
+      }
+
+      .mobile-section.council .mobile-logo-img {
+        width: auto !important;
+        max-width: 100%;
+        max-height: 80px;
+        border-radius: 4px;
+        object-fit: contain;
+        background: transparent;
+        border: none;
+        margin-bottom: 0;
+      }
+
+      .mobile-section.council .mobile-logo-placeholder {
+        width: 80px;
+        height: 35px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-bottom: 0;
+      }
+
+      .mobile-section.council .mobile-logo-name {
+        display: none;
+      }
+
+      /* Core orgs - 3 logos per row, no text labels, vertically centered */
+      .mobile-section.core-orgs .mobile-logos {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        align-items: center;
+      }
+
+      .mobile-section.core-orgs .mobile-logo {
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+      }
+
+      .mobile-section.core-orgs .mobile-logo-img {
+        width: auto !important;
+        max-width: 100%;
+        border-radius: 4px;
+        object-fit: contain;
+        background: transparent;
+        border: none;
+        margin-bottom: 0;
+      }
+
+      .mobile-section.core-orgs .mobile-logo-placeholder {
+        width: 100%;
+        height: 30px;
+        border-radius: 4px;
+        font-size: 10px;
+        margin-bottom: 0;
+      }
+
+      .mobile-section.core-orgs .mobile-logo-name {
+        display: none;
+      }
+
+      /* Native services - text based */
+      .mobile-section.native-services .mobile-logos {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .mobile-native-service {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        padding: 12px 8px;
+        background: rgba(139, 92, 246, 0.1);
+        border-radius: 8px;
+      }
+
+      .mobile-native-abbrev {
+        color: #8b5cf6;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .mobile-native-name {
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.3;
+      }
+
+      .mobile-footer {
+        text-align: center;
+        padding: 20px;
+        color: #c4b5fd;
+        font-size: 11px;
+        border-top: 1px solid rgba(139, 92, 246, 0.3);
+        margin-top: 20px;
+      }
+
+      .mobile-footer a {
+        color: #8b5cf6;
+        text-decoration: none;
+      }
+    }
+
+    /* Shared styles */
+    .top-link {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 100;
+      transition: color 0.2s ease;
+    }
+
+    .top-link:hover {
+      color: #8b5cf6;
+    }
+
+    /* Modal styles (desktop only) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .modal-content {
+      background: #0a0a0f;
+      border: 1px solid #8b5cf6;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 85vw;
+      max-height: 85vh;
+      overflow: auto;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(139, 92, 246, 0.3);
+    }
+
+    .modal-close {
+      background: #0a0a0f;
+      border: 1px solid #8b5cf6;
+      color: #8b5cf6;
+      font-size: 24px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover {
+      background: #8b5cf6;
+      color: #ffffff;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      padding-bottom: 16px;
+    }
+
+    .modal-title {
+      color: #8b5cf6;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 24px;
+    }
+
+    .modal-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.05);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .modal-item:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: #8b5cf6;
+      transform: translateY(-2px);
+    }
+
+    .modal-item-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #8b5cf6;
+      background: rgba(0, 0, 0, 0.6);
+      margin-bottom: 12px;
+    }
+
+    .modal-item-name {
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    /* Council section modal - 3 logos per row */
+    .modal-grid.council {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .council .modal-item-logo {
+      width: 140px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: contain;
+      padding: 10px;
+      background: transparent;
+    }
+
+    /* Core orgs modal */
+    .modal-grid.core-orgs {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .core-orgs .modal-item-logo {
+      width: 180px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: contain;
+      padding: 10px;
+      background: transparent;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <a href="https://hedera-data-app.vercel.app" target="_blank" rel="noopener noreferrer" class="top-link">Hedera Data Dashboard</a>
+
+  <!-- Desktop SVG Map -->
+  <div class="map-container" id="map-container">
+    SVG_CONTENT_PLACEHOLDER
+  </div>
+
+  <!-- Mobile Layout -->
+  <div class="mobile-container" id="mobile-container">
+    <div class="mobile-header">
+      <div style="margin-bottom: 8px;"><a href="https://hedera.com" target="_blank" rel="noopener noreferrer"><img src="HEDERA_LOGO_PLACEHOLDER" alt="Hedera" style="height: 96px;"></a></div>
+      <h1>Ecosystem Map</h1>
+      <p>An Incomplete Map of the Hedera Ecosystem</p>
+    </div>
+    MOBILE_SECTIONS_PLACEHOLDER
+    <div class="mobile-footer">
+      <p>Data updates regularly. The list of projects is not comprehensive.</p>
+      <p style="margin-top: 8px;">Built by <a href="https://genfinity.io" target="_blank" rel="noopener noreferrer"><img src="GENFINITY_LOGO_PLACEHOLDER" alt="Genfinity" style="height: 18px; vertical-align: middle;"></a></p>
+    </div>
+  </div>
+
+  <!-- Desktop Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-wrapper">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-title">Section</h2>
+        </div>
+        <div class="modal-grid" id="modal-grid">
+          <!-- Items will be populated here -->
+        </div>
+      </div>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+  </div>
+
+  <script>
+    // Section data from the CSV (will be populated by the build script)
+    const sectionData = SECTION_DATA_PLACEHOLDER;
+
+    // Check if mobile
+    const isMobile = () => window.innerWidth <= 768;
+
+    // Track hover state per section
+    const hoverState = new Map();
+
+    // Initialize the map
+    function init() {
+      // Skip desktop interactivity on mobile
+      if (isMobile()) return;
+
+      // Add click handlers to entire section groups (not just titles)
+      const sectionGroups = document.querySelectorAll('.section-group');
+      sectionGroups.forEach(group => {
+        const isCouncil = group.classList.contains('council-section');
+
+        // Initialize hover state for this group
+        hoverState.set(group, {
+          timeout: null,
+          isHovered: false,
+          hoveredRect: null,
+          boundChecker: null
+        });
+
+        function activateHover() {
+          if (isMobile()) return;
+          const state = hoverState.get(group);
+          state.isHovered = true;
+
+          // Move this group to the end of its parent to render on top
+          const parent = group.parentNode;
+          parent.appendChild(group);
+
+          // Use requestAnimationFrame to ensure transition applies after DOM move
+          requestAnimationFrame(() => {
+            if (isCouncil) {
+              // Special handling for council section: fade and grow to 5-column layout
+              const normalGroup = group.querySelector('.council-normal');
+              const hoverGroup = group.querySelector('.council-hover');
+              const mainTitle = group.querySelector(':scope > .section-title');
+              if (normalGroup) normalGroup.classList.add('hidden');
+              if (hoverGroup) hoverGroup.classList.add('visible');
+              if (mainTitle) mainTitle.classList.add('hidden'); // Hide main title with hover activation
+              // No section transform - hover group animates its own scale via CSS
+            } else {
+              // Apply the calculated max scale from data attribute
+              const maxScale = parseFloat(group.getAttribute('data-max-scale')) || 1.8;
+              group.style.transform = `scale(${maxScale})`;
+            }
+
+            // Capture the HOVERED bounds after scale animation completes (300ms transition)
+            // Use the PANEL element's bounds, not the entire group (which may include extended elements)
+            setTimeout(() => {
+              if (state.isHovered) {
+                const panel = group.querySelector('.panel');
+                if (panel) {
+                  state.hoveredRect = panel.getBoundingClientRect();
+                } else {
+                  state.hoveredRect = group.getBoundingClientRect();
+                }
+
+                // Start checking if mouse leaves HOVERED bounds
+                state.boundChecker = (e) => {
+                  if (state.isHovered && state.hoveredRect) {
+                    const x = e.clientX;
+                    const y = e.clientY;
+                    const rect = state.hoveredRect;
+                    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+                      deactivateHover();
+                    }
+                  }
+                };
+                document.addEventListener('mousemove', state.boundChecker);
+              }
+            }, 350); // Wait for 300ms transition + small buffer
+          });
+        }
+
+        function deactivateHover() {
+          const state = hoverState.get(group);
+
+          // Clear timeout if pending
+          if (state.timeout) {
+            clearTimeout(state.timeout);
+            state.timeout = null;
+          }
+
+          // Remove bound checker
+          if (state.boundChecker) {
+            document.removeEventListener('mousemove', state.boundChecker);
+            state.boundChecker = null;
+          }
+
+          state.isHovered = false;
+          state.hoveredRect = null;
+
+          if (isCouncil) {
+            // Fade back to normal 2-column layout
+            const normalGroup = group.querySelector('.council-normal');
+            const hoverGroup = group.querySelector('.council-hover');
+            const mainTitle = group.querySelector(':scope > .section-title');
+            if (normalGroup) normalGroup.classList.remove('hidden');
+            if (hoverGroup) hoverGroup.classList.remove('visible');
+            if (mainTitle) mainTitle.classList.remove('hidden'); // Show main title again
+          }
+          // Reset scale on mouse leave
+          group.style.transform = 'scale(1)';
+        }
+
+        group.addEventListener('mouseenter', () => {
+          if (isMobile()) return;
+          const state = hoverState.get(group);
+
+          // Delay hover activation by 0.75 seconds
+          state.timeout = setTimeout(activateHover, 750);
+        });
+
+        group.addEventListener('mouseleave', () => {
+          if (isMobile()) return;
+          // Only deactivate if hover hasn't fully activated yet
+          // Once hoveredRect is set, we use bounds checking instead
+          const state = hoverState.get(group);
+          if (!state.hoveredRect) {
+            deactivateHover();
+          }
+        });
+
+        // Make entire section clickable for popup (desktop only)
+        group.addEventListener('click', (e) => {
+          if (isMobile()) return;
+          // Don't trigger if clicking on a link inside the section
+          if (e.target.closest('a')) return;
+
+          const sectionName = group.getAttribute('data-section');
+          if (sectionName) {
+            openSectionModal(sectionName);
+          }
+        });
+      });
+
+      // Close modal on overlay click
+      document.getElementById('modal-overlay').addEventListener('click', (e) => {
+        if (e.target.id === 'modal-overlay') {
+          closeModal();
+        }
+      });
+
+      // Close modal on button click
+      document.getElementById('modal-close').addEventListener('click', closeModal);
+
+      // Close modal on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeModal();
+        }
+      });
+    }
+
+    function openSectionModal(sectionName) {
+      if (isMobile()) return;
+
+      const section = sectionData[sectionName];
+      if (!section) return;
+
+      document.getElementById('modal-title').textContent = sectionName;
+
+      const grid = document.getElementById('modal-grid');
+      grid.className = 'modal-grid';
+
+      // Add special class for council/core orgs
+      if (sectionName === 'Hedera Council') {
+        grid.classList.add('council');
+      } else if (sectionName === 'Independent Core Organizations') {
+        grid.classList.add('core-orgs');
+      }
+
+      // Get all items from subcategories
+      const items = Object.values(section.subcategories).flat();
+
+      grid.innerHTML = items.map(item => {
+        const logoSrc = item.logoDataUri || '';
+        const hasWebsite = item.website && item.website.trim() !== '';
+        return `
+          <a class="modal-item" ${hasWebsite ? `href="${item.website}" target="_blank" rel="noopener noreferrer"` : 'style="cursor:default;"'}>
+            ${logoSrc ? `<img class="modal-item-logo" src="${logoSrc}" alt="${item.entity}">` :
+              `<div class="modal-item-logo" style="display:flex;justify-content:center;align-items:center;font-size:20px;color:#8b5cf6;font-weight:bold;">${item.entity.substring(0, 2).toUpperCase()}</div>`}
+            <span class="modal-item-name">${item.entity}</span>
+          </a>
+        `;
+      }).join('');
+
+      document.getElementById('modal-overlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Start the app
+    init();
+  </script>
+</body>
+</html>
