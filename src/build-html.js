@@ -220,6 +220,7 @@ function findLogoFile(entityName) {
     "Sara": path.join(LOGOS_PATH, "meme", "Sara.jpg"),
     "Smackm": path.join(LOGOS_PATH, "meme", "Smackm.jpg"),
     "Soot": path.join(LOGOS_PATH, "meme", "Soot.jpg"),
+    "Jeeteroo": path.join(LOGOS_PATH, "meme", "Jeeteroo.jpg"),
     // Infrastructure
     "EQTY Lab": path.join(LOGOS_PATH, "infrastructure", "EQTY Lab.jpg"),
     "Tashi Network": path.join(LOGOS_PATH, "infrastructure", "Tashi Network.jpg"),

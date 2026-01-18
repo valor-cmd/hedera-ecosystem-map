@@ -246,6 +246,7 @@ function findLogoFile(entityName) {
     "Sara": path.join(LOGOS_PATH, "meme", "Sara.jpg"),
     "Smackm": path.join(LOGOS_PATH, "meme", "Smackm.jpg"),
     "Soot": path.join(LOGOS_PATH, "meme", "Soot.jpg"),
+    "Jeeteroo": path.join(LOGOS_PATH, "meme", "Jeeteroo.jpg"),
     // Tooling (additional)
     "Hashgraph.Name": path.join(LOGOS_PATH, "DEXs", "HashNames.jpg"),
     // Additional Services (infrastructure folder)
