@@ -416,10 +416,13 @@ function generateMobileSections(sectionData) {
         const baseHeight = 45 * sizeScale;
         const width = baseHeight * aspectRatio;
 
+        // Repsol logo is already white, don't invert it
+        const noInvertClass = item.entity === 'Repsol' ? ' no-invert' : '';
+
         html += `        <a class="mobile-logo" ${linkAttrs}>\n`;
 
         if (item.logoDataUri) {
-          html += `          <img class="mobile-logo-img" src="${item.logoDataUri}" alt="${item.entity}" style="height: ${baseHeight}px;">\n`;
+          html += `          <img class="mobile-logo-img${noInvertClass}" src="${item.logoDataUri}" alt="${item.entity}" style="height: ${baseHeight}px;">\n`;
         } else {
           html += `          <div class="mobile-logo-placeholder" style="height: ${baseHeight}px;">${item.entity.substring(0, 2).toUpperCase()}</div>\n`;
         }
