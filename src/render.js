@@ -596,6 +596,21 @@ function renderSVG(sectionData) {
           let logoW = logoH * aspectRatio;
 
           // Size adjustments for specific logos
+          // These logos are good size: abrdn, Arrow, Chainlink Labs, Dentons, Deutsche Telekom,
+          // EDF, IIT Madras, Mondelez, Nomura, Repsol, ServiceNow, Shinhan Bank, Swirlds Labs,
+          // Ubisoft, Wipro, Zain Group
+          const goodSizeLogos = [
+            "abrdn", "Arrow", "Chainlink Labs", "Dentons", "Deutsche Telekom", "EDF",
+            "IIT Madras", "Mondelez", "Nomura", "Repsol", "ServiceNow", "Shinhan Bank",
+            "Swirlds Labs", "Ubisoft", "Wipro", "Zain Group"
+          ];
+
+          // Shrink logos not in the good size list by 20%
+          if (!goodSizeLogos.includes(item.entity)) {
+            logoW *= 0.8; logoH *= 0.8;
+          }
+
+          // Additional size adjustment for Repsol (wide logo)
           if (item.entity === "Repsol") {
             logoW *= 0.5; logoH *= 0.5;
           }
