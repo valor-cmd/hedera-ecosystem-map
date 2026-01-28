@@ -571,9 +571,10 @@ function renderSVG(sectionData) {
       };
 
       // Helper function to render council logos with custom panel dimensions
-      const renderCouncilLogos = (targetGroup, cols, baseHeight, panelX, panelW, panelY, panelH, renderPanel, isHoverState = false) => {
+      // bottomPadding: extra padding at bottom for logo area only (panel still draws at full panelH)
+      const renderCouncilLogos = (targetGroup, cols, baseHeight, panelX, panelW, panelY, panelH, renderPanel, isHoverState = false, bottomPadding = 0) => {
         const availableWidth = panelW - innerPad * 2;
-        const availableHeight = panelH - innerPad * 2;
+        const availableHeight = panelH - innerPad * 2 - bottomPadding;
         const rows = Math.ceil(allItems.length / cols);
         const actualCellW = availableWidth / cols;
         const actualCellH = availableHeight / rows;
@@ -668,10 +669,10 @@ function renderSVG(sectionData) {
       };
 
       // Normal state: 2 columns within original panel bounds (with its own panel)
-      // Add extra bottom padding for breathing room
+      // Add extra bottom padding for logo breathing room (panel draws at full height)
       const normalBottomPad = 20;
       const normalGroup = sectionGroup.append("g").attr("class", "council-normal");
-      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h - normalBottomPad, true);
+      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h, true, false, normalBottomPad);
 
       // Hover state: 5 columns with 2x bigger logos, expanded panel
       // Calculate expanded dimensions: grow left from the right edge
