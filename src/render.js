@@ -83,8 +83,49 @@ const CSV_TO_SECTION = {
   "Native Services": "Native Services"
 };
 
-// Logo file finder
-function findLogoFile(entityName) {
+// Logo file finder - section parameter allows section-specific logo selection
+function findLogoFile(entityName, section = null) {
+  // Council-specific logo mappings (used only when section is "Hedera Council")
+  const councilMappings = {
+    "Google": path.join(LOGOS_PATH, "council", "google-black.svg"),
+    "IBM": path.join(LOGOS_PATH, "council", "ibm-black.svg"),
+    "Dell": path.join(LOGOS_PATH, "council", "dell-black.svg"),
+    "Deutsche Telekom": path.join(LOGOS_PATH, "council", "deutsche-telekom-black.svg"),
+    "LG Electronics": path.join(LOGOS_PATH, "council", "lg-black.svg"),
+    "Nomura": path.join(LOGOS_PATH, "council", "nomura-black.svg"),
+    "Ubisoft": path.join(LOGOS_PATH, "council", "ubisoft-black.svg"),
+    "Shinhan Bank": path.join(LOGOS_PATH, "council", "shinhan-bank-black.svg"),
+    "DLA Piper": path.join(LOGOS_PATH, "council", "dla-piper-black.svg"),
+    "EDF": path.join(LOGOS_PATH, "council", "edf-black.svg"),
+    "Hitachi": path.join(LOGOS_PATH, "council", "hitachi-black.svg"),
+    "Swirlds Labs": path.join(LOGOS_PATH, "council", "swirlds-black.svg"),
+    "Tata Communications": path.join(LOGOS_PATH, "council", "tata-black.svg"),
+    "LSE": path.join(LOGOS_PATH, "council", "lse-black.svg"),
+    "abrdn": path.join(LOGOS_PATH, "council", "aberdeen-black.svg"),
+    "Mondelez": path.join(LOGOS_PATH, "council", "mondelez-black.svg"),
+    "ServiceNow": path.join(LOGOS_PATH, "council", "service-now-black.svg"),
+    "Zain Group": path.join(LOGOS_PATH, "council", "zain-black.svg"),
+    "Arrow": path.join(LOGOS_PATH, "council", "arrow-black.svg"),
+    "Cofra": path.join(LOGOS_PATH, "council", "cofra-black.svg"),
+    "Dentons": path.join(LOGOS_PATH, "council", "dentons-black.svg"),
+    "IIT Madras": path.join(LOGOS_PATH, "council", "iit-madras-black.svg"),
+    "Magalu": path.join(LOGOS_PATH, "council", "magalu-black.svg"),
+    "Repsol": path.join(LOGOS_PATH, "council", "repsol-logo-white-flat.png"),
+    "Blockchain for Energy": path.join(LOGOS_PATH, "council", "blockchain-for-energy.svg"),
+    "BitGo": path.join(LOGOS_PATH, "council", "bitgo-black.svg"),
+    "Australian Payments Plus": path.join(LOGOS_PATH, "council", "australian-payments-plus-black.svg"),
+    "Avery Dennison": path.join(LOGOS_PATH, "council", "avery-dennison-black.svg"),
+    "Nairobi Securities Exchange": path.join(LOGOS_PATH, "council", "nse-black.svg"),
+    "Standard Bank": path.join(LOGOS_PATH, "council", "standard-bank-black.svg"),
+    "Chainlink Labs": path.join(LOGOS_PATH, "council", "chainlink-labs-black.svg"),
+    "Wipro": path.join(LOGOS_PATH, "council", "wipro-black.svg"),
+  };
+
+  // Check council mappings first if section is Hedera Council
+  if (section === "Hedera Council" && councilMappings[entityName] && fs.existsSync(councilMappings[entityName])) {
+    return councilMappings[entityName];
+  }
+
   const specialMappings = {
     // Wallets (from wallets folder)
     "HashPack": path.join(LOGOS_PATH, "wallets", "HashPack-CircleLogo_V1.svg"),
@@ -266,39 +307,6 @@ function findLogoFile(entityName) {
     "The Hashgraph Association Full": path.join(LOGOS_PATH, "core", "The Hashgraph Assoication full size.svg"),
     "Exponential Science": path.join(LOGOS_PATH, "core", "Exponetntial Science full size.svg"),
     "Exponential Science Full": path.join(LOGOS_PATH, "core", "Exponetntial Science full size.svg"),
-    // Council members
-    "Google": path.join(LOGOS_PATH, "council", "google-black.svg"),
-    "IBM": path.join(LOGOS_PATH, "council", "ibm-black.svg"),
-    "Dell": path.join(LOGOS_PATH, "council", "dell-black.svg"),
-    "Deutsche Telekom": path.join(LOGOS_PATH, "council", "deutsche-telekom-black.svg"),
-    "LG Electronics": path.join(LOGOS_PATH, "council", "lg-black.svg"),
-    "Nomura": path.join(LOGOS_PATH, "council", "nomura-black.svg"),
-    "Ubisoft": path.join(LOGOS_PATH, "council", "ubisoft-black.svg"),
-    "Shinhan Bank": path.join(LOGOS_PATH, "council", "shinhan-bank-black.svg"),
-    "DLA Piper": path.join(LOGOS_PATH, "council", "dla-piper-black.svg"),
-    "EDF": path.join(LOGOS_PATH, "council", "edf-black.svg"),
-    "Hitachi": path.join(LOGOS_PATH, "council", "hitachi-black.svg"),
-    "Swirlds Labs": path.join(LOGOS_PATH, "council", "swirlds-black.svg"),
-    "Tata Communications": path.join(LOGOS_PATH, "council", "tata-black.svg"),
-    "LSE": path.join(LOGOS_PATH, "council", "lse-black.svg"),
-    "abrdn": path.join(LOGOS_PATH, "council", "aberdeen-black.svg"),
-    "Mondelez": path.join(LOGOS_PATH, "council", "mondelez-black.svg"),
-    "ServiceNow": path.join(LOGOS_PATH, "council", "service-now-black.svg"),
-    "Zain Group": path.join(LOGOS_PATH, "council", "zain-black.svg"),
-    "Arrow": path.join(LOGOS_PATH, "council", "arrow-black.svg"),
-    "Cofra": path.join(LOGOS_PATH, "council", "cofra-black.svg"),
-    "Dentons": path.join(LOGOS_PATH, "council", "dentons-black.svg"),
-    "IIT Madras": path.join(LOGOS_PATH, "council", "iit-madras-black.svg"),
-    "Magalu": path.join(LOGOS_PATH, "council", "magalu-black.svg"),
-    "Repsol": path.join(LOGOS_PATH, "council", "repsol-logo-white-flat.png"),
-    "Blockchain for Energy": path.join(LOGOS_PATH, "council", "blockchain-for-energy.svg"),
-    "BitGo": path.join(LOGOS_PATH, "council", "bitgo-black.svg"),
-    "Australian Payments Plus": path.join(LOGOS_PATH, "council", "australian-payments-plus-black.svg"),
-    "Avery Dennison": path.join(LOGOS_PATH, "council", "avery-dennison-black.svg"),
-    "Nairobi Securities Exchange": path.join(LOGOS_PATH, "council", "nse-black.svg"),
-    "Standard Bank": path.join(LOGOS_PATH, "council", "standard-bank-black.svg"),
-    "Chainlink Labs": path.join(LOGOS_PATH, "council", "chainlink-labs-black.svg"),
-    "Wipro": path.join(LOGOS_PATH, "council", "wipro-black.svg"),
   };
 
   if (specialMappings[entityName] && fs.existsSync(specialMappings[entityName])) {
@@ -627,7 +635,7 @@ function renderSVG(sectionData) {
           const logoX = startX + col * actualCellW + (actualCellW - logoW) / 2;
           const logoY = startY + row * actualCellH + (actualCellH - logoH) / 2;
 
-          const logoFile = findLogoFile(item.entity);
+          const logoFile = findLogoFile(item.entity, "Hedera Council");
           const logoData = imageToDataUri(logoFile);
 
           const link = item.website ? targetGroup.append("a")
