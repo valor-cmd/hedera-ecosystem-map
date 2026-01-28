@@ -792,12 +792,12 @@ function renderSVG(sectionData) {
             .attr("class", "logo-link") : sectionGroup;
 
           if (logoData?.type === "svg") {
-            link.append("image").attr("x", logoX).attr("y", logoY)
+            link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", `data:image/svg+xml;base64,${Buffer.from(logoData.content).toString('base64')}`)
               .attr("preserveAspectRatio", "xMidYMid meet");
           } else if (logoData?.dataUri) {
-            link.append("image").attr("x", logoX).attr("y", logoY)
+            link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
           } else {
@@ -906,7 +906,7 @@ function renderSVG(sectionData) {
           .attr("text-anchor", "middle")
           .attr("font-size", "16px")
           .attr("font-weight", "700")
-          .attr("fill", "#8b5cf6")
+          .attr("fill", "#7b59eb")
           .text(data.abbrev);
 
         // Service name line 1 (white)

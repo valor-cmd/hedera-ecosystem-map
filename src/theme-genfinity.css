@@ -2,14 +2,14 @@
   --bg0:#000000;
   --bg1:#000000;
 
-  --purple:#8b5cf6;
+  --purple:#7b59eb;
   --panel:rgba(139,92,246,0.05);
   --panel2:rgba(139,92,246,0.1);
-  --stroke:#8b5cf6;
+  --stroke:#7b59eb;
 
   --text:#ffffff;
   --muted:#c4b5fd;
-  --accent:#8b5cf6;
+  --accent:#7b59eb;
 
   --badgeOfficial:#2a7fff;
   --badgeCommunity:#6b7cff;
@@ -158,6 +158,17 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
 /* Invert black council logos to white */
 .council-logo-image{
   filter: invert(1);
+  transition: filter 0.2s ease;
+}
+
+/* Council logo hover - turn purple (#7b59eb) */
+.logo-link:hover .council-logo-image {
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(230deg) brightness(95%) contrast(95%);
+}
+
+/* Core org logo hover - turn purple (#7b59eb) */
+.logo-link:hover .core-logo-image {
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(230deg) brightness(95%) contrast(95%);
 }
 
 /* Section hover effects */

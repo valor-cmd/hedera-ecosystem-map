@@ -2,7 +2,7 @@
 
 // Category colors - purple theme matching Genfinity
 export const CATEGORY_COLORS = {
-  council: '#8b5cf6',
+  council: '#7b59eb',
   core: '#a78bfa',
   media: '#c4b5fd',
   wallets: '#7c3aed',
@@ -18,7 +18,7 @@ export const CATEGORY_COLORS = {
  * @returns {string} Hex color code
  */
 export function getCategoryColor(category) {
-  return CATEGORY_COLORS[category] || '#8b5cf6';
+  return CATEGORY_COLORS[category] || '#7b59eb';
 }
 
 /**
