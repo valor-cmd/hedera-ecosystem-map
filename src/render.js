@@ -770,9 +770,16 @@ function renderSVG(sectionData) {
         };
 
         allItems.forEach((item, idx) => {
-          const logoH = logoHeights[item.entity] || defaultHeight;
+          let logoH = logoHeights[item.entity] || defaultHeight;
           const aspectRatio = logoAspectRatios[item.entity] || 3.7;
-          const logoW = logoH * aspectRatio;
+          let logoW = logoH * aspectRatio;
+
+          // Constrain logo width to panel bounds
+          if (logoW > maxLogoW) {
+            logoW = maxLogoW;
+            logoH = logoW / aspectRatio;
+          }
+
           const logoX = panel.x + (panel.w - logoW) / 2;
           const logoY = currentY + (logoYOffsets[item.entity] || 0);
 
