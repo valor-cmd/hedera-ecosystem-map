@@ -668,8 +668,10 @@ function renderSVG(sectionData) {
       };
 
       // Normal state: 2 columns within original panel bounds (with its own panel)
+      // Add extra bottom padding for breathing room
+      const normalBottomPad = 20;
       const normalGroup = sectionGroup.append("g").attr("class", "council-normal");
-      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h, true);
+      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h - normalBottomPad, true);
 
       // Hover state: 5 columns with 2x bigger logos, expanded panel
       // Calculate expanded dimensions: grow left from the right edge
@@ -677,8 +679,9 @@ function renderSVG(sectionData) {
       const hoverCols = 5;
 
       // Calculate width needed for 5 columns of 2x logos
-      const hoverCellW = 200;
-      const hoverPanelW = hoverCols * hoverCellW + innerPad * 2;  // ~1016px
+      // Increased cell width for more horizontal breathing room
+      const hoverCellW = 230;
+      const hoverPanelW = hoverCols * hoverCellW + innerPad * 2;  // ~1166px
 
       // Expand leftward from the right edge of the original panel
       const hoverPanelX = panel.x + panel.w - hoverPanelW;
