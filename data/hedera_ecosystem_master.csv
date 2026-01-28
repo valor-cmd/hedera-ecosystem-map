@@ -1,34 +1,36 @@
 Entity,Section,Type_or_Role,Tier,Status,Primary_Source,Website
-Google,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://google.com
-IBM,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ibm.com
-Boeing,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://boeing.com
-Deutsche Telekom,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://telekom.com
-LG Electronics,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lg.com
-Nomura,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://nomura.com
-Ubisoft,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ubisoft.com
-UCL,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ucl.ac.uk
-Shinhan Bank,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://shinhan.com
-Dell,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dell.com
-DLA Piper,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dlapiper.com
-EDF,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://edf.fr
-eftpos,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://eftposaustralia.com.au
-Hitachi,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://hitachi.com
-Mondelez,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://mondelezinternational.com
-ServiceNow,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://servicenow.com
-Swirlds Labs,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://swirldslabs.com
-Tata Communications,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://tatacommunications.com
-Worldpay,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://worldpay.com
-Zain Group,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://zain.com
-LSE,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lse.ac.uk
 abrdn,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://abrdn.com
 Arrow,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://arrow.com
-Cofra,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://cofraholding.com
-Dentons,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dentons.com
-IIT Madras,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://iitm.ac.in
-Magalu,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://magazineluiza.com.br
-Repsol,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://repsol.com
+Australian Payments Plus,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://australianpaymentsplus.com.au
+Avery Dennison,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://averydennison.com
+BitGo,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://bitgo.com
 Blockchain for Energy,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://blockchainforenergy.org
-GBBC,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://gbbcouncil.org
+Chainlink Labs,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://chain.link
+Cofra,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://cofraholding.com
+Dell,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dell.com
+Dentons,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dentons.com
+Deutsche Telekom,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://telekom.com
+DLA Piper,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dlapiper.com
+EDF,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://edf.fr
+Google,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://google.com
+Hitachi,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://hitachi.com
+IBM,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ibm.com
+IIT Madras,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://iitm.ac.in
+LG Electronics,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lg.com
+LSE,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lse.ac.uk
+Magalu,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://magazineluiza.com.br
+Mondelez,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://mondelezinternational.com
+Nairobi Securities Exchange,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://nse.co.ke
+Nomura,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://nomura.com
+Repsol,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://repsol.com
+ServiceNow,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://servicenow.com
+Shinhan Bank,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://shinhan.com
+Standard Bank,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://standardbank.com
+Swirlds Labs,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://swirldslabs.com
+Tata Communications,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://tatacommunications.com
+Ubisoft,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ubisoft.com
+Wipro,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://wipro.com
+Zain Group,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://zain.com
 Hashgraph,Independent Core Organizations,Core Organization,Tier 1,Active,hashgraph.com,https://www.hashgraph.com
 Hedera Council,Independent Core Organizations,Core Organization,Tier 1,Active,hedera.com,https://hedera.com/council
 Hedera Foundation,Independent Core Organizations,Core Organization,Tier 1,Active,hedera.foundation,https://hedera.foundation

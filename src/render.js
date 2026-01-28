@@ -267,36 +267,38 @@ function findLogoFile(entityName) {
     "Exponential Science": path.join(LOGOS_PATH, "core", "Exponetntial Science full size.svg"),
     "Exponential Science Full": path.join(LOGOS_PATH, "core", "Exponetntial Science full size.svg"),
     // Council members
-    "Google": path.join(LOGOS_PATH, "council", "google-logo-box.svg"),
-    "IBM": path.join(LOGOS_PATH, "council", "ibm.svg"),
-    "Boeing": path.join(LOGOS_PATH, "council", "boeing.svg"),
-    "Dell": path.join(LOGOS_PATH, "council", "dell.svg"),
-    "Deutsche Telekom": path.join(LOGOS_PATH, "council", "deutsche-telekom.svg"),
-    "LG Electronics": path.join(LOGOS_PATH, "council", "lg-electronics.svg"),
-    "Nomura": path.join(LOGOS_PATH, "council", "nomura.svg"),
-    "Ubisoft": path.join(LOGOS_PATH, "council", "ubisoft-logo-box.svg"),
-    "UCL": path.join(LOGOS_PATH, "council", "university-college-london-ucl-seeklogo.svg"),
-    "Shinhan Bank": path.join(LOGOS_PATH, "council", "shinhan-bank.svg"),
-    "DLA Piper": path.join(LOGOS_PATH, "council", "dla-piper-logo-box.svg"),
-    "EDF": path.join(LOGOS_PATH, "council", "edf-logo-box.svg"),
-    "eftpos": path.join(LOGOS_PATH, "council", "eftpos.svg"),
-    "Hitachi": path.join(LOGOS_PATH, "council", "hitachi.svg"),
-    "Swirlds Labs": path.join(LOGOS_PATH, "council", "swirlds-labs.svg"),
-    "Tata Communications": path.join(LOGOS_PATH, "council", "tata-communications.svg"),
-    "Worldpay": path.join(LOGOS_PATH, "council", "Worldpay_logo_c_rgb.svg"),
-    "LSE": path.join(LOGOS_PATH, "council", "lse.svg"),
-    "abrdn": path.join(LOGOS_PATH, "council", "aberdeen-logo-box.svg"),
-    "Mondelez": path.join(LOGOS_PATH, "council", "mondelez-logo-box.svg"),
-    "ServiceNow": path.join(LOGOS_PATH, "council", "servicenow-logo-box.svg"),
-    "Zain Group": path.join(LOGOS_PATH, "council", "zain-logo-box.svg"),
-    "Arrow": path.join(LOGOS_PATH, "council", "arrow-logo-box.svg"),
-    "Cofra": path.join(LOGOS_PATH, "council", "cofra-logo-box.svg"),
-    "Dentons": path.join(LOGOS_PATH, "council", "dentons-logo-box.svg"),
-    "IIT Madras": path.join(LOGOS_PATH, "council", "iit-madras-logo-box.svg"),
-    "Magalu": path.join(LOGOS_PATH, "council", "magalu-logo-box.svg"),
-    "Repsol": path.join(LOGOS_PATH, "council", "repsol-logo-white-flat.svg"),
-    "Blockchain for Energy": path.join(LOGOS_PATH, "council", "blockchain-for-energy-logo-box.svg"),
-    "GBBC": path.join(LOGOS_PATH, "council", "GBBClogo.png"),
+    "Google": path.join(LOGOS_PATH, "council", "New council logos", "google-black.svg"),
+    "IBM": path.join(LOGOS_PATH, "council", "New council logos", "ibm-black.svg"),
+    "Dell": path.join(LOGOS_PATH, "council", "New council logos", "dell-black.svg"),
+    "Deutsche Telekom": path.join(LOGOS_PATH, "council", "New council logos", "deutsche-telekom-black.svg"),
+    "LG Electronics": path.join(LOGOS_PATH, "council", "New council logos", "lg-black.svg"),
+    "Nomura": path.join(LOGOS_PATH, "council", "New council logos", "nomura-black.svg"),
+    "Ubisoft": path.join(LOGOS_PATH, "council", "New council logos", "ubisoft-black.svg"),
+    "Shinhan Bank": path.join(LOGOS_PATH, "council", "New council logos", "shinhan-bank-black.svg"),
+    "DLA Piper": path.join(LOGOS_PATH, "council", "New council logos", "dla-piper-black.svg"),
+    "EDF": path.join(LOGOS_PATH, "council", "New council logos", "edf-black.svg"),
+    "Hitachi": path.join(LOGOS_PATH, "council", "New council logos", "hitachi-black.svg"),
+    "Swirlds Labs": path.join(LOGOS_PATH, "council", "New council logos", "swirlds-black.svg"),
+    "Tata Communications": path.join(LOGOS_PATH, "council", "New council logos", "tata-black.svg"),
+    "LSE": path.join(LOGOS_PATH, "council", "New council logos", "lse-black.svg"),
+    "abrdn": path.join(LOGOS_PATH, "council", "New council logos", "aberdeen-black.svg"),
+    "Mondelez": path.join(LOGOS_PATH, "council", "New council logos", "mondelez-black.svg"),
+    "ServiceNow": path.join(LOGOS_PATH, "council", "New council logos", "service-now-black.svg"),
+    "Zain Group": path.join(LOGOS_PATH, "council", "New council logos", "zain-black.svg"),
+    "Arrow": path.join(LOGOS_PATH, "council", "New council logos", "arrow-black.svg"),
+    "Cofra": path.join(LOGOS_PATH, "council", "New council logos", "cofra-black.svg"),
+    "Dentons": path.join(LOGOS_PATH, "council", "New council logos", "dentons-black.svg"),
+    "IIT Madras": path.join(LOGOS_PATH, "council", "New council logos", "iit-madras-black.svg"),
+    "Magalu": path.join(LOGOS_PATH, "council", "New council logos", "magalu-black.svg"),
+    "Repsol": path.join(LOGOS_PATH, "council", "New council logos", "repsol-logo-white-flat.png"),
+    "Blockchain for Energy": path.join(LOGOS_PATH, "council", "New council logos", "blockchain-for-energy.svg"),
+    "BitGo": path.join(LOGOS_PATH, "council", "New council logos", "bitgo-black.svg"),
+    "Australian Payments Plus": path.join(LOGOS_PATH, "council", "New council logos", "australian-payments-plus-black.svg"),
+    "Avery Dennison": path.join(LOGOS_PATH, "council", "New council logos", "avery-dennison-black.svg"),
+    "Nairobi Securities Exchange": path.join(LOGOS_PATH, "council", "New council logos", "nse-black.svg"),
+    "Standard Bank": path.join(LOGOS_PATH, "council", "New council logos", "standard-bank-black.svg"),
+    "Chainlink Labs": path.join(LOGOS_PATH, "council", "New council logos", "chainlink-labs-black.svg"),
+    "Wipro": path.join(LOGOS_PATH, "council", "New council logos", "wipro-black.svg"),
   };
 
   if (specialMappings[entityName] && fs.existsSync(specialMappings[entityName])) {
@@ -555,14 +557,17 @@ function renderSVG(sectionData) {
 
       // Define aspect ratios for each logo
       const logoAspectRatios = {
-        "Google": 1.67, "IBM": 1.67, "Boeing": 4.3, "Deutsche Telekom": 1.67,
-        "LG Electronics": 1.67, "Nomura": 1.67, "Ubisoft": 1.67, "UCL": 1.0,
+        "Google": 1.67, "IBM": 1.67, "Deutsche Telekom": 1.67,
+        "LG Electronics": 1.67, "Nomura": 1.67, "Ubisoft": 1.67,
         "Shinhan Bank": 1.67, "Dell": 2.18, "DLA Piper": 1.67, "EDF": 1.67,
-        "eftpos": 1.0, "Hitachi": 1.67, "Mondelez": 1.67, "ServiceNow": 1.67,
-        "Swirlds Labs": 1.67, "Tata Communications": 1.67, "Worldpay": 3.71,
+        "Hitachi": 1.67, "Mondelez": 1.67, "ServiceNow": 1.67,
+        "Swirlds Labs": 1.67, "Tata Communications": 1.67,
         "Zain Group": 1.67, "LSE": 1.67, "abrdn": 1.67, "Arrow": 1.67,
         "Cofra": 1.67, "Dentons": 1.67, "IIT Madras": 1.67, "Magalu": 1.67,
-        "Repsol": 4.27, "Blockchain for Energy": 2.23, "GBBC": 1.67
+        "Repsol": 4.27, "Blockchain for Energy": 2.23,
+        "Australian Payments Plus": 2.5, "Avery Dennison": 2.5, "BitGo": 2.5,
+        "Chainlink Labs": 2.5, "Nairobi Securities Exchange": 2.5, "Standard Bank": 2.5,
+        "Wipro": 2.5
       };
 
       // Helper function to render council logos with custom panel dimensions
@@ -591,8 +596,7 @@ function renderSVG(sectionData) {
           let logoW = logoH * aspectRatio;
 
           // Size adjustments for specific logos
-          if (item.entity === "GBBC") { logoW *= 0.6; logoH *= 0.6; }
-          if (item.entity === "Repsol" || item.entity === "Boeing" || item.entity === "Worldpay") {
+          if (item.entity === "Repsol") {
             logoW *= 0.5; logoH *= 0.5;
           }
 
@@ -614,12 +618,12 @@ function renderSVG(sectionData) {
             .attr("class", "logo-link") : targetGroup;
 
           if (logoData?.type === "svg") {
-            link.append("image").attr("x", logoX).attr("y", logoY)
+            link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", `data:image/svg+xml;base64,${Buffer.from(logoData.content).toString('base64')}`)
               .attr("preserveAspectRatio", "xMidYMid meet");
           } else if (logoData?.dataUri) {
-            link.append("image").attr("x", logoX).attr("y", logoY)
+            link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
           } else {
