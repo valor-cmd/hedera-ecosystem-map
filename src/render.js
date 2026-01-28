@@ -618,14 +618,23 @@ function renderSVG(sectionData) {
             .attr("class", "logo-link") : targetGroup;
 
           if (logoData?.type === "svg") {
+            // Convert black SVG to white by replacing fill colors
+            let svgContent = logoData.content;
+            svgContent = svgContent.replace(/fill="#000000"/gi, 'fill="#FFFFFF"');
+            svgContent = svgContent.replace(/fill="#000"/gi, 'fill="#FFF"');
+            svgContent = svgContent.replace(/fill="black"/gi, 'fill="white"');
+            svgContent = svgContent.replace(/fill:#000000/gi, 'fill:#FFFFFF');
+            svgContent = svgContent.replace(/fill:#000/gi, 'fill:#FFF');
+            svgContent = svgContent.replace(/fill:black/gi, 'fill:white');
             link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
-              .attr("href", `data:image/svg+xml;base64,${Buffer.from(logoData.content).toString('base64')}`)
+              .attr("href", `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`)
               .attr("preserveAspectRatio", "xMidYMid meet");
           } else if (logoData?.dataUri) {
             link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
-              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
+              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet")
+              .style("filter", "invert(1)");
           } else {
             link.append("text").attr("class", "council-logo-text")
               .attr("x", logoX + logoW / 2).attr("y", logoY + logoH / 2 + 3)
