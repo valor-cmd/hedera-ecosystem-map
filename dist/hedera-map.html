@@ -717,14 +717,19 @@
       height: 160px;
     }
 
+    .core-orgs .modal-item-logo.logo-foundation {
+      width: 600px;
+      height: 200px;
+    }
+
     .core-orgs .modal-item-logo.logo-2x {
       width: 360px;
       height: 120px;
     }
 
-    .core-orgs .modal-item-logo.logo-1-5x {
-      width: 270px;
-      height: 90px;
+    .core-orgs .modal-item-logo.logo-association {
+      width: 162px;
+      height: 54px;
     }
 
     .core-orgs .modal-item-name {
@@ -1051,12 +1056,14 @@
         // Custom size classes for specific core org logos
         let sizeClass = '';
         if (sectionName === 'Independent Core Organizations') {
-          if (item.entity === 'Hedera Foundation' || item.entity === 'Hedera Council') {
+          if (item.entity === 'Hedera Foundation') {
+            sizeClass = ' logo-foundation';
+          } else if (item.entity === 'Hedera Council') {
             sizeClass = ' logo-3x';
           } else if (item.entity === 'Exponential Science') {
             sizeClass = ' logo-2x';
           } else if (item.entity === 'The Hashgraph Association') {
-            sizeClass = ' logo-1-5x';
+            sizeClass = ' logo-association';
           }
         }
 
