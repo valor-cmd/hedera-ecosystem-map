@@ -571,7 +571,7 @@ function renderSVG(sectionData) {
       };
 
       // Helper function to render council logos with custom panel dimensions
-      const renderCouncilLogos = (targetGroup, cols, baseHeight, panelX, panelW, panelY, panelH, renderPanel) => {
+      const renderCouncilLogos = (targetGroup, cols, baseHeight, panelX, panelW, panelY, panelH, renderPanel, isHoverState = false) => {
         const availableWidth = panelW - innerPad * 2;
         const availableHeight = panelH - innerPad * 2;
         const rows = Math.ceil(allItems.length / cols);
@@ -596,23 +596,25 @@ function renderSVG(sectionData) {
           let logoW = logoH * aspectRatio;
 
           // Size adjustments for specific logos
-          // These logos are good size: abrdn, Arrow, Chainlink Labs, Dentons, Deutsche Telekom,
-          // EDF, IIT Madras, Mondelez, Nomura, Repsol, ServiceNow, Shinhan Bank, Swirlds Labs,
-          // Ubisoft, Wipro, Zain Group
+          // These logos are good size in normal state
           const goodSizeLogos = [
-            "abrdn", "Arrow", "Chainlink Labs", "Dentons", "Deutsche Telekom", "EDF",
-            "IIT Madras", "Mondelez", "Nomura", "Repsol", "ServiceNow", "Shinhan Bank",
-            "Swirlds Labs", "Ubisoft", "Wipro", "Zain Group"
+            "abrdn", "Blockchain for Energy", "Deutsche Telekom", "Dell", "Magalu",
+            "IIT Madras", "ServiceNow", "Tata Communications", "Hitachi"
           ];
 
-          // Shrink logos not in the good size list by 20%
+          // Shrink logos not in the good size list by 15%
           if (!goodSizeLogos.includes(item.entity)) {
-            logoW *= 0.8; logoH *= 0.8;
+            logoW *= 0.85; logoH *= 0.85;
           }
 
           // Additional size adjustment for Repsol (wide logo)
           if (item.entity === "Repsol") {
             logoW *= 0.5; logoH *= 0.5;
+          }
+
+          // In hover state, reduce ALL logos by 20% for more breathing room
+          if (isHoverState) {
+            logoW *= 0.8; logoH *= 0.8;
           }
 
           // Cap width to fit in cell
@@ -691,7 +693,7 @@ function renderSVG(sectionData) {
         .attr("data-scale-ratio", scaleRatio.toFixed(3))
         .style("transform", `scale(${scaleRatio})`)
         .style("transform-origin", `${panel.x + panel.w}px ${panel.y + panel.h / 2}px`);
-      renderCouncilLogos(hoverGroup, hoverCols, hoverLogoBaseHeight, hoverPanelX, hoverPanelW, hoverPanelY, hoverPanelH, true);
+      renderCouncilLogos(hoverGroup, hoverCols, hoverLogoBaseHeight, hoverPanelX, hoverPanelW, hoverPanelY, hoverPanelH, true, true);
 
       // Add title to hover group (positioned for expanded layout)
       // CSS sets .section-title to 10px, other sections scale 1.8x = 18px visually
