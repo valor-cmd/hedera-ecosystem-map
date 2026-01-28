@@ -669,8 +669,17 @@
       transition: filter 0.2s ease;
     }
 
+    /* Repsol logo is already white, don't invert */
+    .council .modal-item-logo.no-invert {
+      filter: none;
+    }
+
     .council .modal-item:hover .modal-item-logo {
       filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(230deg) brightness(95%) contrast(95%);
+    }
+
+    .council .modal-item:hover .modal-item-logo.no-invert {
+      filter: brightness(0.5) sepia(1) hue-rotate(220deg) saturate(5);
     }
 
     /* Core orgs modal */
@@ -698,6 +707,25 @@
     .core-orgs .modal-item-logo.logo-2x {
       width: 360px;
       height: 120px;
+    }
+
+    .core-orgs .modal-item-logo.logo-1-5x {
+      width: 270px;
+      height: 90px;
+    }
+
+    /* Center logos and put titles at bottom for core orgs */
+    .core-orgs .modal-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 250px;
+    }
+
+    .core-orgs .modal-item-name {
+      margin-top: auto;
+      padding-top: 20px;
     }
 
     .core-orgs .modal-item:hover .modal-item-logo {
@@ -836,24 +864,37 @@
                   };
                   state.hoveredRect = { council: true }; // Mark as active
                 } else {
-                  // For other sections, use screen coordinates and panel bounds
+                  // For other sections, use SVG coordinates based on the panel bounds
                   const panel = group.querySelector('.panel');
                   if (panel) {
-                    state.hoveredRect = panel.getBoundingClientRect();
+                    // Get panel bounds from SVG attributes
+                    const panelX = parseFloat(panel.getAttribute('x')) || 0;
+                    const panelY = parseFloat(panel.getAttribute('y')) || 0;
+                    const panelW = parseFloat(panel.getAttribute('width')) || 0;
+                    const panelH = parseFloat(panel.getAttribute('height')) || 0;
+
+                    state.boundChecker = (e) => {
+                      if (state.isHovered) {
+                        const svgPoint = screenToSVG(e.clientX, e.clientY);
+                        if (svgPoint && !isWithinBounds(svgPoint, panelX, panelY, panelW, panelH)) {
+                          deactivateHover();
+                        }
+                      }
+                    };
+                    state.hoveredRect = { panel: true }; // Mark as active
                   } else {
                     state.hoveredRect = group.getBoundingClientRect();
-                  }
-
-                  state.boundChecker = (e) => {
-                    if (state.isHovered && state.hoveredRect) {
-                      const x = e.clientX;
-                      const y = e.clientY;
-                      const rect = state.hoveredRect;
-                      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-                        deactivateHover();
+                    state.boundChecker = (e) => {
+                      if (state.isHovered && state.hoveredRect) {
+                        const x = e.clientX;
+                        const y = e.clientY;
+                        const rect = state.hoveredRect;
+                        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+                          deactivateHover();
+                        }
                       }
-                    }
-                  };
+                    };
+                  }
                 }
                 document.addEventListener('mousemove', state.boundChecker);
               }
@@ -1010,12 +1051,20 @@
             sizeClass = ' logo-3x';
           } else if (item.entity === 'Exponential Science') {
             sizeClass = ' logo-2x';
+          } else if (item.entity === 'The Hashgraph Association') {
+            sizeClass = ' logo-1-5x';
           }
+        }
+
+        // Repsol is a white PNG that should not be inverted
+        let noInvertClass = '';
+        if (sectionName === 'Hedera Council' && item.entity === 'Repsol') {
+          noInvertClass = ' no-invert';
         }
 
         return `
           <a class="modal-item" ${hasWebsite ? `href="${item.website}" target="_blank" rel="noopener noreferrer"` : 'style="cursor:default;"'}>
-            ${logoSrc ? `<img class="modal-item-logo${sizeClass}" src="${logoSrc}" alt="${item.entity}">` :
+            ${logoSrc ? `<img class="modal-item-logo${sizeClass}${noInvertClass}" src="${logoSrc}" alt="${item.entity}">` :
               `<div class="modal-item-logo${sizeClass}" style="display:flex;justify-content:center;align-items:center;font-size:20px;color:#7b59eb;font-weight:bold;">${item.entity.substring(0, 2).toUpperCase()}</div>`}
             <span class="modal-item-name">${item.entity}</span>
           </a>
