@@ -635,8 +635,12 @@ function renderSVG(sectionData) {
           if (logoData?.type === "svg") {
             // Convert black SVG to white by replacing fill colors
             let svgContent = logoData.content;
-            // Add fill="white" to svg element for paths without explicit fill
-            svgContent = svgContent.replace(/<svg([^>]*)>/i, '<svg$1 fill="white">');
+            // Replace fill="none" on root svg element with fill="white"
+            svgContent = svgContent.replace(/<svg([^>]*)fill="none"([^>]*)>/i, '<svg$1fill="white"$2>');
+            // If no fill attribute on svg, add fill="white"
+            if (!svgContent.match(/<svg[^>]*fill=/i)) {
+              svgContent = svgContent.replace(/<svg([^>]*)>/i, '<svg$1 fill="white">');
+            }
             // Also replace any explicit black fills
             svgContent = svgContent.replace(/fill="#000000"/gi, 'fill="#FFFFFF"');
             svgContent = svgContent.replace(/fill="#000"/gi, 'fill="#FFF"');
