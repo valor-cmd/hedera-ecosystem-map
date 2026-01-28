@@ -412,8 +412,8 @@ function generateMobileSections(sectionData) {
         // GBBC, Repsol, Boeing, Worldpay keep their current sizes, others 75% bigger
         const sizeScale = councilSizeScale[item.entity] || 1.75;
 
-        // Base height 45px for 3-column layout, adjusted by scale
-        const baseHeight = 45 * sizeScale;
+        // Base height 45px for 3-column layout, adjusted by scale, then reduced by 20%
+        const baseHeight = 45 * sizeScale * 0.8;
         const width = baseHeight * aspectRatio;
 
         // Repsol logo is already white, don't invert it
