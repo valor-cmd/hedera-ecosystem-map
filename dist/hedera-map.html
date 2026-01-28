@@ -873,7 +873,7 @@
                   };
                   state.hoveredRect = { council: true }; // Mark as active
                 } else {
-                  // For other sections, use SVG coordinates based on the panel bounds
+                  // For other sections, use SVG coordinates based on the SCALED panel bounds
                   const panel = group.querySelector('.panel');
                   if (panel) {
                     // Get panel bounds from SVG attributes
@@ -882,10 +882,42 @@
                     const panelW = parseFloat(panel.getAttribute('width')) || 0;
                     const panelH = parseFloat(panel.getAttribute('height')) || 0;
 
+                    // Get the scale factor and transform origin for hover state
+                    const maxScale = parseFloat(group.getAttribute('data-max-scale')) || 1;
+                    const originStyle = group.style.transformOrigin || '';
+                    const originMatch = originStyle.match(/(\d+(?:\.\d+)?)px\s+(\d+(?:\.\d+)?)px/);
+
+                    let scaledX = panelX, scaledY = panelY, scaledW = panelW, scaledH = panelH;
+
+                    if (originMatch && maxScale > 1) {
+                      const originX = parseFloat(originMatch[1]);
+                      const originY = parseFloat(originMatch[2]);
+
+                      // Calculate scaled bounds based on transform origin
+                      // Origin determines which edges stay fixed
+                      if (originX <= panelX + panelW / 2) {
+                        // Origin on left side - left edge stays fixed
+                        scaledW = panelW * maxScale;
+                      } else {
+                        // Origin on right side - right edge stays fixed
+                        scaledX = panelX + panelW - (panelW * maxScale);
+                        scaledW = panelW * maxScale;
+                      }
+
+                      if (originY <= panelY + panelH / 2) {
+                        // Origin on top - top edge stays fixed
+                        scaledH = panelH * maxScale;
+                      } else {
+                        // Origin on bottom - bottom edge stays fixed
+                        scaledY = panelY + panelH - (panelH * maxScale);
+                        scaledH = panelH * maxScale;
+                      }
+                    }
+
                     state.boundChecker = (e) => {
                       if (state.isHovered) {
                         const svgPoint = screenToSVG(e.clientX, e.clientY);
-                        if (svgPoint && !isWithinBounds(svgPoint, panelX, panelY, panelW, panelH)) {
+                        if (svgPoint && !isWithinBounds(svgPoint, scaledX, scaledY, scaledW, scaledH)) {
                           deactivateHover();
                         }
                       }

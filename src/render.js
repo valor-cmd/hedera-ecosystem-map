@@ -732,6 +732,16 @@ function renderSVG(sectionData) {
       // Independent Core Organizations - vertical or horizontal layout
       const allItems = activeSubcats.flatMap(([_, items]) => items);
 
+      // Create a clipPath to constrain clickable area to panel bounds
+      const clipId = `core-orgs-clip-${panel.x}-${panel.y}`;
+      svg.append("defs").append("clipPath")
+        .attr("id", clipId)
+        .append("rect")
+        .attr("x", panel.x)
+        .attr("y", panel.y)
+        .attr("width", panel.w)
+        .attr("height", panel.h);
+
       if (panel.isVertical) {
         // Vertical layout - stack logos vertically, centered horizontally
         // For narrow vertical panel, scale logos to fit
@@ -785,25 +795,42 @@ function renderSVG(sectionData) {
           const logoFile = findLogoFile(logoKey);
           const logoData = imageToDataUri(logoFile);
 
-          // Wrap in link if website exists
+          // Wrap in link if website exists - constrain clickable area to panel width
           const link = item.website ? sectionGroup.append("a")
             .attr("href", item.website)
             .attr("target", "_blank")
             .attr("class", "logo-link") : sectionGroup;
 
+          // Calculate visible logo bounds (constrained to panel width)
+          const visibleLogoW = Math.min(logoW, panel.w - 10);
+          const visibleLogoX = panel.x + (panel.w - visibleLogoW) / 2;
+
           if (logoData?.type === "svg") {
             link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", `data:image/svg+xml;base64,${Buffer.from(logoData.content).toString('base64')}`)
-              .attr("preserveAspectRatio", "xMidYMid meet");
+              .attr("preserveAspectRatio", "xMidYMid meet")
+              .style("pointer-events", "none");
           } else if (logoData?.dataUri) {
             link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
-              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
+              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet")
+              .style("pointer-events", "none");
           } else {
             link.append("text").attr("class", "council-logo-text")
               .attr("x", logoX + logoW / 2).attr("y", logoY + logoH / 2 + 3)
               .attr("text-anchor", "middle").attr("font-size", "8px").text(item.entity);
+          }
+
+          // Add transparent hit area constrained to panel width
+          if (item.website) {
+            link.append("rect")
+              .attr("x", visibleLogoX)
+              .attr("y", logoY)
+              .attr("width", visibleLogoW)
+              .attr("height", logoH)
+              .attr("fill", "transparent")
+              .style("cursor", "pointer");
           }
 
           currentY += logoH + verticalGap;
