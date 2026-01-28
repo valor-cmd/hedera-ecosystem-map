@@ -682,9 +682,23 @@
       filter: brightness(0.5) sepia(1) hue-rotate(220deg) saturate(5);
     }
 
-    /* Core orgs modal */
+    /* Core orgs modal - single column layout for large logos */
     .modal-grid.core-orgs {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .core-orgs .modal-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 600px;
+      padding: 30px;
+      min-height: 200px;
     }
 
     .core-orgs .modal-item-logo {
@@ -692,7 +706,6 @@
       height: 60px;
       border-radius: 8px;
       object-fit: contain;
-      padding: 10px;
       background: transparent;
       border: none;
       transition: filter 0.2s ease;
@@ -700,8 +713,8 @@
 
     /* Larger logos for specific core orgs */
     .core-orgs .modal-item-logo.logo-3x {
-      width: 540px;
-      height: 180px;
+      width: 480px;
+      height: 160px;
     }
 
     .core-orgs .modal-item-logo.logo-2x {
@@ -714,18 +727,9 @@
       height: 90px;
     }
 
-    /* Center logos and put titles at bottom for core orgs */
-    .core-orgs .modal-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 250px;
-    }
-
     .core-orgs .modal-item-name {
-      margin-top: auto;
-      padding-top: 20px;
+      margin-top: 20px;
+      font-size: 14px;
     }
 
     .core-orgs .modal-item:hover .modal-item-logo {
