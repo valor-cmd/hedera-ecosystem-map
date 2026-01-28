@@ -689,6 +689,17 @@
       transition: filter 0.2s ease;
     }
 
+    /* Larger logos for specific core orgs */
+    .core-orgs .modal-item-logo.logo-3x {
+      width: 540px;
+      height: 180px;
+    }
+
+    .core-orgs .modal-item-logo.logo-2x {
+      width: 360px;
+      height: 120px;
+    }
+
     .core-orgs .modal-item:hover .modal-item-logo {
       filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(230deg) brightness(95%) contrast(95%);
     }
@@ -991,10 +1002,21 @@
       grid.innerHTML = items.map(item => {
         const logoSrc = item.logoDataUri || '';
         const hasWebsite = item.website && item.website.trim() !== '';
+
+        // Custom size classes for specific core org logos
+        let sizeClass = '';
+        if (sectionName === 'Independent Core Organizations') {
+          if (item.entity === 'Hedera Foundation' || item.entity === 'Hedera Council') {
+            sizeClass = ' logo-3x';
+          } else if (item.entity === 'Exponential Science') {
+            sizeClass = ' logo-2x';
+          }
+        }
+
         return `
           <a class="modal-item" ${hasWebsite ? `href="${item.website}" target="_blank" rel="noopener noreferrer"` : 'style="cursor:default;"'}>
-            ${logoSrc ? `<img class="modal-item-logo" src="${logoSrc}" alt="${item.entity}">` :
-              `<div class="modal-item-logo" style="display:flex;justify-content:center;align-items:center;font-size:20px;color:#7b59eb;font-weight:bold;">${item.entity.substring(0, 2).toUpperCase()}</div>`}
+            ${logoSrc ? `<img class="modal-item-logo${sizeClass}" src="${logoSrc}" alt="${item.entity}">` :
+              `<div class="modal-item-logo${sizeClass}" style="display:flex;justify-content:center;align-items:center;font-size:20px;color:#7b59eb;font-weight:bold;">${item.entity.substring(0, 2).toUpperCase()}</div>`}
             <span class="modal-item-name">${item.entity}</span>
           </a>
         `;
