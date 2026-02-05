@@ -601,7 +601,7 @@ function renderSVG(sectionData) {
           const col = idx % cols;
 
           const aspectRatio = logoAspectRatios[item.entity] || 2.5;
-          let logoH = baseHeight;
+          let logoH = baseHeight * 0.75;  // Shrink all council logos by 25%
           let logoW = logoH * aspectRatio;
 
           // Size adjustments for specific logos
