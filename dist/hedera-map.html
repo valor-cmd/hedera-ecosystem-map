@@ -1107,9 +1107,9 @@
           }
         }
 
-        // Repsol is a white PNG that should not be inverted
+        // Repsol and FedEx logos are already white, don't invert them
         let noInvertClass = '';
-        if (sectionName === 'Hedera Council' && item.entity === 'Repsol') {
+        if (sectionName === 'Hedera Council' && (item.entity === 'Repsol' || item.entity === 'FedEx')) {
           noInvertClass = ' no-invert';
         }
 

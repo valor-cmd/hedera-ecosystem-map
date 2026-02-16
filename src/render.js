@@ -97,6 +97,7 @@ function findLogoFile(entityName, section = null) {
     "Shinhan Bank": path.join(LOGOS_PATH, "council", "shinhan-bank-black.svg"),
     "DLA Piper": path.join(LOGOS_PATH, "council", "dla-piper-black.svg"),
     "EDF": path.join(LOGOS_PATH, "council", "edf-black.svg"),
+    "FedEx": path.join(LOGOS_PATH, "council", "fedex.svg"),
     "Hitachi": path.join(LOGOS_PATH, "council", "hitachi-black.svg"),
     "Swirlds Labs": path.join(LOGOS_PATH, "council", "swirlds-black.svg"),
     "Tata Communications": path.join(LOGOS_PATH, "council", "tata-black.svg"),
