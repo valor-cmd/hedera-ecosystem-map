@@ -161,9 +161,19 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   transition: filter 0.2s ease;
 }
 
+/* Logos that are already white should not be inverted */
+.council-logo-image.no-invert {
+  filter: none;
+}
+
 /* Council logo hover - turn purple (#7b59eb) */
 .logo-link:hover .council-logo-image {
   filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(230deg) brightness(95%) contrast(95%);
+}
+
+/* White logos need different hover filter */
+.logo-link:hover .council-logo-image.no-invert {
+  filter: brightness(0.5) sepia(1) hue-rotate(220deg) saturate(5);
 }
 
 /* Core org logo hover - turn purple (#7b59eb) */

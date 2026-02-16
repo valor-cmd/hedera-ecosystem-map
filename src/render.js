@@ -647,28 +647,20 @@ function renderSVG(sectionData) {
           if (logoData?.type === "svg") {
             // Convert black SVG to white by replacing fill colors
             let svgContent = logoData.content;
-            // Replace fill="none" on root svg element with fill="white"
-            svgContent = svgContent.replace(/<svg([^>]*)fill="none"([^>]*)>/i, '<svg$1fill="white"$2>');
-            // If no fill attribute on svg, add fill="white"
-            if (!svgContent.match(/<svg[^>]*fill=/i)) {
-              svgContent = svgContent.replace(/<svg([^>]*)>/i, '<svg$1 fill="white">');
-            }
-            // Also replace any explicit black fills
-            svgContent = svgContent.replace(/fill="#000000"/gi, 'fill="#FFFFFF"');
-            svgContent = svgContent.replace(/fill="#000"/gi, 'fill="#FFF"');
-            svgContent = svgContent.replace(/fill="black"/gi, 'fill="white"');
-            svgContent = svgContent.replace(/fill:#000000/gi, 'fill:#FFFFFF');
-            svgContent = svgContent.replace(/fill:#000/gi, 'fill:#FFF');
-            svgContent = svgContent.replace(/fill:black/gi, 'fill:white');
-            link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
+            // Logos that are already white should not be inverted
+            const noInvertLogos = ["Repsol", "FedEx"];
+            const logoClass = noInvertLogos.includes(item.entity) ? "council-logo-image no-invert" : "council-logo-image";
+            link.append("image").attr("class", logoClass).attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`)
               .attr("preserveAspectRatio", "xMidYMid meet");
           } else if (logoData?.dataUri) {
-            link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
+            // Logos that are already white should not be inverted
+            const noInvertLogos = ["Repsol", "FedEx"];
+            const logoClass = noInvertLogos.includes(item.entity) ? "council-logo-image no-invert" : "council-logo-image";
+            link.append("image").attr("class", logoClass).attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
-              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet")
-              .style("filter", "invert(1)");
+              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
           } else {
             link.append("text").attr("class", "council-logo-text")
               .attr("x", logoX + logoW / 2).attr("y", logoY + logoH / 2 + 3)
