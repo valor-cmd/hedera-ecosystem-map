@@ -292,6 +292,15 @@ function findLogoFile(entityName, section = null) {
     "Smackm": path.join(LOGOS_PATH, "meme", "Smackm.jpg"),
     "Soot": path.join(LOGOS_PATH, "meme", "Soot.jpg"),
     "Jeeteroo": path.join(LOGOS_PATH, "meme", "Jeeteroo.jpg"),
+    "Fly": path.join(LOGOS_PATH, "meme", "Fly.jpg"),
+    "Bober": path.join(LOGOS_PATH, "meme", "Bober.jpg"),
+    "Dinopack": path.join(LOGOS_PATH, "meme", "Dinopack.png"),
+    "2FingersInu": path.join(LOGOS_PATH, "meme", "2FingersInu.jpg"),
+    "Escohbar": path.join(LOGOS_PATH, "meme", "Escohbar.jpg"),
+    "Hashman": path.join(LOGOS_PATH, "meme", "Hashman.png"),
+    "Honk": path.join(LOGOS_PATH, "meme", "Honk.png"),
+    "Fins": path.join(LOGOS_PATH, "meme", "Fins.png"),
+    "Trash Artists": path.join(LOGOS_PATH, "meme", "Trash.jpg"),
     // Tooling (additional)
     "Hashgraph.Name": path.join(LOGOS_PATH, "DEXs", "HashNames.jpg"),
     // Additional Services (infrastructure folder)
@@ -469,7 +478,7 @@ function renderSVG(sectionData) {
   const r3_risk = Math.floor(leftAreaW * 0.17);       // 5 entities (was 14%)
   const r3_stablecoin = Math.floor(leftAreaW * 0.10); // 3 entities
   const r3_tooling = Math.floor(leftAreaW * 0.31);    // 9 entities (was 20% - too cramped)
-  const r3_meme = leftAreaW - r3_advisory - r3_risk - r3_stablecoin - r3_tooling - gap * 4;  // 10 entities (~35%)
+  const r3_meme = leftAreaW - r3_advisory - r3_risk - r3_stablecoin - r3_tooling - gap * 4;  // 20 entities (~35%)
 
   // Row 4: 4 panels (DeFi, NFTs, Gaming & ENT, Real World Assets) - adjusted for 12 DeFi + 10 Gaming
   const row4Y = row3Y + row3H + rowGap;
