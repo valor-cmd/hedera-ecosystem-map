@@ -111,6 +111,7 @@ function findLogoFile(entityName, section = null) {
     "Dentons": path.join(LOGOS_PATH, "council", "dentons-black.svg"),
     "IIT Madras": path.join(LOGOS_PATH, "council", "iit-madras-black.svg"),
     "Magalu": path.join(LOGOS_PATH, "council", "magalu-black.svg"),
+    "McLaren Racing": path.join(LOGOS_PATH, "council", "mclaren-racing-black.svg"),
     "Repsol": path.join(LOGOS_PATH, "council", "repsol-logo-white-flat.png"),
     "Blockchain for Energy": path.join(LOGOS_PATH, "council", "blockchain-for-energy.svg"),
     "BitGo": path.join(LOGOS_PATH, "council", "bitgo-black.svg"),
@@ -329,6 +330,29 @@ function imageToDataUri(filePath) {
   if (ext === ".svg") return { type: "svg", content: data.toString("utf8") };
   const mimeTypes = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp" };
   return { type: "image", dataUri: `data:${mimeTypes[ext] || "image/png"};base64,${data.toString("base64")}` };
+}
+
+// Convert black SVG content to white by replacing fill values directly.
+// This avoids relying on CSS filter: invert(1) which doesn't work in Safari on SVG <image> elements.
+function makeCouncilLogoWhite(svgContent) {
+  // Replace fill="black" attribute values with fill="white"
+  svgContent = svgContent.replace(/fill="black"/g, 'fill="white"');
+  // Replace fill="#000000" and fill="#000" with white
+  svgContent = svgContent.replace(/fill="#000000"/g, 'fill="#ffffff"');
+  svgContent = svgContent.replace(/fill="#000"/g, 'fill="#fff"');
+  // Replace CSS fill:black with fill:white (handles <style> blocks)
+  svgContent = svgContent.replace(/fill\s*:\s*black/g, 'fill:white');
+  // Replace CSS fill:#000000 and fill:#000 with white
+  svgContent = svgContent.replace(/fill\s*:\s*#000000/g, 'fill:#ffffff');
+  svgContent = svgContent.replace(/fill\s*:\s*#000([;\s}])/g, 'fill:#fff$1');
+  // Set fill="white" on root <svg> element so paths without explicit fill inherit white
+  // (SVG default fill is black, so paths without a fill attribute would otherwise be invisible)
+  if (svgContent.match(/<svg[^>]*\sfill="none"/)) {
+    svgContent = svgContent.replace(/(<svg[^>]*)\sfill="none"/, '$1 fill="white"');
+  } else if (!svgContent.match(/<svg[^>]*\sfill="/)) {
+    svgContent = svgContent.replace(/<svg/, '<svg fill="white"');
+  }
+  return svgContent;
 }
 
 function wrapText(text, maxCharsPerLine) {
@@ -573,7 +597,7 @@ function renderSVG(sectionData) {
         "Swirlds Labs": 1.67, "Tata Communications": 1.67,
         "Zain Group": 1.67, "LSE": 1.67, "abrdn": 1.67, "Arrow": 1.67,
         "Cofra": 1.67, "Dentons": 1.67, "IIT Madras": 1.67, "Magalu": 1.67,
-        "Repsol": 4.27, "Blockchain for Energy": 2.23,
+        "McLaren Racing": 5.45, "Repsol": 4.27, "Blockchain for Energy": 2.23,
         "Australian Payments Plus": 2.5, "Avery Dennison": 2.5, "BitGo": 2.5,
         "Chainlink Labs": 2.5, "Nairobi Securities Exchange": 2.5, "Standard Bank": 2.5,
         "Wipro": 2.5
@@ -617,9 +641,12 @@ function renderSVG(sectionData) {
             logoW *= 0.85; logoH *= 0.85;
           }
 
-          // Additional size adjustment for Repsol (wide logo)
+          // Additional size adjustment for very wide logos
           if (item.entity === "Repsol") {
             logoW *= 0.5; logoH *= 0.5;
+          }
+          if (item.entity === "McLaren Racing") {
+            logoW *= 0.55; logoH *= 0.55;
           }
 
           // In hover state, reduce ALL logos by 20% for more breathing room
@@ -645,20 +672,19 @@ function renderSVG(sectionData) {
             .attr("class", "logo-link") : targetGroup;
 
           if (logoData?.type === "svg") {
-            // Convert black SVG to white by replacing fill colors
             let svgContent = logoData.content;
-            // Logos that are already white should not be inverted
+            // Pre-process black SVG logos to white (Safari doesn't support CSS filter on SVG <image>)
             const noInvertLogos = ["Repsol", "FedEx"];
-            const logoClass = noInvertLogos.includes(item.entity) ? "council-logo-image no-invert" : "council-logo-image";
-            link.append("image").attr("class", logoClass).attr("x", logoX).attr("y", logoY)
+            if (!noInvertLogos.includes(item.entity)) {
+              svgContent = makeCouncilLogoWhite(svgContent);
+            }
+            link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`)
               .attr("preserveAspectRatio", "xMidYMid meet");
           } else if (logoData?.dataUri) {
-            // Logos that are already white should not be inverted
-            const noInvertLogos = ["Repsol", "FedEx"];
-            const logoClass = noInvertLogos.includes(item.entity) ? "council-logo-image no-invert" : "council-logo-image";
-            link.append("image").attr("class", logoClass).attr("x", logoX).attr("y", logoY)
+            // Non-SVG logos (e.g., Repsol PNG) are already white
+            link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
               .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
           } else {
@@ -1082,7 +1108,7 @@ function renderSVG(sectionData) {
   const today = new Date();
   const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  svg.append("text").attr("class", "footer-text").attr("x", leftMargin).attr("y", H - 43)
+  svg.append("text").attr("class", "footer-text").attr("id", "footer-date").attr("x", leftMargin).attr("y", H - 43)
     .attr("font-size", "10px").text(`Data as of: ${dateStr}`);
 
   svg.append("text").attr("class", "footer-note").attr("x", leftMargin).attr("y", H - 31)

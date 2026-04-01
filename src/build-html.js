@@ -84,6 +84,7 @@ function findLogoFile(entityName, section = null) {
     "Dentons": path.join(LOGOS_PATH, "council", "dentons-black.svg"),
     "IIT Madras": path.join(LOGOS_PATH, "council", "iit-madras-black.svg"),
     "Magalu": path.join(LOGOS_PATH, "council", "magalu-black.svg"),
+    "McLaren Racing": path.join(LOGOS_PATH, "council", "mclaren-racing-black.svg"),
     "Repsol": path.join(LOGOS_PATH, "council", "repsol-logo-white-flat.png"),
     "Blockchain for Energy": path.join(LOGOS_PATH, "council", "blockchain-for-energy.svg"),
     "BitGo": path.join(LOGOS_PATH, "council", "bitgo-black.svg"),
@@ -299,6 +300,35 @@ function imageToDataUri(filePath) {
   return `data:${mimeTypes[ext] || "image/png"};base64,${data.toString("base64")}`;
 }
 
+// Convert black SVG content to white by replacing fill values directly.
+// This avoids relying on CSS filter: invert(1) which doesn't work in Safari on SVG <image> elements.
+function makeCouncilLogoWhite(svgContent) {
+  svgContent = svgContent.replace(/fill="black"/g, 'fill="white"');
+  svgContent = svgContent.replace(/fill="#000000"/g, 'fill="#ffffff"');
+  svgContent = svgContent.replace(/fill="#000"/g, 'fill="#fff"');
+  svgContent = svgContent.replace(/fill\s*:\s*black/g, 'fill:white');
+  svgContent = svgContent.replace(/fill\s*:\s*#000000/g, 'fill:#ffffff');
+  svgContent = svgContent.replace(/fill\s*:\s*#000([;\s}])/g, 'fill:#fff$1');
+  if (svgContent.match(/<svg[^>]*\sfill="none"/)) {
+    svgContent = svgContent.replace(/(<svg[^>]*)\sfill="none"/, '$1 fill="white"');
+  } else if (!svgContent.match(/<svg[^>]*\sfill="/)) {
+    svgContent = svgContent.replace(/<svg/, '<svg fill="white"');
+  }
+  return svgContent;
+}
+
+// Create a white version of an SVG data URI for council logos
+function makeCouncilLogoDataUriWhite(dataUri, filePath) {
+  if (!dataUri || !filePath) return dataUri;
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext !== '.svg') return dataUri;
+  const base64Match = dataUri.match(/^data:image\/svg\+xml;base64,(.+)$/);
+  if (!base64Match) return dataUri;
+  let svgContent = Buffer.from(base64Match[1], 'base64').toString('utf8');
+  svgContent = makeCouncilLogoWhite(svgContent);
+  return `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`;
+}
+
 function readCSV() {
   return Papa.parse(fs.readFileSync(CSV_PATH, "utf8"), { header: true, skipEmptyLines: true }).data;
 }
@@ -320,7 +350,13 @@ function buildSectionData(rows) {
     if (result[displaySection].subcategories[targetSubcat]) {
       const entityName = row.Entity?.trim();
       const logoFile = findLogoFile(entityName, displaySection);
-      const logoDataUri = imageToDataUri(logoFile);
+      let logoDataUri = imageToDataUri(logoFile);
+
+      // Pre-process council SVG logos to white (Safari CSS filter fix)
+      const noInvertLogos = ["Repsol", "FedEx"];
+      if (displaySection === "Hedera Council" && logoDataUri && !noInvertLogos.includes(entityName)) {
+        logoDataUri = makeCouncilLogoDataUriWhite(logoDataUri, logoFile);
+      }
 
       result[displaySection].subcategories[targetSubcat].push({
         entity: entityName,
