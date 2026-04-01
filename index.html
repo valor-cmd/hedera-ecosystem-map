@@ -926,7 +926,6 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
 .section-group {
   transition: transform 0.3s ease;
   cursor: pointer;
-  will-change: transform;
 }
 
 /* Council section layout transitions */
@@ -3792,6 +3791,10 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
 
           // Use requestAnimationFrame to ensure transition applies after DOM move
           requestAnimationFrame(() => {
+            // Disable child pointer-events during scale transition to prevent Chrome hover flicker
+            group.style.pointerEvents = 'none';
+            setTimeout(() => { group.style.pointerEvents = ''; }, 350);
+
             if (isCouncil) {
               // Special handling for council section: fade and grow to 5-column layout
               const normalGroup = group.querySelector('.council-normal');
@@ -3925,6 +3928,8 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
             if (mainTitle) mainTitle.classList.remove('hidden'); // Show main title again
           }
           // Reset scale on mouse leave
+          group.style.pointerEvents = 'none';
+          setTimeout(() => { group.style.pointerEvents = ''; }, 350);
           group.style.transform = 'scale(1)';
         }
 
