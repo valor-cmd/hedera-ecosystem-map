@@ -818,11 +818,7 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   transition: fill 0.2s ease;
 }
 
-.section-title:hover{
-  fill: #ffffff;
-}
-
-.section-group:hover .section-title{
+.section-group.hovered .section-title{
   fill: #ffffff;
   filter: drop-shadow(0px 2px 0px #000000) drop-shadow(0px 2px 2px #000000);
 }
@@ -3784,6 +3780,7 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
           if (isMobile()) return;
           const state = hoverState.get(group);
           state.isHovered = true;
+          group.classList.add('hovered');
 
           // Move this group to the end of its parent to render on top
           const parent = group.parentNode;
@@ -3791,9 +3788,6 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
 
           // Use requestAnimationFrame to ensure transition applies after DOM move
           requestAnimationFrame(() => {
-            // Disable child pointer-events during scale transition to prevent Chrome hover flicker
-            group.style.pointerEvents = 'none';
-            setTimeout(() => { group.style.pointerEvents = ''; }, 350);
 
             if (isCouncil) {
               // Special handling for council section: fade and grow to 5-column layout
@@ -3917,6 +3911,7 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
 
           state.isHovered = false;
           state.hoveredRect = null;
+          group.classList.remove('hovered');
 
           if (isCouncil) {
             // Fade back to normal 2-column layout
@@ -3928,8 +3923,6 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
             if (mainTitle) mainTitle.classList.remove('hidden'); // Show main title again
           }
           // Reset scale on mouse leave
-          group.style.pointerEvents = 'none';
-          setTimeout(() => { group.style.pointerEvents = ''; }, 350);
           group.style.transform = 'scale(1)';
         }
 
