@@ -87,6 +87,7 @@ const CSV_TO_SECTION = {
 function findLogoFile(entityName, section = null) {
   // Council-specific logo mappings (used only when section is "Hedera Council")
   const councilMappings = {
+    "Accenture": path.join(LOGOS_PATH, "council", "accenture-black.svg"),
     "Google": path.join(LOGOS_PATH, "council", "google-black.svg"),
     "IBM": path.join(LOGOS_PATH, "council", "ibm-black.svg"),
     "Dell": path.join(LOGOS_PATH, "council", "dell-black.svg"),
