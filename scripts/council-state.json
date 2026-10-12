@@ -1,0 +1,272 @@
+{
+ "Hedera Council::abrdn": {
+  "name": "Aberdeen",
+  "url": "https://hederacouncil.org/aberdeen-black.svg",
+  "sha": "8dc03d4532ebdd99603993ca5064aa1893ac3a5e1638376cde79c2cf91d3e6b0",
+  "since": "05 Oct 2022"
+ },
+ "Hedera Council::accenture": {
+  "name": "Accenture",
+  "url": "https://hederacouncil.org/accenture-logo-black.svg",
+  "sha": "511870b533fb059ee0d94ac9c2e2eeaed2da7ca2d6fe00151f73421bd99770d4",
+  "since": "30 Apr 2026"
+ },
+ "Hedera Council::arrow": {
+  "name": "Arrow",
+  "url": "https://hederacouncil.org/arrow-black.svg",
+  "sha": "55fb02b534ace5dc1bdad90eacff7c05694eb5eed15c2acff132e3ca2cd21714",
+  "since": "04 June 2025"
+ },
+ "Hedera Council::australian payments plus": {
+  "name": "Australian Payments Plus",
+  "url": "https://hederacouncil.org/australian-payments-plus-black.svg",
+  "sha": "bbcc83fe88e9ea501646c4cffb04c79143c1acbed999937fd4c205dfad91e68b",
+  "since": "26 Jan 2021"
+ },
+ "Hedera Council::avery dennison": {
+  "name": "Avery Dennison",
+  "url": "https://hederacouncil.org/avery-dennison-black.svg",
+  "sha": "2cb7c6c52900c9e0048c91b545cd0955fc37dc86833106754c88d7bc11f0e346",
+  "since": "05 Jul 2020"
+ },
+ "Hedera Council::bitgo": {
+  "name": "BitGo",
+  "url": "https://hederacouncil.org/bitgo-black.svg",
+  "sha": "cc01a2e5528ec0b8b5f21074a9ed26d3417b15434223e8129f67dc1e3e6e1dbf",
+  "since": "28 Feb 2024"
+ },
+ "Hedera Council::blockchain for energy": {
+  "name": "Blockchain For Energy",
+  "url": "https://hederacouncil.org/blockchain-for-energy.svg",
+  "sha": "b8f4c9ecceabec8fc0822aca0ddc3e2c8af72cc452488bea0262b278f7655ae4",
+  "since": "24 Jun 2025"
+ },
+ "Hedera Council::chainlink": {
+  "name": "Chainlink Labs",
+  "url": "https://hederacouncil.org/chainlink-labs-black.svg",
+  "sha": "a7c8f5936eb3c774ee3737200f5cd430e697c54bea8dc0099cd379d743b35c8e",
+  "since": "19 May 2021"
+ },
+ "Hedera Council::dell": {
+  "name": "Dell",
+  "url": "https://hederacouncil.org/dell-black.svg",
+  "sha": "41ba900b9dc5493a814de5481a7db320e7deb4c2f76c8d68f43d8649499ae74d",
+  "since": "06 Feb 2023"
+ },
+ "Hedera Council::dentons": {
+  "name": "Dentons",
+  "url": "https://hederacouncil.org/dentons-black.svg",
+  "sha": "c7841add61d3cea828ce5088964b051894e20795d05f3485913336e4e31a3744",
+  "since": "09 Dec 2020"
+ },
+ "Hedera Council::deutsche telekom": {
+  "name": "Deutsche Telekom",
+  "url": "https://hederacouncil.org/deutsche-telekom-logo-dark.svg",
+  "sha": "4d2290b53b3671cc441e9ede0703e610685f90d3a2dc005493b30e377c3d727f",
+  "since": "19 Feb 2019"
+ },
+ "Hedera Council::dla piper": {
+  "name": "DLA Piper",
+  "url": "https://hederacouncil.org/dla-piper-black.svg",
+  "sha": "2b023a62772a7edf87d656afed8338924eaa6e557d556d02e0f19f382880bcac",
+  "since": "19 Feb 2019"
+ },
+ "Hedera Council::edf": {
+  "name": "EDF",
+  "url": "https://hederacouncil.org/edf-black.svg",
+  "sha": "0d9a8046215c1f99e2b72ddc4d70ae0981435df039ccfe99be98219d74816ffa",
+  "since": "03 Mar 2021"
+ },
+ "Hedera Council::fedex": {
+  "name": "FedEx",
+  "url": "https://hederacouncil.org/fedex-logo-white.png",
+  "sha": "d54f804a442596ee33c256d3f6aa148bca80248d88b8f6bd045d8761f3f47d4d",
+  "since": "13 Feb 2026"
+ },
+ "Hedera Council::google": {
+  "name": "Google",
+  "url": "https://hederacouncil.org/google-black.svg",
+  "sha": "6a4253dbdbba446656beeb6a4ea52860b0029d6359ba62b4bee65bb8323c1b6c",
+  "since": "10 Feb 2020"
+ },
+ "Hedera Council::ibm": {
+  "name": "IBM",
+  "url": "https://hederacouncil.org/ibm-black.svg",
+  "sha": "e887536a4d03e3292c8eb05006efe3c6490547c62f681ebfbfcd417bacdf5e82",
+  "since": "11 Aug 2019"
+ },
+ "Hedera Council::iit madras": {
+  "name": "IIT Madras",
+  "url": "https://hederacouncil.org/IIT_Madras_Logo_Black.svg",
+  "sha": "238275f23323905f07baf015a0302344d2ff6b7554fea4b5f20bc41deeba782a",
+  "since": "13 Sep 2021"
+ },
+ "Hedera Council::lg electronics": {
+  "name": "LG",
+  "url": "https://hederacouncil.org/lg-black.svg",
+  "sha": "bdad66f114813f3b50738e25b57925fac97ff4573bbff4a6291fcb4af2f285f9",
+  "since": "26 May 2020"
+ },
+ "Hedera Council::lse": {
+  "name": "LSE",
+  "url": "https://hederacouncil.org/lse-black.svg",
+  "sha": "ef6eb1c92677addc9c36a20d9be0af1f287b19436852b115d6e687f74011a1f1",
+  "since": "18 Aug 2021"
+ },
+ "Hedera Council::magalu": {
+  "name": "Magalu",
+  "url": "https://hederacouncil.org/magalu-black.svg",
+  "sha": "254e2488777d86ec44f42bbd891e698e8cc3218a1d8b3d248cff7a322ba1032c",
+  "since": "19 Feb 2019"
+ },
+ "Hedera Council::mclaren racing": {
+  "name": "McLaren Racing",
+  "url": "https://hederacouncil.org/McLaren-white.png",
+  "sha": "7b8cbacb6b1c5d977e3fa7854b2e7210bbc3eae1135f5a86ce7262d8f304c47d",
+  "since": "25 Mar 2026"
+ },
+ "Hedera Council::mondelez": {
+  "name": "Mondelēz",
+  "url": "https://hederacouncil.org/mondelez-black.svg",
+  "sha": "46227201fc8149f61b88c2b53e39203553854735fc773586885ba6a593afd6c8",
+  "since": "14 Feb 2024"
+ },
+ "Hedera Council::nairobi securities exchange": {
+  "name": "NSE",
+  "url": "https://hederacouncil.org/nse-black.svg",
+  "sha": "443a8ef917733f55c5851a98db2fa7960d8f0eb714fdbeff288db656ea6d361b",
+  "since": "30 Oct 2024"
+ },
+ "Hedera Council::nomura": {
+  "name": "Nomura",
+  "url": "https://hederacouncil.org/nomura-black.svg",
+  "sha": "64dafb99ecef0fa58487600509778e94ce7e5b3397e29501b74e314711421602",
+  "since": "19 Feb 2019"
+ },
+ "Hedera Council::repsol": {
+  "name": "Repsol",
+  "url": "https://hederacouncil.org/repsol-logo-white-flat.png",
+  "sha": "4056f93d71d7e5c3b230b8e469aefdb8ab706715ead1a27850ba72871d62c63e",
+  "since": "18 Dec 2025"
+ },
+ "Hedera Council::servicenow": {
+  "name": "ServiceNow",
+  "url": "https://hederacouncil.org/service-now-black.svg",
+  "sha": "a5c04226a4519e3a170d1a6407460769fa825e7ed1ada4659e7a8fffcfa286ae",
+  "since": "15 Nov 2021"
+ },
+ "Hedera Council::shinhan bank": {
+  "name": "Shinhan Bank",
+  "url": "https://hederacouncil.org/shinhan-bank-black.svg",
+  "sha": "9e66e8ec2889028d89829071fbe313e7bf572613c9013104fa580aa2f226b61f",
+  "since": "13 Apr 2021"
+ },
+ "Hedera Council::standard bank": {
+  "name": "Standard Bank",
+  "url": "https://hederacouncil.org/standard-bank-black.svg",
+  "sha": "b8202012a09ae3a65e9a07f52a2498c0792453e9ad7d3c1a6b1f0b4fc0add01f",
+  "since": "18 Feb 2021"
+ },
+ "Hedera Council::swirlds": {
+  "name": "Swirlds",
+  "url": "https://hederacouncil.org/swirlds-black.svg",
+  "sha": "d8a87be62318f5efa677a8e5091e455d5192f8dfc7f0fde4d9cba48a0d0853aa",
+  "since": "30 Nov 2017"
+ },
+ "Hedera Council::tata communications": {
+  "name": "Tata Communications",
+  "url": "https://hederacouncil.org/tata-black.svg",
+  "sha": "d4b39e2fc0d1280d44babfebda767c2fffb5d17c0435ed12ef72aaf5c6c24566",
+  "since": "11 Aug 2019"
+ },
+ "Hedera Council::ubisoft": {
+  "name": "Ubisoft",
+  "url": "https://hederacouncil.org/ubisoft-black.svg",
+  "sha": "c5215d4fc15f879da8d7b277e4b3418616cfa08d7525de4448ba11da35cffa91",
+  "since": "02 Feb 2022"
+ },
+ "Hedera Council::wipro": {
+  "name": "Wipro",
+  "url": "https://hederacouncil.org/wipro-black.svg",
+  "sha": "7e008106262bf78de76ead8407cc82c96ee30225b8aeb33df62045d8300a9c40",
+  "since": "17 Mar 2020"
+ },
+ "Hedera Council::zain": {
+  "name": "Zain",
+  "url": "https://hederacouncil.org/zain-black.svg",
+  "sha": "ce35b51a4975a7c1aeec84c1aa5ef0a39ee51df360f566cebb8ca870dd6a40f8",
+  "since": "13 Jun 2020"
+ },
+ "Strategic Partners::global blockchain business council": {
+  "name": "Global Blockchain Business Council",
+  "url": "https://hederacouncil.org/GBBClogo_white.png",
+  "sha": "eacf8adc6033bddb654debfc28090d3c9521dd3160e7539f0b14c7e62ca26d16",
+  "since": "16 Dec 2025"
+ },
+ "Strategic Partners::halborn": {
+  "name": "Halborn",
+  "url": "https://hederacouncil.org/halborn_white.png",
+  "sha": "eb854a2e3d33b2eaca271fd39a4a965c4e91ab7211e1dd3ac4c1e1be468abe74",
+  "since": "23 Jan 2026"
+ },
+ "Strategic Partners::the institutes riskstream": {
+  "name": "The Institutes RiskStream",
+  "url": "https://hederacouncil.org/TheInstitutesRiskStream-White.png",
+  "sha": "c9e03bac2f76c3e520be799836dda0a5686ce741447090dc7e1936d50785061e",
+  "since": "09 Jun 2026"
+ },
+ "Strategic Partners::wisekey": {
+  "name": "WISeKey",
+  "url": "https://hederacouncil.org/wisekey-white.png",
+  "sha": "95a3688e1f1961791bc07dae37f5e1af75b2bfff4e0f39a208868c8373f50d9c",
+  "since": "04 Sep 2026"
+ },
+ "Community Partners::eqty lab": {
+  "name": "EQTY Lab",
+  "url": "https://hederacouncil.org/EQTYLab-white.png",
+  "sha": "d4fa5402e8325c25e405805133a15fa1978de72f78c8b9a7aa67dd1da07591d5",
+  "since": "09 Jun 2026"
+ },
+ "Community Partners::genfinity": {
+  "name": "Genfinity",
+  "url": "https://hederacouncil.org/genfinity_white.png",
+  "sha": "0e43796048f0c9086152861f72ebb248691c9b980bab376b30dc8b4dbd3351db",
+  "since": "23 Jan 2026"
+ },
+ "Community Partners::hashgraph online": {
+  "name": "Hashgraph Online",
+  "url": "https://hederacouncil.org/hashgraph_online_white.png",
+  "sha": "a0e4d3e3e4bd74f05188bacce597d0f1dc71bcb891ed7c934cd600fc531ce894",
+  "since": "23 Jan 2026"
+ },
+ "Community Partners::hashpack": {
+  "name": "HashPack",
+  "url": "https://hederacouncil.org/hashpack_white.png",
+  "sha": "7e06bf5aee29630fbcea5dbfc796517ab3bf48fe0916216984494d418bd3c104",
+  "since": "23 Jan 2026"
+ },
+ "Community Partners::hgraph": {
+  "name": "Hgraph",
+  "url": "https://hederacouncil.org/Hgraph-black.svg",
+  "sha": "7eb9604880c04585e255b791fb8d8e3a3a9324bac4251dcae6fa63891ee84836",
+  "since": "09 Jun 2026"
+ },
+ "Community Partners::kabila": {
+  "name": "Kabila",
+  "url": "https://hederacouncil.org/logo-horizontal-black.svg",
+  "sha": "f4e93ec13c3567c90e396a782911d5a27c945c7dd853f3687a32bf7fabacccb8",
+  "since": "09 Jun 2026"
+ },
+ "Community Partners::spacedev": {
+  "name": "SpaceDev",
+  "url": "https://hederacouncil.org/spacedev-white.png",
+  "sha": "a93531005750dd2e9b0b14a28dcce5f6baa571b12f4f2ceb08529e9346eb071f",
+  "since": "04 Sep 2026"
+ },
+ "Community Partners::xeni": {
+  "name": "Xeni",
+  "url": "https://hederacouncil.org/XENI-LOGO-white.png",
+  "sha": "4191273a7b6e91c2249e9ec7d8f267b50eefa2241daf3dc421185c2a92a9ebc2",
+  "since": "09 Jun 2026"
+ }
+}

@@ -16,7 +16,8 @@ async function main() {
     </body>
   </html>`;
 
-  const browser = await chromium.launch();
+  // CHROME_PATH: use an already installed Chromium instead of the one matching this Playwright version
+  const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   await page.setContent(html, { waitUntil: "load" });
 

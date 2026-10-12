@@ -437,6 +437,11 @@
         display: none;
       }
 
+      /* Council partners (wide wordmarks) - 2 logos per row */
+      .mobile-section.council.partners .mobile-logos {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
       /* Core orgs - 3 logos per row, no text labels, vertically centered */
       .mobile-section.core-orgs .mobile-logos {
         grid-template-columns: repeat(3, 1fr);
@@ -714,16 +719,6 @@
       height: 200px;
     }
 
-    .core-orgs .modal-item-logo.logo-2x {
-      width: 360px;
-      height: 120px;
-    }
-
-    .core-orgs .modal-item-logo.logo-association {
-      width: 194px;
-      height: 65px;
-    }
-
     .core-orgs .modal-item-name {
       margin-top: 20px;
       font-size: 14px;
@@ -735,7 +730,7 @@
   </style>
 </head>
 <body>
-  <a href="https://hedera-data-app.vercel.app" target="_blank" rel="noopener noreferrer" class="top-link">Hedera Data Dashboard →</a>
+  <a href="https://dashboard.hederamap.com" target="_blank" rel="noopener noreferrer" class="top-link">Hedera Data Dashboard →</a>
 
   <!-- Desktop Search Bar (positioned dynamically via JavaScript) -->
   <div class="desktop-search-container" id="desktop-search-container">
@@ -798,234 +793,306 @@
     // Check if mobile
     const isMobile = () => window.innerWidth <= 768;
 
-    // Track hover state per section
-    const hoverState = new Map();
+    // ----- Hover layout -----
+    // Hovering a section (after a short delay) zooms it: its box and logos grow to its data-hover-scale (the
+    // Hedera Council switches to its larger 3-column layout instead). The other boxes never sit under it:
+    // its row and column neighbors narrow or shorten to make room, every box reflows its logos to its new
+    // shape, and the boxes always tile the same outer rectangle. The hovered box always contains its resting
+    // box, so the pointer that opened it stays inside it while everything moves.
+    const HOVER_DELAY = 250;    // ms before a section opens (hover intent)
+    const LEAVE_DELAY = 200;    // ms before the map settles back after the pointer leaves the boxes
+    const MOVE_MS = 300;        // expand / collapse animation
+    const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+    const hoverMap = { boxes: new Map(), hot: null, layout: null, pending: null, anim: null, struct: null, svg: null };
+
+    const numList = (s) => (s || '').split(',').map(Number);
+
+    function initHoverLayout() {
+      const svg = document.querySelector('.map-container svg');
+      if (!svg || !svg.getAttribute('data-layout')) return;
+      hoverMap.svg = svg;
+      hoverMap.struct = JSON.parse(svg.getAttribute('data-layout'));
+      svg.querySelectorAll('.section-group').forEach(group => {
+        const name = group.getAttribute('data-section');
+        const [x, y, w, h] = numList(group.getAttribute('data-box'));
+        const isCouncil = group.classList.contains('council-section');
+        const layer = isCouncil ? group.querySelector('.council-normal') : group;
+        const panel = isCouncil ? layer.querySelector('.panel') : group.querySelector(':scope > .panel');
+        const cellOwner = isCouncil ? layer : group;
+        const [bw, bh] = numList(cellOwner.getAttribute('data-cell') || '44,56');
+        const items = [...layer.querySelectorAll('.map-item')].map(el => ({
+          el, ox: +el.getAttribute('data-cx'), oy: +el.getAttribute('data-cy'), cur: { a: 0, b: 0, k: 1 }
+        }));
+        const title = group.querySelector(':scope > .section-title');
+        const tx = title ? +title.getAttribute('x') : x, ty = title ? +title.getAttribute('y') : y;
+        let titleW = 0;
+        try { titleW = title ? title.getBBox().width : 0; } catch (e) { titleW = 0; }
+        hoverMap.boxes.set(name, {
+          name, group, isCouncil, panel, items, title, tx, ty, titleW,
+          rest: { x, y, w, h }, cur: { x, y, w, h },
+          titleCur: { a: 0, b: 0, k: 1 },
+          scale: parseFloat(group.getAttribute('data-hover-scale')) || 1.8,
+          hoverBox: isCouncil ? numList(group.getAttribute('data-hover-box')) : null,
+          cell: { w: bw, h: bh },
+          restCols: +(group.getAttribute('data-cols') || 0),
+          alignTop: group.getAttribute('data-align') === 'top',
+          hoverLayer: isCouncil ? group.querySelector('.council-hover') : null,
+          normalLayer: isCouncil ? layer : null,
+        });
+      });
+
+      svg.addEventListener('mousemove', onMapPointer);
+      svg.addEventListener('mouseleave', () => schedule(null, LEAVE_DELAY));
+    }
+
+    // Where every box goes when `hot` is expanded (rest positions when hot is null)
+    function computeLayout(hot) {
+      const S = hoverMap.struct, B = hoverMap.boxes, out = new Map();
+      for (const [n, b] of B) out.set(n, { ...b.rest });
+      if (!hot || !B.has(hot)) return out;
+      const hb = B.get(hot);
+      const gap = S.gap, rowGap = S.rowGap;
+      const council = B.get(S.council);
+      const sideRest = B.get(S.side[0]).rest;
+      const Lw = sideRest.x - gap - council.rest.w - gap - S.x;   // left area width at rest
+      const Cw = council.rest.w, Sw = sideRest.w;
+      const inner = S.w - 2 * gap;                                // Lw + Cw + Sw
+      const rowIdx = S.rows.findIndex(r => r.includes(hot));
+      const inSide = S.side.includes(hot);
+      const isCouncil = hot === S.council;
+      let tw, th;
+      if (isCouncil) { tw = hb.hoverBox[2]; th = hb.hoverBox[3]; }
+      else { tw = hb.rest.w * hb.scale; th = hb.rest.h * hb.scale; }
+
+      // 1. column widths: left area, council, side column
+      let L = Lw, C = Cw, Sd = Sw;
+      if (rowIdx >= 0) {
+        const row = S.rows[rowIdx];
+        const others = row.filter(n => n !== hot).reduce((t, n) => t + B.get(n).rest.w, 0);
+        const gapsRow = gap * (row.length - 1);
+        if (others > 0) {
+          // grow the left area just enough that the row's other boxes and the right columns shrink alike
+          const R = Cw + Sd;
+          const balanced = (inner / R + (tw + gapsRow) / others) / (1 / others + 1 / R);
+          L = Math.max(Lw, Math.min(balanced, inner - 120));
+        } else L = Math.max(Lw, tw);
+        const f = (inner - L) / (Cw + Sw);
+        C = Cw * f; Sd = Sw * f;
+      } else if (isCouncil) {
+        C = tw;
+        const f = (inner - tw) / (Lw + Sw);
+        L = Lw * f; Sd = Sw * f;
+      } else if (inSide) {
+        Sd = Math.min(tw, inner - 240);
+        const f = (inner - Sd) / (Lw + Cw);
+        L = Lw * f; C = Cw * f;
+      }
+      const Lx = S.x, Cx = S.x + L + gap, Sx = Cx + C + gap;
+
+      // 2. left area rows
+      const nRows = S.rows.length;
+      const rowsH = S.h - rowGap * (nRows - 1);
+      const restRowH = S.rows.map(r => B.get(r[0]).rest.h);
+      const restSum = restRowH.reduce((t, v) => t + v, 0);
+      let rowH;
+      if (rowIdx >= 0) {
+        const hotH = Math.min(th, rowsH - 48 * (nRows - 1));
+        const rest = restSum - restRowH[rowIdx];
+        rowH = restRowH.map((v, i) => i === rowIdx ? hotH : (rowsH - hotH) * v / rest);
+      } else rowH = restRowH.map(v => v * rowsH / restSum);
+      let y = S.y;
+      S.rows.forEach((row, i) => {
+        const gapsRow = gap * (row.length - 1);
+        let widths;
+        if (i === rowIdx) {
+          const others = row.filter(n => n !== hot).reduce((t, n) => t + B.get(n).rest.w, 0);
+          const avail = L - gapsRow - tw;
+          widths = row.map(n => n === hot ? tw : B.get(n).rest.w * avail / others);
+        } else {
+          const restW = row.reduce((t, n) => t + B.get(n).rest.w, 0);
+          widths = row.map(n => B.get(n).rest.w * (L - gapsRow) / restW);
+        }
+        let x = Lx;
+        row.forEach((n, j) => { out.set(n, { x, y, w: widths[j], h: rowH[i] }); x += widths[j] + gap; });
+        y += rowH[i] + rowGap;
+      });
+
+      // 3. council column (the expanded council uses its own drawn box)
+      out.set(S.council, isCouncil
+        ? { x: hb.hoverBox[0], y: hb.hoverBox[1], w: hb.hoverBox[2], h: hb.hoverBox[3] }
+        : { x: Cx, y: S.y, w: C, h: S.h });
+
+      // 4. side column
+      const sideH = S.h - rowGap * (S.side.length - 1);
+      const sideRestH = S.side.map(n => B.get(n).rest.h);
+      let sh;
+      if (inSide) {
+        const k = S.side.indexOf(hot);
+        const hotH = Math.min(th, sideH - 48 * (S.side.length - 1));
+        const rest = sideRestH.reduce((t, v, i) => i === k ? t : t + v, 0);
+        sh = sideRestH.map((v, i) => i === k ? hotH : (sideH - hotH) * v / rest);
+      } else sh = sideRestH;
+      y = S.y;
+      S.side.forEach((n, i) => { out.set(n, { x: Sx, y, w: Sd, h: sh[i] }); y += sh[i] + rowGap; });
+      return out;
+    }
+
+    // Item transforms for a box drawn at `r`: the hovered box scales its resting arrangement; any other box
+    // lays its logos out again in the grid that keeps them largest (never above their resting size)
+    function placeItems(b, r, hot) {
+      const n = b.items.length;
+      if (!n) return [];
+      const same = Math.abs(r.x - b.rest.x) < 0.01 && Math.abs(r.y - b.rest.y) < 0.01 && Math.abs(r.w - b.rest.w) < 0.01 && Math.abs(r.h - b.rest.h) < 0.01;
+      if (same) return b.items.map(() => ({ a: 0, b: 0, k: 1 }));
+      if (hot) {
+        const s = Math.min(r.w / b.rest.w, r.h / b.rest.h);
+        return b.items.map(it => {
+          const nx = r.x + (it.ox - b.rest.x) * s, ny = r.y + (it.oy - b.rest.y) * s;
+          return { a: nx - s * it.ox, b: ny - s * it.oy, k: s };
+        });
+      }
+      const pad = 6, aw = Math.max(1, r.w - 2 * pad), ah = Math.max(1, r.h - 2 * pad);
+      const { w: cw, h: ch } = b.cell;
+      let best = null;
+      for (let c = 1; c <= n; c++) {
+        const rows = Math.ceil(n / c);
+        const k = Math.min(1, aw / (c * cw), ah / (rows * ch));
+        const pref = b.restCols ? Math.abs(c - b.restCols) : Math.abs(Math.log((aw / c) / (ah / rows)) - Math.log(cw / ch));
+        if (!best || k > best.k + 1e-6 || (Math.abs(k - best.k) <= 1e-6 && pref < best.pref)) best = { c, rows, k, pref };
+      }
+      const { c, rows, k } = best;
+      const cellW = aw / c;
+      const pitch = Math.min(ah / rows, ch * k + (b.alignTop ? 15 * k : ah));
+      const top = b.alignTop ? r.y + pad : r.y + pad + (ah - pitch * rows) / 2;
+      return b.items.map((it, i) => {
+        const col = i % c, row = Math.floor(i / c);
+        const nx = r.x + pad + (col + 0.5) * cellW, ny = top + (row + 0.5) * pitch;
+        return { a: nx - k * it.ox, b: ny - k * it.oy, k };
+      });
+    }
+
+    function titleTarget(b, r, hot) {
+      if (hot) {
+        const s = Math.min(r.w / b.rest.w, r.h / b.rest.h);
+        const nx = r.x + 3 * s, ny = r.y - 5 * s;
+        return { a: nx - s * b.tx, b: ny - s * b.ty, k: s };
+      }
+      // a narrowed box shrinks its title to its width, so titles never run into each other
+      const k = b.titleW > 0 ? Math.min(1, (r.w - 6) / b.titleW) : 1;
+      const nx = r.x + 3, ny = r.y - 5;
+      return { a: nx - k * b.tx, b: ny - k * b.ty, k };
+    }
+
+    const ease = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const setT = (el, t) => {
+      if (Math.abs(t.k - 1) < 1e-4 && Math.abs(t.a) < 1e-3 && Math.abs(t.b) < 1e-3) el.removeAttribute('transform');
+      else el.setAttribute('transform', `translate(${t.a.toFixed(3)} ${t.b.toFixed(3)}) scale(${t.k.toFixed(5)})`);
+    };
+
+    function applyLayout(hot) {
+      const layout = computeLayout(hot);
+      hoverMap.layout = layout;
+      const jobs = [];
+      for (const [n, b] of hoverMap.boxes) {
+        const r = layout.get(n);
+        const isHot = n === hot;
+        b.group.classList.toggle('hovered', isHot);
+        if (b.isCouncil) {
+          b.normalLayer.classList.toggle('hidden', isHot);
+          b.hoverLayer.classList.toggle('visible', isHot);
+          if (b.title) b.title.classList.toggle('hidden', isHot);
+          if (isHot) continue; // the council's resting layer stays where it was while it fades out
+        }
+        const items = placeItems(b, r, isHot);
+        const title = b.title ? titleTarget(b, r, isHot) : null;
+        jobs.push({ b, from: { ...b.cur }, to: r, items: b.items.map((it, i) => ({ it, from: { ...it.cur }, to: items[i] })),
+          title: title ? { from: { ...b.titleCur }, to: title } : null });
+      }
+      const step = (t) => {
+        for (const j of jobs) {
+          const c = { x: lerp(j.from.x, j.to.x, t), y: lerp(j.from.y, j.to.y, t), w: lerp(j.from.w, j.to.w, t), h: lerp(j.from.h, j.to.h, t) };
+          j.b.cur = c;
+          if (j.b.panel) {
+            j.b.panel.setAttribute('x', c.x); j.b.panel.setAttribute('y', c.y);
+            j.b.panel.setAttribute('width', Math.max(0, c.w)); j.b.panel.setAttribute('height', Math.max(0, c.h));
+          }
+          for (const m of j.items) {
+            const v = { a: lerp(m.from.a, m.to.a, t), b: lerp(m.from.b, m.to.b, t), k: lerp(m.from.k, m.to.k, t) };
+            m.it.cur = v; setT(m.it.el, v);
+          }
+          if (j.title) {
+            const v = { a: lerp(j.title.from.a, j.title.to.a, t), b: lerp(j.title.from.b, j.title.to.b, t), k: lerp(j.title.from.k, j.title.to.k, t) };
+            j.b.titleCur = v; setT(j.b.title, v);
+          }
+        }
+      };
+      if (hoverMap.anim) cancelAnimationFrame(hoverMap.anim);
+      if (reduceMotion.matches) { step(1); return; }
+      const t0 = performance.now();
+      const frame = (now) => {
+        const t = Math.min(1, (now - t0) / MOVE_MS);
+        step(ease(t));
+        hoverMap.anim = t < 1 ? requestAnimationFrame(frame) : null;
+      };
+      hoverMap.anim = requestAnimationFrame(frame);
+    }
+
+    function setHot(name) {
+      if (hoverMap.pending) { clearTimeout(hoverMap.pending); hoverMap.pending = null; }
+      if (name === hoverMap.hot) return;
+      hoverMap.hot = name;
+      applyLayout(name);
+    }
+
+    function schedule(name, delay) {
+      if (hoverMap.pending) { clearTimeout(hoverMap.pending); hoverMap.pending = null; }
+      if (name === hoverMap.hot) return;
+      hoverMap.pending = setTimeout(() => { hoverMap.pending = null; setHot(name); }, delay);
+    }
+
+    function screenToSVG(screenX, screenY) {
+      const svg = hoverMap.svg;
+      if (!svg) return null;
+      const svgRect = svg.getBoundingClientRect();
+      const scale = Math.min(svgRect.width / 1920, svgRect.height / 1080);
+      const offsetX = (svgRect.width - 1920 * scale) / 2;
+      const offsetY = (svgRect.height - 1080 * scale) / 2;
+      return { x: (screenX - svgRect.left - offsetX) / scale, y: (screenY - svgRect.top - offsetY) / scale };
+    }
+
+    // The box under the pointer, in the layout the map is moving to (a box's title strip above it counts)
+    function boxAt(p) {
+      const layout = hoverMap.layout || computeLayout(hoverMap.hot);
+      for (const [n, r] of layout) {
+        const top = n === hoverMap.hot ? 24 : 20;
+        if (p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y - top && p.y <= r.y + r.h) return n;
+      }
+      return null;
+    }
+
+    function onMapPointer(e) {
+      if (isMobile()) return;
+      const p = screenToSVG(e.clientX, e.clientY);
+      if (!p) return;
+      const n = boxAt(p);
+      if (n === hoverMap.hot) { if (hoverMap.pending) { clearTimeout(hoverMap.pending); hoverMap.pending = null; } return; }
+      schedule(n, n ? HOVER_DELAY : LEAVE_DELAY);
+    }
 
     // Initialize the map
     function init() {
       // Skip desktop interactivity on mobile
       if (isMobile()) return;
 
-      // Add click handlers to entire section groups (not just titles)
-      const sectionGroups = document.querySelectorAll('.section-group');
-      sectionGroups.forEach(group => {
-        const isCouncil = group.classList.contains('council-section');
+      initHoverLayout();
 
-        // Initialize hover state for this group
-        hoverState.set(group, {
-          timeout: null,
-          isHovered: false,
-          hoveredRect: null,
-          boundChecker: null
-        });
-
-        function activateHover() {
-          if (isMobile()) return;
-          const state = hoverState.get(group);
-          state.isHovered = true;
-
-          // Move this group to the end of its parent to render on top
-          const parent = group.parentNode;
-          parent.appendChild(group);
-
-          // Use requestAnimationFrame to ensure transition applies after DOM move
-          requestAnimationFrame(() => {
-            if (isCouncil) {
-              // Special handling for council section: fade and grow to 5-column layout
-              const normalGroup = group.querySelector('.council-normal');
-              const hoverGroup = group.querySelector('.council-hover');
-              const mainTitle = group.querySelector(':scope > .section-title');
-              if (normalGroup) normalGroup.classList.add('hidden');
-              if (hoverGroup) hoverGroup.classList.add('visible');
-              if (mainTitle) mainTitle.classList.add('hidden'); // Hide main title with hover activation
-              // No section transform - hover group animates its own scale via CSS
-            } else {
-              // Apply the calculated max scale from data attribute
-              const maxScale = parseFloat(group.getAttribute('data-max-scale')) || 1.8;
-              group.style.transform = `scale(${maxScale})`;
-            }
-
-            // Set up bound checking after animation completes
-            setTimeout(() => {
-              if (state.isHovered) {
-                if (isCouncil) {
-                  // For council, use SVG coordinates and EXPANDED hover bounds from data attributes
-                  const hoverX = parseFloat(group.getAttribute('data-hover-x'));
-                  const hoverY = parseFloat(group.getAttribute('data-hover-y'));
-                  const hoverW = parseFloat(group.getAttribute('data-hover-w'));
-                  const hoverH = parseFloat(group.getAttribute('data-hover-h'));
-
-                  state.boundChecker = (e) => {
-                    if (state.isHovered) {
-                      const svgPoint = screenToSVG(e.clientX, e.clientY);
-                      if (svgPoint && !isWithinBounds(svgPoint, hoverX, hoverY, hoverW, hoverH)) {
-                        deactivateHover();
-                      }
-                    }
-                  };
-                  state.hoveredRect = { council: true }; // Mark as active
-                } else {
-                  // For other sections, use SVG coordinates based on the SCALED panel bounds
-                  const panel = group.querySelector('.panel');
-                  if (panel) {
-                    // Get panel bounds from SVG attributes
-                    const panelX = parseFloat(panel.getAttribute('x')) || 0;
-                    const panelY = parseFloat(panel.getAttribute('y')) || 0;
-                    const panelW = parseFloat(panel.getAttribute('width')) || 0;
-                    const panelH = parseFloat(panel.getAttribute('height')) || 0;
-
-                    // Get the scale factor and transform origin for hover state
-                    const maxScale = parseFloat(group.getAttribute('data-max-scale')) || 1;
-                    const originStyle = group.style.transformOrigin || '';
-                    const originMatch = originStyle.match(/(\d+(?:\.\d+)?)px\s+(\d+(?:\.\d+)?)px/);
-
-                    let scaledX = panelX, scaledY = panelY, scaledW = panelW, scaledH = panelH;
-
-                    if (originMatch && maxScale > 1) {
-                      const originX = parseFloat(originMatch[1]);
-                      const originY = parseFloat(originMatch[2]);
-
-                      // Calculate scaled bounds based on transform origin
-                      // Origin determines which edges stay fixed
-                      if (originX <= panelX + panelW / 2) {
-                        // Origin on left side - left edge stays fixed
-                        scaledW = panelW * maxScale;
-                      } else {
-                        // Origin on right side - right edge stays fixed
-                        scaledX = panelX + panelW - (panelW * maxScale);
-                        scaledW = panelW * maxScale;
-                      }
-
-                      if (originY <= panelY + panelH / 2) {
-                        // Origin on top - top edge stays fixed
-                        scaledH = panelH * maxScale;
-                      } else {
-                        // Origin on bottom - bottom edge stays fixed
-                        scaledY = panelY + panelH - (panelH * maxScale);
-                        scaledH = panelH * maxScale;
-                      }
-                    }
-
-                    state.boundChecker = (e) => {
-                      if (state.isHovered) {
-                        const svgPoint = screenToSVG(e.clientX, e.clientY);
-                        if (svgPoint && !isWithinBounds(svgPoint, scaledX, scaledY, scaledW, scaledH)) {
-                          deactivateHover();
-                        }
-                      }
-                    };
-                    state.hoveredRect = { panel: true }; // Mark as active
-                  } else {
-                    state.hoveredRect = group.getBoundingClientRect();
-                    state.boundChecker = (e) => {
-                      if (state.isHovered && state.hoveredRect) {
-                        const x = e.clientX;
-                        const y = e.clientY;
-                        const rect = state.hoveredRect;
-                        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-                          deactivateHover();
-                        }
-                      }
-                    };
-                  }
-                }
-                document.addEventListener('mousemove', state.boundChecker);
-              }
-            }, 350); // Wait for 300ms transition + small buffer
-          });
-        }
-
-        function deactivateHover() {
-          const state = hoverState.get(group);
-
-          // Clear timeout if pending
-          if (state.timeout) {
-            clearTimeout(state.timeout);
-            state.timeout = null;
-          }
-
-          // Remove bound checker
-          if (state.boundChecker) {
-            document.removeEventListener('mousemove', state.boundChecker);
-            state.boundChecker = null;
-          }
-
-          state.isHovered = false;
-          state.hoveredRect = null;
-
-          if (isCouncil) {
-            // Fade back to normal 2-column layout
-            const normalGroup = group.querySelector('.council-normal');
-            const hoverGroup = group.querySelector('.council-hover');
-            const mainTitle = group.querySelector(':scope > .section-title');
-            if (normalGroup) normalGroup.classList.remove('hidden');
-            if (hoverGroup) hoverGroup.classList.remove('visible');
-            if (mainTitle) mainTitle.classList.remove('hidden'); // Show main title again
-          }
-          // Reset scale on mouse leave
-          group.style.transform = 'scale(1)';
-        }
-
-        // Helper to convert screen coordinates to SVG coordinates
-        function screenToSVG(screenX, screenY) {
-          const svg = document.querySelector('.map-container svg');
-          if (!svg) return null;
-          const svgRect = svg.getBoundingClientRect();
-          const viewBoxWidth = 1920;
-          const viewBoxHeight = 1080;
-          const scaleX = svgRect.width / viewBoxWidth;
-          const scaleY = svgRect.height / viewBoxHeight;
-          const scale = Math.min(scaleX, scaleY);
-          const scaledWidth = viewBoxWidth * scale;
-          const scaledHeight = viewBoxHeight * scale;
-          const offsetX = (svgRect.width - scaledWidth) / 2;
-          const offsetY = (svgRect.height - scaledHeight) / 2;
-          const svgX = (screenX - svgRect.left - offsetX) / scale;
-          const svgY = (screenY - svgRect.top - offsetY) / scale;
-          return { x: svgX, y: svgY };
-        }
-
-        // For council section, check if point is within specified bounds
-        function isWithinBounds(svgPoint, x, y, w, h) {
-          return svgPoint.x >= x && svgPoint.x <= x + w &&
-                 svgPoint.y >= y && svgPoint.y <= y + h;
-        }
-
-        group.addEventListener('mouseenter', (e) => {
-          if (isMobile()) return;
-          const state = hoverState.get(group);
-
-          // For council section, only activate if mouse is within NORMAL panel bounds
-          if (isCouncil) {
-            const normalX = parseFloat(group.getAttribute('data-normal-x'));
-            const normalY = parseFloat(group.getAttribute('data-normal-y'));
-            const normalW = parseFloat(group.getAttribute('data-normal-w'));
-            const normalH = parseFloat(group.getAttribute('data-normal-h'));
-            const svgPoint = screenToSVG(e.clientX, e.clientY);
-            if (!svgPoint || !isWithinBounds(svgPoint, normalX, normalY, normalW, normalH)) {
-              return; // Don't activate - mouse is not in normal panel area
-            }
-          }
-
-          // Delay hover activation by 0.25 seconds
-          state.timeout = setTimeout(activateHover, 250);
-        });
-
-        group.addEventListener('mouseleave', () => {
-          if (isMobile()) return;
-          // Only deactivate if hover hasn't fully activated yet
-          // Once hoveredRect is set, we use bounds checking instead
-          const state = hoverState.get(group);
-          if (!state.hoveredRect) {
-            deactivateHover();
-          }
-        });
-
-        // Make entire section clickable for popup (desktop only)
+      // Make entire section clickable for popup (desktop only)
+      document.querySelectorAll('.section-group').forEach(group => {
         group.addEventListener('click', (e) => {
           if (isMobile()) return;
           // Don't trigger if clicking on a link inside the section
-          if (e.target.closest('a')) return;
+          if (e.target.closest('a[href]')) return;
 
           const sectionName = group.getAttribute('data-section');
           if (sectionName) {
@@ -1064,7 +1131,7 @@
       grid.className = 'modal-grid';
 
       // Add special class for council/core orgs
-      if (sectionName === 'Hedera Council') {
+      if (sectionName === 'Hedera Council' || sectionName === 'Strategic Partners' || sectionName === 'Community Partners') {
         grid.classList.add('council');
       } else if (sectionName === 'Independent Core Organizations') {
         grid.classList.add('core-orgs');
@@ -1084,10 +1151,6 @@
             sizeClass = ' logo-foundation';
           } else if (item.entity === 'Hedera Council') {
             sizeClass = ' logo-3x';
-          } else if (item.entity === 'Exponential Science') {
-            sizeClass = ' logo-2x';
-          } else if (item.entity === 'The Hashgraph Association') {
-            sizeClass = ' logo-association';
           }
         }
 
@@ -1187,7 +1250,7 @@
       });
 
       // Special case: check for Genfinity
-      let isGenfinity = term.includes('genfinity') || 'genfinity'.includes(term);
+      let isGenfinity = !match && (term.includes('genfinity') || 'genfinity'.includes(term));
 
       if (match || isGenfinity) {
         // Found
@@ -1267,10 +1330,18 @@
               foundImage = genfinityLink.querySelector('image');
             }
           } else if (svgElement) {
+            // Every logo carries its organization's name (data-entity); outside the expanded council layer first
+            const byName = [...svgElement.querySelectorAll('a.map-item')].filter(a => a.getAttribute('data-entity') === match.entity && !a.closest('.council-hover'));
+            const inSection = byName.find(a => a.closest('.section-group')?.getAttribute('data-section') === match.section) || byName[0];
+            if (inSection) {
+              foundImage = inSection.querySelector('image');
+              foundSection = inSection.closest('.section-group');
+            }
+
             // Search all logo-link elements and combine their label texts for full name match
             const allLogoLinks = svgElement.querySelectorAll('a.logo-link');
 
-            allLogoLinks.forEach(logoLink => {
+            if (!foundSection) allLogoLinks.forEach(logoLink => {
               // Get all logo-label text elements and combine them
               const labelTexts = logoLink.querySelectorAll('.logo-label');
               const fullName = Array.from(labelTexts)
@@ -1289,7 +1360,7 @@
             });
 
             // If not found by label text, try finding by website URL (for Core Orgs which have no text labels)
-            if (!foundImage && match.website) {
+            if (!foundSection && !foundImage && match.website) {
               const linkByUrl = svgElement.querySelector(`a.logo-link[href="${match.website}"]`);
               if (linkByUrl) {
                 foundImage = linkByUrl.querySelector('image');
@@ -1306,10 +1377,10 @@
           }
 
           // For Council section, find the logo in council-hover group (not council-normal)
-          if (foundSection && foundSection.classList.contains('council-section') && match.website) {
+          if (foundSection && foundSection.classList.contains('council-section')) {
             const hoverGroup = foundSection.querySelector('.council-hover');
             if (hoverGroup) {
-              const hoverLink = hoverGroup.querySelector(`a.logo-link[href="${match.website}"]`);
+              const hoverLink = [...hoverGroup.querySelectorAll('a.map-item')].find(a => a.getAttribute('data-entity') === match.entity);
               if (hoverLink) {
                 foundImage = hoverLink.querySelector('image');
               }
@@ -1448,70 +1519,15 @@
       window.addEventListener('resize', positionDesktopSearch);
     }
 
-    // Function to activate hover state on a section
+    // Search: open the found logo's section (the same zoom and reflow as hovering it)
     function activateSectionHover(sectionGroup) {
-      if (!sectionGroup) return;
-
-      const isCouncil = sectionGroup.classList.contains('council-section');
-
-      // Move to end of parent to render on top
-      const parent = sectionGroup.parentNode;
-      parent.appendChild(sectionGroup);
-
-      requestAnimationFrame(() => {
-        if (isCouncil) {
-          const normalGroup = sectionGroup.querySelector('.council-normal');
-          const hoverGroup = sectionGroup.querySelector('.council-hover');
-          const mainTitle = sectionGroup.querySelector(':scope > .section-title');
-          if (normalGroup) normalGroup.classList.add('hidden');
-          if (hoverGroup) hoverGroup.classList.add('visible');
-          if (mainTitle) mainTitle.classList.add('hidden');
-
-          // Set the hover group's panel to solid black (it's inside council-hover)
-          const hoverPanel = hoverGroup ? hoverGroup.querySelector('.panel') : null;
-          if (hoverPanel) {
-            hoverPanel.style.fill = '#000000';
-          }
-        } else {
-          // Set panel to solid black background for non-council sections
-          const panel = sectionGroup.querySelector('.panel');
-          if (panel) {
-            panel.style.fill = '#000000';
-          }
-          const maxScale = parseFloat(sectionGroup.getAttribute('data-max-scale')) || 1.8;
-          sectionGroup.style.transform = `scale(${maxScale})`;
-        }
-      });
+      if (!sectionGroup || !hoverMap.svg) return;
+      setHot(sectionGroup.getAttribute('data-section'));
     }
 
-    // Function to deactivate hover state on a section
     function deactivateSectionHover(sectionGroup) {
-      if (!sectionGroup) return;
-
-      const isCouncil = sectionGroup.classList.contains('council-section');
-
-      if (isCouncil) {
-        const normalGroup = sectionGroup.querySelector('.council-normal');
-        const hoverGroup = sectionGroup.querySelector('.council-hover');
-        const mainTitle = sectionGroup.querySelector(':scope > .section-title');
-
-        // Reset the hover group's panel background
-        const hoverPanel = hoverGroup ? hoverGroup.querySelector('.panel') : null;
-        if (hoverPanel) {
-          hoverPanel.style.fill = '';
-        }
-
-        if (normalGroup) normalGroup.classList.remove('hidden');
-        if (hoverGroup) hoverGroup.classList.remove('visible');
-        if (mainTitle) mainTitle.classList.remove('hidden');
-      } else {
-        // Reset panel background for non-council sections
-        const panel = sectionGroup.querySelector('.panel');
-        if (panel) {
-          panel.style.fill = '';
-        }
-      }
-      sectionGroup.style.transform = 'scale(1)';
+      if (!sectionGroup || !hoverMap.svg) return;
+      if (hoverMap.hot === sectionGroup.getAttribute('data-section')) setHot(null);
     }
 
     // Update footer date to current date (so it's always fresh, not the build date)
