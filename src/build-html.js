@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import Papa from "papaparse";
+import { wordmarkDataUri, logoRatio } from "./wordmarks.js";
 
 const ROOT = process.cwd();
 const CSV_PATH = path.join(ROOT, "data", "hedera_ecosystem_master.csv");
@@ -13,6 +14,8 @@ const OUT_HTML = path.join(ROOT, "dist", "hedera-ecosystem.html");
 const SECTIONS = [
   { name: "Independent Core Organizations", subcategories: ["Core Organization"] },
   { name: "Hedera Council", subcategories: ["Council Member"] },
+  { name: "Strategic Partners", subcategories: ["Strategic Partner"] },
+  { name: "Community Partners", subcategories: ["Community Partner"] },
   { name: "Native Services", subcategories: ["Native Service"] },
   { name: "DeFi", subcategories: ["DEX", "Lending", "Staking", "Suite"] },
   { name: "NFT Markets", subcategories: ["NFT Platform", "NFT Marketplace"] },
@@ -51,13 +54,17 @@ const CSV_TO_SECTION = {
   "Real World Assets": "Real World Assets",
   "Gaming and Entertainment": "Gaming & Entertainment",
   "Hedera Council": "Hedera Council",
+  "Strategic Partners": "Strategic Partners",
+  "Community Partners": "Community Partners",
   "Independent Core Organizations": "Independent Core Organizations",
   "Meme Tokens": "Meme Tokens",
   "Native Services": "Native Services"
 };
 
 // Logo file finder (matching render.js mappings)
-function findLogoFile(entityName, section = null) {
+function findLogoFile(entityName, section = null, csvLogo = "") {
+  // The CSV's Logo column (a path under logos/) wins: the hederacouncil.org sync writes it
+  if (csvLogo && fs.existsSync(path.join(LOGOS_PATH, csvLogo))) return path.join(LOGOS_PATH, csvLogo);
   // Council-specific logo mappings
   const councilMappings = {
     "Accenture": path.join(LOGOS_PATH, "council", "accenture-black.svg"),
@@ -72,7 +79,6 @@ function findLogoFile(entityName, section = null) {
     "DLA Piper": path.join(LOGOS_PATH, "council", "dla-piper-black.svg"),
     "EDF": path.join(LOGOS_PATH, "council", "edf-black.svg"),
     "FedEx": path.join(LOGOS_PATH, "council", "fedex.svg"),
-    "Hitachi": path.join(LOGOS_PATH, "council", "hitachi-black.svg"),
     "Swirlds Labs": path.join(LOGOS_PATH, "council", "swirlds-black.svg"),
     "Tata Communications": path.join(LOGOS_PATH, "council", "tata-black.svg"),
     "LSE": path.join(LOGOS_PATH, "council", "lse-black.svg"),
@@ -81,7 +87,6 @@ function findLogoFile(entityName, section = null) {
     "ServiceNow": path.join(LOGOS_PATH, "council", "service-now-black.svg"),
     "Zain Group": path.join(LOGOS_PATH, "council", "zain-black.svg"),
     "Arrow": path.join(LOGOS_PATH, "council", "arrow-black.svg"),
-    "Cofra": path.join(LOGOS_PATH, "council", "cofra-black.svg"),
     "Dentons": path.join(LOGOS_PATH, "council", "dentons-black.svg"),
     "IIT Madras": path.join(LOGOS_PATH, "council", "iit-madras-black.svg"),
     "Magalu": path.join(LOGOS_PATH, "council", "magalu-black.svg"),
@@ -285,8 +290,6 @@ function findLogoFile(entityName, section = null) {
     "Hashgraph": path.join(LOGOS_PATH, "core", "Hashgraph full size.svg"),
     "Hedera Council": path.join(LOGOS_PATH, "core", "Hedera Council full size.svg"),
     "Hedera Foundation": path.join(LOGOS_PATH, "core", "Hedera Foundation full size.svg"),
-    "The Hashgraph Association": path.join(LOGOS_PATH, "core", "The Hashgraph Assoication full size.svg"),
-    "Exponential Science": path.join(LOGOS_PATH, "core", "Exponetntial Science full size.svg"),
   };
 
   if (specialMappings[entityName] && fs.existsSync(specialMappings[entityName])) {
@@ -310,35 +313,6 @@ function imageToDataUri(filePath) {
   return `data:${mimeTypes[ext] || "image/png"};base64,${data.toString("base64")}`;
 }
 
-// Convert black SVG content to white by replacing fill values directly.
-// This avoids relying on CSS filter: invert(1) which doesn't work in Safari on SVG <image> elements.
-function makeCouncilLogoWhite(svgContent) {
-  svgContent = svgContent.replace(/fill="black"/g, 'fill="white"');
-  svgContent = svgContent.replace(/fill="#000000"/g, 'fill="#ffffff"');
-  svgContent = svgContent.replace(/fill="#000"/g, 'fill="#fff"');
-  svgContent = svgContent.replace(/fill\s*:\s*black/g, 'fill:white');
-  svgContent = svgContent.replace(/fill\s*:\s*#000000/g, 'fill:#ffffff');
-  svgContent = svgContent.replace(/fill\s*:\s*#000([;\s}])/g, 'fill:#fff$1');
-  if (svgContent.match(/<svg[^>]*\sfill="none"/)) {
-    svgContent = svgContent.replace(/(<svg[^>]*)\sfill="none"/, '$1 fill="white"');
-  } else if (!svgContent.match(/<svg[^>]*\sfill="/)) {
-    svgContent = svgContent.replace(/<svg/, '<svg fill="white"');
-  }
-  return svgContent;
-}
-
-// Create a white version of an SVG data URI for council logos
-function makeCouncilLogoDataUriWhite(dataUri, filePath) {
-  if (!dataUri || !filePath) return dataUri;
-  const ext = path.extname(filePath).toLowerCase();
-  if (ext !== '.svg') return dataUri;
-  const base64Match = dataUri.match(/^data:image\/svg\+xml;base64,(.+)$/);
-  if (!base64Match) return dataUri;
-  let svgContent = Buffer.from(base64Match[1], 'base64').toString('utf8');
-  svgContent = makeCouncilLogoWhite(svgContent);
-  return `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`;
-}
-
 function readCSV() {
   return Papa.parse(fs.readFileSync(CSV_PATH, "utf8"), { header: true, skipEmptyLines: true }).data;
 }
@@ -359,14 +333,11 @@ function buildSectionData(rows) {
 
     if (result[displaySection].subcategories[targetSubcat]) {
       const entityName = row.Entity?.trim();
-      const logoFile = findLogoFile(entityName, displaySection);
-      let logoDataUri = imageToDataUri(logoFile);
-
-      // Pre-process council SVG logos to white (Safari CSS filter fix)
-      const noInvertLogos = ["Repsol", "FedEx"];
-      if (displaySection === "Hedera Council" && logoDataUri && !noInvertLogos.includes(entityName)) {
-        logoDataUri = makeCouncilLogoDataUriWhite(logoDataUri, logoFile);
-      }
+      const logoFile = findLogoFile(entityName, displaySection, row.Logo?.trim());
+      // Council and council partner logos are white wordmarks (repainted in the build: Safari ignores CSS
+      // filters on SVG images); the other sections use their logo files as they are
+      const wordmark = ["Hedera Council", "Strategic Partners", "Community Partners"].includes(displaySection);
+      const logoDataUri = wordmark ? wordmarkDataUri(logoFile, entityName) : imageToDataUri(logoFile);
 
       result[displaySection].subcategories[targetSubcat].push({
         entity: entityName,
@@ -374,6 +345,7 @@ function buildSectionData(rows) {
         tier: row.Tier?.trim() || "",
         status: row.Status?.trim() || "",
         website: row.Website?.trim() || "",
+        logo: row.Logo?.trim() || "",
         logoDataUri: logoDataUri || ""
       });
     }
@@ -394,10 +366,10 @@ function generateMobileSections(sectionData) {
     "Google": 1.67, "IBM": 1.67, "Boeing": 4.3, "Deutsche Telekom": 1.67,
     "LG Electronics": 1.67, "Nomura": 1.67, "Ubisoft": 1.67, "UCL": 1.0,
     "Shinhan Bank": 1.67, "Dell": 2.18, "DLA Piper": 1.67, "EDF": 1.67,
-    "eftpos": 1.0, "Hitachi": 1.67, "Mondelez": 1.67, "ServiceNow": 1.67,
+    "eftpos": 1.0, "Mondelez": 1.67, "ServiceNow": 1.67,
     "Swirlds Labs": 1.67, "Tata Communications": 1.67, "Worldpay": 3.71,
     "Zain Group": 1.67, "LSE": 1.67, "abrdn": 1.67, "Arrow": 1.67,
-    "Cofra": 1.67, "Dentons": 1.67, "IIT Madras": 1.67, "Magalu": 1.67,
+    "Dentons": 1.67, "IIT Madras": 1.67, "Magalu": 1.67,
     "Repsol": 4.27, "Blockchain for Energy": 2.23, "GBBC": 1.67
   };
 
@@ -410,14 +382,12 @@ function generateMobileSections(sectionData) {
   };
 
   // Core org relative heights (from desktop render.js - scaled up for mobile 3-column layout)
-  // Desktop heights: Hashgraph: 31, Hedera Council: 99, Hedera Foundation: 112, THA: 42, ExpSci: 70
+  // Desktop heights: Hashgraph: 31, Hedera Council: 99, Hedera Foundation: 112
   // For mobile 3-column, use larger base sizes while maintaining ratios
   const coreOrgHeights = {
     "Hashgraph": 31,           // 22 * 1.4
     "Hedera Council": 98,      // 70 * 1.4
-    "Hedera Foundation": 112,  // 80 * 1.4
-    "The Hashgraph Association": 42,  // 30 * 1.4
-    "Exponential Science": 70  // 50 * 1.4
+    "Hedera Foundation": 112   // 80 * 1.4
   };
 
   let html = '';
@@ -432,6 +402,7 @@ function generateMobileSections(sectionData) {
     // Determine section CSS class
     let sectionClass = 'mobile-section';
     if (section.name === 'Hedera Council') sectionClass += ' council';
+    else if (section.name === 'Strategic Partners' || section.name === 'Community Partners') sectionClass += ' council partners';
     else if (section.name === 'Independent Core Organizations') sectionClass += ' core-orgs';
     else if (section.name === 'Native Services') sectionClass += ' native-services';
 
@@ -447,6 +418,22 @@ function generateMobileSections(sectionData) {
         html += `        <a class="mobile-native-service" ${hasWebsite ? `href="${item.website}" target="_blank" rel="noopener noreferrer"` : ''}>\n`;
         html += `          <span class="mobile-native-abbrev">${data.abbrev}</span>\n`;
         html += `          <span class="mobile-native-name">${data.name}</span>\n`;
+        html += `        </a>\n`;
+      });
+    } else if (section.name === 'Strategic Partners' || section.name === 'Community Partners') {
+      // Council partner wordmarks (white, from hederacouncil.org) - 2 per row, similar visual weight
+      items.forEach(item => {
+        const hasWebsite = item.website && item.website.trim() !== '';
+        const linkAttrs = hasWebsite ? `href="${item.website}" target="_blank" rel="noopener noreferrer"` : '';
+        const ratio = logoRatio(findLogoFile(item.entity, section.name, item.logo)) || 3;
+        const height = Math.min(38, Math.max(14, Math.sqrt(3000 / ratio)));
+        html += `        <a class="mobile-logo" ${linkAttrs}>\n`;
+        if (item.logoDataUri) {
+          html += `          <img class="mobile-logo-img" src="${item.logoDataUri}" alt="${item.entity}" style="height: ${height.toFixed(1)}px;">\n`;
+        } else {
+          html += `          <div class="mobile-logo-placeholder">${item.entity.substring(0, 2).toUpperCase()}</div>\n`;
+        }
+        html += `          <span class="mobile-logo-name">${item.entity}</span>\n`;
         html += `        </a>\n`;
       });
     } else if (section.name === 'Hedera Council') {

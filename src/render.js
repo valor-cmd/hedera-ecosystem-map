@@ -3,6 +3,7 @@ import path from "node:path";
 import Papa from "papaparse";
 import * as d3 from "d3";
 import { JSDOM } from "jsdom";
+import { logoRatio, wordmarkDataUri } from "./wordmarks.js";
 
 const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>");
 global.document = dom.window.document;
@@ -55,6 +56,8 @@ const SECTIONS = [
   { name: "Real World Assets", subcategories: ["Commodities", "Real Estate", "Carbon Credits", "Security Tokens", "RWA DeFi", "Exchange", "Environmental"] },
   { name: "Gaming & ENT", subcategories: ["Gaming", "Music"] },
   { name: "Hedera Council", subcategories: ["Council Member"] },
+  { name: "Strategic Partners", subcategories: ["Strategic Partner"] },
+  { name: "Community Partners", subcategories: ["Community Partner"] },
   { name: "Independent Core Organizations", subcategories: ["Core Organization"] },
   { name: "Meme Tokens", subcategories: ["Meme Token"] },
   { name: "Native Services", subcategories: ["Native Service"] }
@@ -78,13 +81,17 @@ const CSV_TO_SECTION = {
   "Real World Assets": "Real World Assets",
   "Gaming and Entertainment": "Gaming & ENT",
   "Hedera Council": "Hedera Council",
+  "Strategic Partners": "Strategic Partners",
+  "Community Partners": "Community Partners",
   "Independent Core Organizations": "Independent Core Organizations",
   "Meme Tokens": "Meme Tokens",
   "Native Services": "Native Services"
 };
 
 // Logo file finder - section parameter allows section-specific logo selection
-function findLogoFile(entityName, section = null) {
+function findLogoFile(entityName, section = null, csvLogo = "") {
+  // The CSV's Logo column (a path under logos/) wins: the hederacouncil.org sync writes it
+  if (csvLogo && fs.existsSync(path.join(LOGOS_PATH, csvLogo))) return path.join(LOGOS_PATH, csvLogo);
   // Council-specific logo mappings (used only when section is "Hedera Council")
   const councilMappings = {
     "Accenture": path.join(LOGOS_PATH, "council", "accenture-black.svg"),
@@ -99,7 +106,6 @@ function findLogoFile(entityName, section = null) {
     "DLA Piper": path.join(LOGOS_PATH, "council", "dla-piper-black.svg"),
     "EDF": path.join(LOGOS_PATH, "council", "edf-black.svg"),
     "FedEx": path.join(LOGOS_PATH, "council", "fedex.svg"),
-    "Hitachi": path.join(LOGOS_PATH, "council", "hitachi-black.svg"),
     "Swirlds Labs": path.join(LOGOS_PATH, "council", "swirlds-black.svg"),
     "Tata Communications": path.join(LOGOS_PATH, "council", "tata-black.svg"),
     "LSE": path.join(LOGOS_PATH, "council", "lse-black.svg"),
@@ -108,7 +114,6 @@ function findLogoFile(entityName, section = null) {
     "ServiceNow": path.join(LOGOS_PATH, "council", "service-now-black.svg"),
     "Zain Group": path.join(LOGOS_PATH, "council", "zain-black.svg"),
     "Arrow": path.join(LOGOS_PATH, "council", "arrow-black.svg"),
-    "Cofra": path.join(LOGOS_PATH, "council", "cofra-black.svg"),
     "Dentons": path.join(LOGOS_PATH, "council", "dentons-black.svg"),
     "IIT Madras": path.join(LOGOS_PATH, "council", "iit-madras-black.svg"),
     "Magalu": path.join(LOGOS_PATH, "council", "magalu-black.svg"),
@@ -315,10 +320,6 @@ function findLogoFile(entityName, section = null) {
     "Hedera Council": path.join(LOGOS_PATH, "core", "Hedera Council full size.svg"),
     "Hedera Foundation": path.join(LOGOS_PATH, "core", "Hedera Foundation full size.svg"),
     "Hedera Foundation Full": path.join(LOGOS_PATH, "core", "Hedera Foundation full size.svg"),
-    "The Hashgraph Association": path.join(LOGOS_PATH, "core", "The Hashgraph Assoication full size.svg"),
-    "The Hashgraph Association Full": path.join(LOGOS_PATH, "core", "The Hashgraph Assoication full size.svg"),
-    "Exponential Science": path.join(LOGOS_PATH, "core", "Exponetntial Science full size.svg"),
-    "Exponential Science Full": path.join(LOGOS_PATH, "core", "Exponetntial Science full size.svg"),
   };
 
   if (specialMappings[entityName] && fs.existsSync(specialMappings[entityName])) {
@@ -340,29 +341,6 @@ function imageToDataUri(filePath) {
   if (ext === ".svg") return { type: "svg", content: data.toString("utf8") };
   const mimeTypes = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp" };
   return { type: "image", dataUri: `data:${mimeTypes[ext] || "image/png"};base64,${data.toString("base64")}` };
-}
-
-// Convert black SVG content to white by replacing fill values directly.
-// This avoids relying on CSS filter: invert(1) which doesn't work in Safari on SVG <image> elements.
-function makeCouncilLogoWhite(svgContent) {
-  // Replace fill="black" attribute values with fill="white"
-  svgContent = svgContent.replace(/fill="black"/g, 'fill="white"');
-  // Replace fill="#000000" and fill="#000" with white
-  svgContent = svgContent.replace(/fill="#000000"/g, 'fill="#ffffff"');
-  svgContent = svgContent.replace(/fill="#000"/g, 'fill="#fff"');
-  // Replace CSS fill:black with fill:white (handles <style> blocks)
-  svgContent = svgContent.replace(/fill\s*:\s*black/g, 'fill:white');
-  // Replace CSS fill:#000000 and fill:#000 with white
-  svgContent = svgContent.replace(/fill\s*:\s*#000000/g, 'fill:#ffffff');
-  svgContent = svgContent.replace(/fill\s*:\s*#000([;\s}])/g, 'fill:#fff$1');
-  // Set fill="white" on root <svg> element so paths without explicit fill inherit white
-  // (SVG default fill is black, so paths without a fill attribute would otherwise be invisible)
-  if (svgContent.match(/<svg[^>]*\sfill="none"/)) {
-    svgContent = svgContent.replace(/(<svg[^>]*)\sfill="none"/, '$1 fill="white"');
-  } else if (!svgContent.match(/<svg[^>]*\sfill="/)) {
-    svgContent = svgContent.replace(/<svg/, '<svg fill="white"');
-  }
-  return svgContent;
 }
 
 function wrapText(text, maxCharsPerLine) {
@@ -402,7 +380,8 @@ function buildSectionData(rows) {
     if (result[displaySection].subcategories[targetSubcat]) {
       result[displaySection].subcategories[targetSubcat].push({
         entity: row.Entity?.trim(), role, tier: row.Tier?.trim() || "",
-        status: row.Status?.trim() || "", website: row.Website?.trim() || ""
+        status: row.Status?.trim() || "", website: row.Website?.trim() || "",
+        logo: row.Logo?.trim() || ""
       });
     }
   });
@@ -439,22 +418,32 @@ function renderSVG(sectionData) {
   // Layout fills full canvas width
   const footerSpace = 85;  // 4x more bottom padding
 
-  // Right side: Council (2 cols) + Core Orgs/Native Services - WIDER
-  const councilW = 320;  // Wider for 2 columns of council logos
-  const coreOrgsW = 180;  // Wider for Core Orgs + Native Services
-  const rightSectionW = councilW + coreOrgsW + gap;
+  // Right side: Hedera Council column (2 columns of logos) + a side column with the council's Strategic and
+  // Community Partners (hederacouncil.org's other two tabs), the Independent Core Organizations and Native Services
+  const councilW = 320;
+  const sideW = 200;
+  const rightSectionW = councilW + sideW + gap;
   const leftAreaW = W - leftMargin - rightMargin - rightSectionW - gap;  // Left area width
 
-  // Right side vertical panels - fill to edge
   const rightX = W - rightMargin - rightSectionW;
   const councilH = H - contentY - footerSpace;  // Full height for Council with bottom padding
-  const coreOrgsH = (councilH - rowGap) * 0.65;  // 65% for Core Orgs, using rowGap for title space
-  const nativeH = councilH - coreOrgsH - rowGap;  // Rest for Native Services, using rowGap for title space
+  const sideX = rightX + councilW + gap;
+
+  // Side column, top to bottom. Heights fit the content; Native Services takes what is left.
+  const sideBoxes = [
+    { section: "Strategic Partners", h: 110 },
+    { section: "Community Partners", h: 200 },
+    { section: "Independent Core Organizations", h: 230 },
+    { section: "Native Services", h: 0 },
+  ];
+  sideBoxes[sideBoxes.length - 1].h = councilH - rowGap * (sideBoxes.length - 1) - sideBoxes.slice(0, -1).reduce((t, b) => t + b.h, 0);
 
   // Calculate row heights to fill vertical space (4 rows + footer)
   const availableHeight = H - contentY - footerSpace;
   const totalRowGaps = rowGap * 3;
   const rowH = Math.floor((availableHeight - totalRowGaps) / 4);
+  // the last row takes the rounding remainder so the left area ends exactly where the right columns end
+  const lastRowH = availableHeight - totalRowGaps - rowH * 3;
 
   // Row 1: 3 panels (left side) - Wallets wider, Exchanges narrower
   const row1Y = contentY;
@@ -463,123 +452,101 @@ function renderSVG(sectionData) {
   const r1_custodians = Math.floor(leftAreaW * 0.12);
   const r1_exchanges = leftAreaW - r1_wallets - r1_custodians - gap * 2;  // Narrower
 
-  // Row 2: 5 panels - proportional to entity count (3, 6, 12, 5, 11 = 37 total)
+  // Row 2: 5 panels - proportional to entity count
   const row2Y = row1Y + row1H + rowGap;
   const row2H = rowH;
-  const r2_oracles = Math.floor(leftAreaW * 0.08);    // 3 entities
-  const r2_bridges = Math.floor(leftAreaW * 0.16);    // 6 entities
-  const r2_services = Math.floor(leftAreaW * 0.32);   // 12 entities (was 20% - too cramped)
-  const r2_onramps = Math.floor(leftAreaW * 0.14);    // 5 entities
-  const r2_partners = leftAreaW - r2_oracles - r2_bridges - r2_services - r2_onramps - gap * 4;  // 11 entities (~30%)
+  const r2_oracles = Math.floor(leftAreaW * 0.08);
+  const r2_bridges = Math.floor(leftAreaW * 0.16);
+  const r2_services = Math.floor(leftAreaW * 0.32);
+  const r2_onramps = Math.floor(leftAreaW * 0.14);
+  const r2_partners = leftAreaW - r2_oracles - r2_bridges - r2_services - r2_onramps - gap * 4;
 
-  // Row 3: 5 panels - proportional to entity count (2, 5, 3, 9, 10 = 29 total)
+  // Row 3: 5 panels - proportional to entity count
   const row3Y = row2Y + row2H + rowGap;
   const row3H = rowH;
-  const r3_advisory = Math.floor(leftAreaW * 0.07);   // 2 entities
-  const r3_risk = Math.floor(leftAreaW * 0.17);       // 5 entities (was 14%)
-  const r3_stablecoin = Math.floor(leftAreaW * 0.10); // 3 entities
-  const r3_tooling = Math.floor(leftAreaW * 0.31);    // 9 entities (was 20% - too cramped)
-  const r3_meme = leftAreaW - r3_advisory - r3_risk - r3_stablecoin - r3_tooling - gap * 4;  // 20 entities (~35%)
+  const r3_advisory = Math.floor(leftAreaW * 0.07);
+  const r3_risk = Math.floor(leftAreaW * 0.17);
+  const r3_stablecoin = Math.floor(leftAreaW * 0.10);
+  const r3_tooling = Math.floor(leftAreaW * 0.31);
+  const r3_meme = leftAreaW - r3_advisory - r3_risk - r3_stablecoin - r3_tooling - gap * 4;
 
-  // Row 4: 4 panels (DeFi, NFTs, Gaming & ENT, Real World Assets) - adjusted for 12 DeFi + 10 Gaming
+  // Row 4: 4 panels (DeFi, NFTs, Gaming & ENT, Real World Assets)
   const row4Y = row3Y + row3H + rowGap;
-  const row4H = rowH;
-  const r4_defi = Math.floor(leftAreaW * 0.30);  // Larger for 12 DeFi entities
-  const r4_nfts = Math.floor(leftAreaW * 0.10);  // Smaller, only 3 NFT entities
-  const r4_gaming = Math.floor(leftAreaW * 0.28);  // Much larger for 10 gaming entities
-  const r4_rwas = leftAreaW - r4_defi - r4_nfts - r4_gaming - gap * 3;  // ~32% for 9 RWA entities
+  const row4H = lastRowH;
+  const r4_defi = Math.floor(leftAreaW * 0.30);
+  const r4_nfts = Math.floor(leftAreaW * 0.10);
+  const r4_gaming = Math.floor(leftAreaW * 0.28);
+  const r4_rwas = leftAreaW - r4_defi - r4_nfts - r4_gaming - gap * 3;
 
-  const panels = [
-    // Row 1: Wallets, Custodians, Exchanges (left side)
-    { section: "Wallets", x: leftMargin, y: row1Y, w: r1_wallets, h: row1H, alignLeft: true, alignTop: true },
-    { section: "Custodians", x: leftMargin + r1_wallets + gap, y: row1Y, w: r1_custodians, h: row1H, alignTop: true },
-    { section: "Exchanges", x: leftMargin + r1_wallets + gap + r1_custodians + gap, y: row1Y, w: r1_exchanges, h: row1H, alignTop: true },
-
-    // Row 2: Oracles, Bridges, Services, Onramps, Implementation Partners
-    { section: "Oracles", x: leftMargin, y: row2Y, w: r2_oracles, h: row2H, alignLeft: true, alignTop: true },
-    { section: "Bridges and Interoperability", x: leftMargin + r2_oracles + gap, y: row2Y, w: r2_bridges, h: row2H, alignTop: true },
-    { section: "Services", x: leftMargin + r2_oracles + gap + r2_bridges + gap, y: row2Y, w: r2_services, h: row2H, alignTop: true },
-    { section: "Onramps", x: leftMargin + r2_oracles + gap + r2_bridges + gap + r2_services + gap, y: row2Y, w: r2_onramps, h: row2H, alignTop: true },
-    { section: "Implementation Partners", x: leftMargin + r2_oracles + gap + r2_bridges + gap + r2_services + gap + r2_onramps + gap, y: row2Y, w: r2_partners, h: row2H, alignTop: true },
-
-    // Row 3: Advisory, Risk, Stablecoin, Tooling, Meme Tokens
-    { section: "Advisory Firms", x: leftMargin, y: row3Y, w: r3_advisory, h: row3H, alignLeft: true, alignTop: true },
-    { section: "Risk and Compliance", x: leftMargin + r3_advisory + gap, y: row3Y, w: r3_risk, h: row3H, alignTop: true },
-    { section: "Stablecoin Infrastructure", x: leftMargin + r3_advisory + gap + r3_risk + gap, y: row3Y, w: r3_stablecoin, h: row3H, alignTop: true },
-    { section: "Tooling and Solutions", x: leftMargin + r3_advisory + gap + r3_risk + gap + r3_stablecoin + gap, y: row3Y, w: r3_tooling, h: row3H, alignTop: true },
-    { section: "Meme Tokens", x: leftMargin + r3_advisory + gap + r3_risk + gap + r3_stablecoin + gap + r3_tooling + gap, y: row3Y, w: r3_meme, h: row3H, alignTop: true },
-
-    // Row 4: DeFi, NFTs, Gaming & ENT, Real World Assets
-    { section: "DeFi", x: leftMargin, y: row4Y, w: r4_defi, h: row4H, alignLeft: true, alignTop: true },
-    { section: "NFT Markets", x: leftMargin + r4_defi + gap, y: row4Y, w: r4_nfts, h: row4H, alignTop: true },
-    { section: "Gaming & ENT", x: leftMargin + r4_defi + gap + r4_nfts + gap, y: row4Y, w: r4_gaming, h: row4H, alignTop: true },
-    { section: "Real World Assets", x: leftMargin + r4_defi + gap + r4_nfts + gap + r4_gaming + gap, y: row4Y, w: r4_rwas, h: row4H, alignTop: true },
-
-    // Right side vertical panels - fill to right edge
-    // Hedera Council - tall vertical strip (2 columns, big logos)
-    { section: "Hedera Council", x: rightX, y: contentY, w: councilW, h: councilH, isCouncil: true, isVertical: true },
-
-    // Independent Core Organizations - vertical strip
-    { section: "Independent Core Organizations", x: rightX + councilW + gap, y: contentY, w: coreOrgsW, h: coreOrgsH, isCoreOrgs: true, isVertical: true },
-
-    // Native Services - below Core Orgs with proper title spacing
-    { section: "Native Services", x: rightX + councilW + gap, y: contentY + coreOrgsH + rowGap, w: coreOrgsW, h: nativeH, isNativeServices: true }
+  const rowsDef = [
+    { y: row1Y, h: row1H, boxes: [["Wallets", r1_wallets], ["Custodians", r1_custodians], ["Exchanges", r1_exchanges]] },
+    { y: row2Y, h: row2H, boxes: [["Oracles", r2_oracles], ["Bridges and Interoperability", r2_bridges], ["Services", r2_services], ["Onramps", r2_onramps], ["Implementation Partners", r2_partners]] },
+    { y: row3Y, h: row3H, boxes: [["Advisory Firms", r3_advisory], ["Risk and Compliance", r3_risk], ["Stablecoin Infrastructure", r3_stablecoin], ["Tooling and Solutions", r3_tooling], ["Meme Tokens", r3_meme]] },
+    { y: row4Y, h: row4H, boxes: [["DeFi", r4_defi], ["NFT Markets", r4_nfts], ["Gaming & ENT", r4_gaming], ["Real World Assets", r4_rwas]] },
   ];
 
-  // Define boundaries for hover expansion
-  // All sections should expand to fill the content area but not beyond
-  const leftBoundary = leftMargin;  // 60
-  const rightBoundary = W - rightMargin;  // 1850 (aligns with right edge of Independent Core Organizations)
-  const topBoundary = contentY - 15;  // 95 (a bit above content for title)
-  const bottomBoundary = H - footerSpace + 10;  // 1005
+  const panels = [];
+  rowsDef.forEach(row => {
+    let x = leftMargin;
+    row.boxes.forEach(([section, w]) => {
+      panels.push({ section, x, y: row.y, w, h: row.h, alignTop: true });
+      x += w + gap;
+    });
+  });
+  panels.push({ section: "Hedera Council", x: rightX, y: contentY, w: councilW, h: councilH, isCouncil: true });
+  {
+    let y = contentY;
+    sideBoxes.forEach(b => {
+      panels.push({
+        section: b.section, x: sideX, y, w: sideW, h: b.h,
+        isCoreOrgs: b.section === "Independent Core Organizations",
+        isNativeServices: b.section === "Native Services",
+        isPartners: b.section === "Strategic Partners" || b.section === "Community Partners",
+      });
+      y += b.h + rowGap;
+    });
+  }
+
+  // Hover zoom. The hovered section grows to HOVER_SCALE times its size (the sizes hederamap.com has always
+  // used: 1.8x, Exchanges 1.62x, Independent Core Organizations 1.61x; the council partner sections 1.6x like
+  // the council's own hover logos) and the other boxes reflow around it, so nothing is covered and the map
+  // stays one rectangle. The reflow itself runs in the page (dist/hedera-map.html, see "Hover layout").
+  const HOVER_SCALE = {
+    "Exchanges": 1.62,
+    "Independent Core Organizations": 1.61,
+    "Strategic Partners": 1.6,
+    "Community Partners": 1.6,
+  };
+
+  // Council hover: the same logo sizes as always (2x base, then 0.75, 0.85 and 0.8 as below), in 3 columns so
+  // the expanded council takes about a third of the map width instead of two thirds
+  const hoverCols = 3;
+  const hoverCellW = 180;
+  const councilInnerPad = 8;
+  const hoverPanelW = hoverCols * hoverCellW + councilInnerPad * 2;
+  // The expanded council box: the left area and the side column narrow in proportion to make room
+  // (the page computes the same box; it is passed in data-hover-box)
+  const councilShrink = (W - leftMargin - rightMargin - 2 * gap - hoverPanelW) / (leftAreaW + sideW);
+  const hoverPanelX = leftMargin + leftAreaW * councilShrink + gap;
+
+  // Layout structure for the page's hover reflow
+  svg.attr("data-layout", JSON.stringify({
+    x: leftMargin, y: contentY, w: W - leftMargin - rightMargin, h: councilH, gap, rowGap,
+    rows: rowsDef.map(r => r.boxes.map(([s]) => s)),
+    council: "Hedera Council",
+    side: sideBoxes.map(b => b.section),
+  }));
 
   panels.forEach(panel => {
     const secData = sectionData[panel.section];
     if (!secData) return;
 
-    // Create a group for this section with hover effects
-    // Transform-origin: grow towards center of map (960, 540)
-    const centerX = W / 2;  // 960
-    const centerY = H / 2;  // 540
-    const sectionCenterX = panel.x + panel.w / 2;
-    const sectionCenterY = panel.y + panel.h / 2;
-    // If section is left of center, anchor on left; if right of center, anchor on right
-    const originX = sectionCenterX < centerX ? panel.x : panel.x + panel.w;
-    // If section is above center, anchor on top; if below center, anchor on bottom
-    const originY = sectionCenterY < centerY ? panel.y : panel.y + panel.h;
-
-    // Calculate max scale based on boundaries
-    // The scale is limited by how far the panel can grow before hitting a boundary
-    let maxScaleX = 10;  // Start with a high value
-    let maxScaleY = 10;
-
-    // Horizontal constraints
-    if (originX === panel.x) {
-      // Origin at left edge - right edge expands right
-      maxScaleX = (rightBoundary - panel.x) / panel.w;
-    } else {
-      // Origin at right edge - left edge expands left
-      maxScaleX = (panel.x + panel.w - leftBoundary) / panel.w;
-    }
-
-    // Vertical constraints
-    if (originY === panel.y) {
-      // Origin at top edge - bottom edge expands down
-      maxScaleY = (bottomBoundary - panel.y) / panel.h;
-    } else {
-      // Origin at bottom edge - top edge expands up
-      maxScaleY = (panel.y + panel.h - topBoundary) / panel.h;
-    }
-
-    // Use the minimum of the two to maintain aspect ratio, cap at 180%
-    const maxScale = Math.min(maxScaleX, maxScaleY, 1.8);
-
     const sectionClass = panel.isCouncil ? "section-group council-section" : "section-group";
     const sectionGroup = svg.append("g")
       .attr("class", sectionClass)
       .attr("data-section", panel.section)
-      .attr("data-max-scale", maxScale.toFixed(2))
-      .style("transform-origin", `${originX}px ${originY}px`);
+      .attr("data-box", [panel.x, panel.y, panel.w, panel.h].map(v => +v.toFixed(2)).join(","))
+      .attr("data-hover-scale", HOVER_SCALE[panel.section] || 1.8);
 
     // Panel background (box starts below title) - for non-Council sections
     // Council sections have panels inside their normal/hover groups
@@ -591,31 +558,39 @@ function renderSVG(sectionData) {
 
     const activeSubcats = Object.entries(secData.subcategories).filter(([_, items]) => items.length > 0);
 
+    // Each logo is one <a class="map-item"> with its resting center (data-cx, data-cy); the page moves and
+    // scales whole items when the boxes reflow. data-cell is the item's base cell (w,h) for that reflow.
+    const itemLink = (target, item, cx, cy) => {
+      const a = target.append("a").attr("class", item.website ? "logo-link map-item" : "map-item")
+        .attr("data-cx", +cx.toFixed(2)).attr("data-cy", +cy.toFixed(2)).attr("data-entity", item.entity);
+      if (item.website) a.attr("href", item.website).attr("target", "_blank");
+      return a;
+    };
+
     if (panel.isCouncil) {
-      // Council - render both normal (2 columns) and hover (5 columns) layouts
+      // Council - render both normal (2 columns) and hover (3 columns, bigger logos) layouts
       const allItems = activeSubcats.flatMap(([_, items]) => items)
         .sort((a, b) => a.entity.localeCompare(b.entity));
 
-      const innerPad = 8;
+      const innerPad = councilInnerPad;
 
-      // Define aspect ratios for each logo
+      // Define aspect ratios for each logo (box ratio; the artwork is fitted inside)
       const logoAspectRatios = {
         "Google": 1.67, "IBM": 1.67, "Deutsche Telekom": 1.67,
         "LG Electronics": 1.67, "Nomura": 1.67, "Ubisoft": 1.67,
         "Shinhan Bank": 1.67, "Dell": 2.18, "DLA Piper": 1.67, "EDF": 1.67,
-        "Hitachi": 1.67, "Mondelez": 1.67, "ServiceNow": 1.67,
+        "Mondelez": 1.67, "ServiceNow": 1.67,
         "Swirlds Labs": 1.67, "Tata Communications": 1.67,
         "Zain Group": 1.67, "LSE": 1.67, "abrdn": 1.67, "Arrow": 1.67,
-        "Cofra": 1.67, "Dentons": 1.67, "IIT Madras": 1.67, "Magalu": 1.67,
+        "Dentons": 1.67, "IIT Madras": 1.67, "Magalu": 1.67,
         "McLaren Racing": 5.45, "Repsol": 4.27, "Blockchain for Energy": 2.23,
         "Australian Payments Plus": 2.5, "Avery Dennison": 2.5, "BitGo": 2.5,
         "Chainlink Labs": 2.5, "Nairobi Securities Exchange": 2.5, "Standard Bank": 2.5,
         "Wipro": 2.5
       };
 
-      // Helper function to render council logos with custom panel dimensions
-      // bottomPadding: extra padding at bottom for logo area only (panel still draws at full panelH)
-      const renderCouncilLogos = (targetGroup, cols, baseHeight, panelX, panelW, panelY, panelH, renderPanel, isHoverState = false, bottomPadding = 0) => {
+      // Helper to render council logos into a panel; bottomPadding is extra room at the bottom of the logo area
+      const renderCouncilLogos = (targetGroup, cols, baseHeight, panelX, panelW, panelY, panelH, isHoverState = false, bottomPadding = 0, colNudge = 0) => {
         const availableWidth = panelW - innerPad * 2;
         const availableHeight = panelH - innerPad * 2 - bottomPadding;
         const rows = Math.ceil(allItems.length / cols);
@@ -624,12 +599,9 @@ function renderSVG(sectionData) {
         const startX = panelX + innerPad;
         const startY = panelY + innerPad;
 
-        // Render panel background if requested
-        if (renderPanel) {
-          targetGroup.append("rect").attr("class", "panel")
-            .attr("x", panelX).attr("y", panelY)
-            .attr("width", panelW).attr("height", panelH).attr("rx", 12);
-        }
+        targetGroup.append("rect").attr("class", "panel")
+          .attr("x", panelX).attr("y", panelY)
+          .attr("width", panelW).attr("height", panelH).attr("rx", 12);
 
         allItems.forEach((item, idx) => {
           const row = Math.floor(idx / cols);
@@ -639,14 +611,11 @@ function renderSVG(sectionData) {
           let logoH = baseHeight * 0.75;  // Shrink all council logos by 25%
           let logoW = logoH * aspectRatio;
 
-          // Size adjustments for specific logos
-          // These logos are good size in normal state
+          // These logos are a good size in the normal state; the others shrink by 15%
           const goodSizeLogos = [
             "abrdn", "Blockchain for Energy", "Deutsche Telekom", "Dell", "Magalu",
-            "IIT Madras", "ServiceNow", "Tata Communications", "Hitachi"
+            "IIT Madras", "ServiceNow", "Tata Communications"
           ];
-
-          // Shrink logos not in the good size list by 15%
           if (!goodSizeLogos.includes(item.entity)) {
             logoW *= 0.85; logoH *= 0.85;
           }
@@ -670,265 +639,128 @@ function renderSVG(sectionData) {
             logoH = logoW / aspectRatio;
           }
 
-          const logoX = startX + col * actualCellW + (actualCellW - logoW) / 2;
-          const logoY = startY + row * actualCellH + (actualCellH - logoH) / 2;
+          // a little more room between the two columns (owner's spacing on hederamap.com)
+          const nudge = cols === 2 ? (col === 0 ? -colNudge : colNudge) : 0;
+          const cx = startX + col * actualCellW + actualCellW / 2 + nudge;
+          const cy = startY + row * actualCellH + actualCellH / 2;
+          const logoX = cx - logoW / 2;
+          const logoY = cy - logoH / 2;
 
-          const logoFile = findLogoFile(item.entity, "Hedera Council");
-          const logoData = imageToDataUri(logoFile);
+          const logoFile = findLogoFile(item.entity, "Hedera Council", item.logo);
+          const href = wordmarkDataUri(logoFile, item.entity);
+          const link = itemLink(targetGroup, item, cx, cy);
 
-          const link = item.website ? targetGroup.append("a")
-            .attr("href", item.website)
-            .attr("target", "_blank")
-            .attr("class", "logo-link") : targetGroup;
-
-          if (logoData?.type === "svg") {
-            let svgContent = logoData.content;
-            // Pre-process black SVG logos to white (Safari doesn't support CSS filter on SVG <image>)
-            const noInvertLogos = ["Repsol", "FedEx"];
-            if (!noInvertLogos.includes(item.entity)) {
-              svgContent = makeCouncilLogoWhite(svgContent);
-            }
+          if (href) {
             link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
               .attr("width", logoW).attr("height", logoH)
-              .attr("href", `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`)
+              .attr("href", href)
               .attr("preserveAspectRatio", "xMidYMid meet");
-          } else if (logoData?.dataUri) {
-            // Non-SVG logos (e.g., Repsol PNG) are already white
-            link.append("image").attr("class", "council-logo-image").attr("x", logoX).attr("y", logoY)
-              .attr("width", logoW).attr("height", logoH)
-              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
           } else {
             link.append("text").attr("class", "council-logo-text")
-              .attr("x", logoX + logoW / 2).attr("y", logoY + logoH / 2 + 3)
+              .attr("x", cx).attr("y", cy + 3)
               .attr("text-anchor", "middle").attr("font-size", "7px").text(item.entity);
           }
         });
       };
 
-      // Normal state: 2 columns within original panel bounds (with its own panel)
-      // Add extra bottom padding for logo breathing room (panel draws at full height)
+      // Normal state: 2 columns within the panel, extra bottom padding for breathing room
       const normalBottomPad = 20;
-      const normalGroup = sectionGroup.append("g").attr("class", "council-normal");
-      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h, true, false, normalBottomPad);
+      const normalGroup = sectionGroup.append("g").attr("class", "council-normal")
+        .attr("data-cell", "110,44");
+      renderCouncilLogos(normalGroup, 2, 50, panel.x, panel.w, panel.y, panel.h, false, normalBottomPad, 4);
 
-      // Hover state: 5 columns with 2x bigger logos, expanded panel
-      // Calculate expanded dimensions: grow left from the right edge
-      const hoverLogoBaseHeight = 100;  // 2x the normal size
-      const hoverCols = 5;
+      // Hover state: 3 columns with the bigger logos, drawn in the expanded council box
+      const hoverGroup = sectionGroup.append("g").attr("class", "council-hover");
+      renderCouncilLogos(hoverGroup, hoverCols, 100, hoverPanelX, hoverPanelW, panel.y, panel.h, true);
 
-      // Calculate width needed for 5 columns of 2x logos
-      // Increased cell width for more horizontal breathing room
-      const hoverCellW = 230;
-      const hoverPanelW = hoverCols * hoverCellW + innerPad * 2;  // ~1166px
-
-      // Expand leftward from the right edge of the original panel
-      const hoverPanelX = panel.x + panel.w - hoverPanelW;
-      const hoverPanelY = panel.y;
-      const hoverPanelH = panel.h;
-
-      // Calculate scale ratio for animation (normal width / hover width)
-      const scaleRatio = panel.w / hoverPanelW;  // ~0.315
-
-      const hoverGroup = sectionGroup.append("g")
-        .attr("class", "council-hover")
-        .attr("data-scale-ratio", scaleRatio.toFixed(3))
-        .style("transform", `scale(${scaleRatio})`)
-        .style("transform-origin", `${panel.x + panel.w}px ${panel.y + panel.h / 2}px`);
-      renderCouncilLogos(hoverGroup, hoverCols, hoverLogoBaseHeight, hoverPanelX, hoverPanelW, hoverPanelY, hoverPanelH, true, true);
-
-      // Add title to hover group (positioned for expanded layout)
-      // CSS sets .section-title to 10px, other sections scale 1.8x = 18px visually
-      // Council doesn't scale, so use inline style to set 18px directly (overrides CSS)
+      // Title of the expanded council (CSS sets .section-title to 10px; the expanded title is 18px like the
+      // other sections' titles at 1.8x)
       hoverGroup.append("text").attr("class", "section-title council-hover-title")
         .attr("x", hoverPanelX + 3)
-        .attr("y", hoverPanelY - 9)
+        .attr("y", panel.y - 9)
         .style("font-size", "18px")
         .attr("data-section", panel.section)
         .text(panel.section);
 
-      // Store expanded hover bounds as data attributes for JavaScript hover tracking
-      // Don't use a hit area that blocks other sections - use JS coordinate checking instead
-      sectionGroup
-        .attr("data-hover-x", hoverPanelX)
-        .attr("data-hover-y", hoverPanelY - 20)
-        .attr("data-hover-w", hoverPanelW)
-        .attr("data-hover-h", hoverPanelH + 20)
-        .attr("data-normal-x", panel.x)
-        .attr("data-normal-y", panel.y)
-        .attr("data-normal-w", panel.w)
-        .attr("data-normal-h", panel.h);
+      sectionGroup.attr("data-hover-box", [hoverPanelX, panel.y, hoverPanelW, panel.h].map(v => +v.toFixed(2)).join(","));
+    } else if (panel.isPartners) {
+      // Strategic / Community Partners: white wordmarks like the council logos, 2 columns
+      const allItems = activeSubcats.flatMap(([_, items]) => items)
+        .sort((a, b) => a.entity.localeCompare(b.entity));
+      const innerPad = 8;
+      const cols = 2;
+      const rows = Math.ceil(allItems.length / cols);
+      const cellW = (panel.w - innerPad * 2) / cols;
+      const cellH = (panel.h - innerPad * 2) / rows;
+      sectionGroup.attr("data-cell", `${Math.round(cellW)},40`);
+      const AREA = 1900;  // similar visual weight for wide and compact wordmarks
+      allItems.forEach((item, idx) => {
+        const col = idx % cols, row = Math.floor(idx / cols);
+        const file = findLogoFile(item.entity, panel.section, item.logo);
+        const ratio = logoRatio(file) || 3;
+        let logoW = Math.sqrt(AREA * ratio), logoH = Math.sqrt(AREA / ratio);
+        if (logoW > cellW - 8) { logoW = cellW - 8; logoH = logoW / ratio; }
+        if (logoH > 30) { logoH = 30; logoW = logoH * ratio; }
+        const cx = panel.x + innerPad + col * cellW + cellW / 2;
+        const cy = panel.y + innerPad + row * cellH + cellH / 2;
+        const href = wordmarkDataUri(file, item.entity);
+        const link = itemLink(sectionGroup, item, cx, cy);
+        if (href) {
+          link.append("image").attr("class", "council-logo-image").attr("x", cx - logoW / 2).attr("y", cy - logoH / 2)
+            .attr("width", logoW).attr("height", logoH).attr("href", href).attr("preserveAspectRatio", "xMidYMid meet");
+        } else {
+          link.append("text").attr("class", "council-logo-text").attr("x", cx).attr("y", cy + 3)
+            .attr("text-anchor", "middle").attr("font-size", "7px").text(item.entity);
+        }
+        // a hit area the size of the cell, so the small wordmarks are easy to click
+        link.append("rect").attr("x", cx - (cellW - 8) / 2).attr("y", cy - 16).attr("width", cellW - 8).attr("height", 32)
+          .attr("fill", "transparent");
+      });
     } else if (panel.isCoreOrgs) {
-      // Independent Core Organizations - vertical or horizontal layout
+      // Independent Core Organizations - logos stacked vertically, evenly spaced, centered
       const allItems = activeSubcats.flatMap(([_, items]) => items);
+      sectionGroup.attr("data-cell", "120,56");
 
-      // Create a clipPath to constrain clickable area to panel bounds
-      const clipId = `core-orgs-clip-${panel.x}-${panel.y}`;
-      svg.append("defs").append("clipPath")
-        .attr("id", clipId)
-        .append("rect")
-        .attr("x", panel.x)
-        .attr("y", panel.y)
-        .attr("width", panel.w)
-        .attr("height", panel.h);
-
-      if (panel.isVertical) {
-        // Vertical layout - stack logos vertically, centered horizontally
-        // For narrow vertical panel, scale logos to fit
-        const maxLogoW = panel.w - 20;  // 10px padding each side
-        const verticalGap = 35;  // Space between logos
-
-        // Individual heights to match visual sizing of Hashgraph logo
-        const logoHeights = {
-          "Hashgraph": 31,
-          "Hedera Council": 99,  // 10% larger
-          "Hedera Foundation": 112,  // 25% larger
-          "The Hashgraph Association": 42,
-          "Exponential Science": 70
-        };
-
-        // Logo aspect ratios (width/height) - calculate width from height
-        const logoAspectRatios = {
-          "Hashgraph": 3.7,
-          "Hedera Council": 3.7,
-          "Hedera Foundation": 3.7,
-          "The Hashgraph Association": 3.7,
-          "Exponential Science": 3.7
-        };
-
-        // Calculate total height based on individual logo heights
-        const defaultHeight = 55;
-        const totalHeight = allItems.reduce((sum, item) => sum + (logoHeights[item.entity] || defaultHeight), 0) + (allItems.length - 1) * verticalGap;
-        let currentY = panel.y + (panel.h - totalHeight) / 2;
-
-        // Custom Y offsets for individual logos
-        const logoYOffsets = {
-          "Hashgraph": 10,  // Move down 10 pixels
-          "Hedera Council": 20,  // Move down 20 pixels
-          "Hedera Foundation": -10,  // Move up 10 pixels
-          "The Hashgraph Association": -10  // Move up 10 pixels
-        };
-
-        allItems.forEach((item, idx) => {
-          const logoH = logoHeights[item.entity] || defaultHeight;
-          const aspectRatio = logoAspectRatios[item.entity] || 3.7;
-          const logoW = logoH * aspectRatio;
-          const logoX = panel.x + (panel.w - logoW) / 2;
-          const logoY = currentY + (logoYOffsets[item.entity] || 0);
-
-          let logoKey = item.entity;
-          if (item.entity === "Hashgraph") logoKey = "Hashgraph Full";
-          if (item.entity === "Hedera Foundation") logoKey = "Hedera Foundation Full";
-          if (item.entity === "The Hashgraph Association") logoKey = "The Hashgraph Association Full";
-          if (item.entity === "Exponential Science") logoKey = "Exponential Science Full";
-
-          const logoFile = findLogoFile(logoKey);
-          const logoData = imageToDataUri(logoFile);
-
-          // Wrap in link if website exists - constrain clickable area to panel width
-          const link = item.website ? sectionGroup.append("a")
-            .attr("href", item.website)
-            .attr("target", "_blank")
-            .attr("class", "logo-link") : sectionGroup;
-
-          // Calculate visible logo bounds (constrained to panel width)
-          const visibleLogoW = Math.min(logoW, panel.w - 10);
-          const visibleLogoX = panel.x + (panel.w - visibleLogoW) / 2;
-
-          if (logoData?.type === "svg") {
-            link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
-              .attr("width", logoW).attr("height", logoH)
-              .attr("href", `data:image/svg+xml;base64,${Buffer.from(logoData.content).toString('base64')}`)
-              .attr("preserveAspectRatio", "xMidYMid meet")
-              .style("pointer-events", "none");
-          } else if (logoData?.dataUri) {
-            link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
-              .attr("width", logoW).attr("height", logoH)
-              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet")
-              .style("pointer-events", "none");
-          } else {
-            link.append("text").attr("class", "council-logo-text")
-              .attr("x", logoX + logoW / 2).attr("y", logoY + logoH / 2 + 3)
-              .attr("text-anchor", "middle").attr("font-size", "8px").text(item.entity);
-          }
-
-          // Add transparent hit area constrained to panel width
-          if (item.website) {
-            link.append("rect")
-              .attr("x", visibleLogoX)
-              .attr("y", logoY)
-              .attr("width", visibleLogoW)
-              .attr("height", logoH)
-              .attr("fill", "transparent")
-              .style("cursor", "pointer");
-          }
-
-          currentY += logoH + verticalGap;
-        });
-      } else {
-        // Horizontal layout (original)
-        // Individual logo sizes (half size)
-        const logoSizes = {
-          "Hashgraph": { w: 150, h: 40 },
-          "Hedera Council": { w: 408, h: 110 },
-          "Hedera Foundation": { w: 512, h: 137 },
-          "The Hashgraph Association": { w: 180, h: 48 },
-          "Exponential Science": { w: 300, h: 80 }
-        };
-
-        const defaultSize = { w: 225, h: 60 };
-        const customGaps = [30, 40, 22, 22, 22];  // Half size gaps
-
-        const maxHeight = Math.max(...allItems.map(item => (logoSizes[item.entity] || defaultSize).h));
-        const centerY = panel.y + panel.h / 2;
-
-        let currentX = panel.x + customGaps[0];
-
-        allItems.forEach((item, idx) => {
-          const size = logoSizes[item.entity] || defaultSize;
-
-          // Half size offsets
-          const logoOffsets = {
-            "Hashgraph": 80,
-            "Hedera Council": 93,
-            "Hedera Foundation": -87,
-            "The Hashgraph Association": -120,
-            "Exponential Science": -120
-          };
-          const xOffset = logoOffsets[item.entity] || 0;
-
-          const logoX = currentX + xOffset;
-          const logoY = centerY - size.h / 2;
-
-          let logoKey = item.entity;
-          if (item.entity === "Hashgraph") logoKey = "Hashgraph Full";
-          if (item.entity === "Hedera Foundation") logoKey = "Hedera Foundation Full";
-          if (item.entity === "The Hashgraph Association") logoKey = "The Hashgraph Association Full";
-          if (item.entity === "Exponential Science") logoKey = "Exponential Science Full";
-
-          const logoFile = findLogoFile(logoKey);
-          const logoData = imageToDataUri(logoFile);
-
-          if (logoData?.type === "svg") {
-            sectionGroup.append("image").attr("x", logoX).attr("y", logoY)
-              .attr("width", size.w).attr("height", size.h)
-              .attr("href", `data:image/svg+xml;base64,${Buffer.from(logoData.content).toString('base64')}`)
-              .attr("preserveAspectRatio", "xMidYMid meet");
-          } else if (logoData?.dataUri) {
-            sectionGroup.append("image").attr("x", logoX).attr("y", logoY)
-              .attr("width", size.w).attr("height", size.h)
-              .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet");
-          } else {
-            sectionGroup.append("text").attr("class", "council-logo-text")
-              .attr("x", logoX + size.w / 2).attr("y", logoY + size.h / 2 + 3)
-              .attr("text-anchor", "middle").attr("font-size", "8px").text(item.entity);
-          }
-
-          currentX += size.w + (customGaps[idx + 1] || 0);
-        });
-      }
+      // Cropped artwork and sizes as tuned on hederamap.com
+      const coreLogos = {
+        "Hashgraph": { file: path.join(LOGOS_PATH, "core", "Hashgraph full size.svg"), w: 90.6, h: 24 },
+        "Hedera Council": { file: path.join(LOGOS_PATH, "core", "Hedera Council cropped.svg"), w: 93, h: 29.46 },
+        "Hedera Foundation": { file: path.join(LOGOS_PATH, "core", "Hedera Foundation cropped.svg"), w: 96, h: 23.28 },
+      };
+      const slot = (panel.h - 20) / allItems.length;
+      allItems.forEach((item, idx) => {
+        const spec = coreLogos[item.entity] || { file: findLogoFile(item.entity), w: 90, h: 28 };
+        const cx = panel.x + panel.w / 2;
+        const cy = panel.y + 10 + slot * idx + slot / 2;
+        const logoData = imageToDataUri(spec.file);
+        const link = itemLink(sectionGroup, item, cx, cy);
+        const logoX = cx - spec.w / 2, logoY = cy - spec.h / 2;
+        if (logoData?.type === "svg") {
+          link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
+            .attr("width", spec.w).attr("height", spec.h)
+            .attr("href", `data:image/svg+xml;base64,${Buffer.from(logoData.content).toString('base64')}`)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .style("pointer-events", "none");
+        } else if (logoData?.dataUri) {
+          link.append("image").attr("class", "core-logo-image").attr("x", logoX).attr("y", logoY)
+            .attr("width", spec.w).attr("height", spec.h)
+            .attr("href", logoData.dataUri).attr("preserveAspectRatio", "xMidYMid meet")
+            .style("pointer-events", "none");
+        } else {
+          link.append("text").attr("class", "council-logo-text")
+            .attr("x", cx).attr("y", cy + 3)
+            .attr("text-anchor", "middle").attr("font-size", "8px").text(item.entity);
+        }
+        // Transparent hit area over the logo
+        if (item.website) {
+          link.append("rect").attr("x", logoX).attr("y", logoY).attr("width", spec.w).attr("height", spec.h)
+            .attr("fill", "transparent").style("cursor", "pointer");
+        }
+      });
     } else if (panel.isNativeServices) {
       // Native Services - centered in box
       const allItems = activeSubcats.flatMap(([_, items]) => items);
+      sectionGroup.attr("data-cell", "140,62");
 
       // Service display data: abbreviation and 2-line name
       const serviceData = {
@@ -946,16 +778,11 @@ function renderSVG(sectionData) {
       const itemSpacing = itemHeight + itemGap;
 
       allItems.forEach((item, idx) => {
-        // Wrap in link if website exists
-        const link = item.website ? sectionGroup.append("a")
-          .attr("href", item.website)
-          .attr("target", "_blank")
-          .attr("class", "logo-link") : sectionGroup;
-
         const itemY = textStartY + idx * itemSpacing;
+        // the item's visual center: from the abbreviation's cap height to the second line's baseline
+        const link = itemLink(sectionGroup, item, panel.x + panel.w / 2, itemY + 10);
         const data = serviceData[item.entity] || { abbrev: "", line1: item.entity, line2: "" };
 
-        // Abbreviation label (40% smaller: 26px -> 16px)
         link.append("text")
           .attr("x", panel.x + panel.w / 2)
           .attr("y", itemY)
@@ -965,7 +792,6 @@ function renderSVG(sectionData) {
           .attr("fill", "#7b59eb")
           .text(data.abbrev);
 
-        // Service name line 1 (white)
         link.append("text")
           .attr("x", panel.x + panel.w / 2)
           .attr("y", itemY + 18)
@@ -975,7 +801,6 @@ function renderSVG(sectionData) {
           .attr("fill", "#ffffff")
           .text(data.line1);
 
-        // Service name line 2 (white)
         link.append("text")
           .attr("x", panel.x + panel.w / 2)
           .attr("y", itemY + 31)
@@ -1021,18 +846,16 @@ function renderSVG(sectionData) {
       const gridStartX = panel.x + innerPad;
       const gridStartY = panel.y + innerPad;
 
-      // Calculate row spacing to distribute rows evenly with equal top/bottom padding
-      // Total content height for all rows at minimum spacing
+      // Distribute rows evenly, capping the extra spacing for sections with few rows
       const minTotalRowsHeight = numRows * effectiveCellH;
-      // Extra space available after accounting for top padding (bottom should match top)
       const extraSpace = availableHeight - minTotalRowsHeight;
-      // Distribute extra space between rows, but cap spacing for sections with few rows
-      // This prevents 2-row sections from pushing the second row to the very bottom
       const maxExtraSpacing = 15; // Maximum extra spacing between rows
       const rawRowSpacing = numRows > 1 ? extraSpace / (numRows - 1) : 0;
       const rowSpacing = Math.min(rawRowSpacing, maxExtraSpacing);
-      // Actual cell height including distributed spacing
       const actualCellH = effectiveCellH + rowSpacing;
+
+      // base cell for the hover reflow: a logo plus its up-to-three-line name
+      sectionGroup.attr("data-cell", "44,56").attr("data-cols", cols).attr("data-align", "top");
 
       allItems.forEach((item, idx) => {
         const itemRow = Math.floor(idx / cols);
@@ -1043,19 +866,19 @@ function renderSVG(sectionData) {
         const cellCenterY = gridStartY + itemRow * actualCellH + effectiveCellH / 2;
 
         // Skip if cell would be outside panel bounds
-        if (cellCenterY + effectiveCellH / 2 > panel.y + panel.h) return;
+        if (cellCenterY + effectiveCellH / 2 > panel.y + panel.h) {
+          console.warn(`WARNING: ${item.entity} does not fit in ${panel.section} and is not drawn`);
+          return;
+        }
 
         const logoX = cellCenterX - effectiveLogoSize / 2;
         const logoY = cellCenterY - effectiveCellH / 2 + 5;  // Offset from top of cell
 
-        const logoFile = findLogoFile(item.entity);
+        const logoFile = findLogoFile(item.entity, null, item.logo);
         const logoData = imageToDataUri(logoFile);
 
-        // Wrap in link if website exists
-        const link = item.website ? sectionGroup.append("a")
-          .attr("href", item.website)
-          .attr("target", "_blank")
-          .attr("class", "logo-link") : sectionGroup;
+        // the item's visual center: logo top (cell top + 5) to the bottom of a three-line name (+58)
+        const link = itemLink(sectionGroup, item, cellCenterX, logoY + 27);
 
         if (logoData?.dataUri) {
           const clipId = `clip-${panel.section}-${idx}`.replace(/[^a-z0-9]/gi, '-');

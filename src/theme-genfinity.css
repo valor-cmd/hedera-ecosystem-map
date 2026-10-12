@@ -54,7 +54,7 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   ry: 12;
 }
 
-.section-group:hover .panel{
+.section-group.hovered .panel{
   fill: #000000 !important;
 }
 
@@ -66,11 +66,7 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   transition: fill 0.2s ease;
 }
 
-.section-title:hover{
-  fill: #ffffff;
-}
-
-.section-group:hover .section-title{
+.section-group.hovered .section-title{
   fill: #ffffff;
   filter: drop-shadow(0px 2px 0px #000000) drop-shadow(0px 2px 2px #000000);
 }
@@ -170,33 +166,42 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(230deg) brightness(95%) contrast(95%);
 }
 
-/* Section hover effects */
+/* Section hover: the page's hover layout moves and resizes the boxes (no CSS transform on the groups) */
 .section-group {
-  transition: transform 0.3s ease;
   cursor: pointer;
 }
 
 /* Council section layout transitions */
-.council-normal,
-.council-hover {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
 .council-normal {
   opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
+/* the expanded council is drawn in its expanded box; hidden, it must not catch clicks over other boxes */
 .council-hover {
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
 }
 
 .council-normal.hidden {
   opacity: 0;
+  pointer-events: none;
 }
 
 .council-hover.visible {
   opacity: 1;
-  transform: scale(1) !important;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.3s ease, visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .council-normal, .council-hover, .council-hover.visible,
+  .council-section > .section-title, .section-title, .logo-circle, .council-logo-image {
+    transition: none !important;
+  }
 }
 
 /* Council title visibility is controlled via JavaScript to sync with hover delay */
@@ -208,7 +213,6 @@ svg{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans
   opacity: 0;
 }
 
-/* Scale is applied dynamically via JavaScript based on data-max-scale attribute */
 
 /* SVG Embedded Search Bar Styles */
 .svg-search-container {
