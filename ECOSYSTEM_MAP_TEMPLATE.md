@@ -326,7 +326,7 @@ const SECTIONS = [
 
 ```javascript
 // Delay before hover state activates (prevents accidental triggers)
-const HOVER_DELAY = 250;  // milliseconds (0.25 seconds)
+const HOVER_DELAY = 120;  // milliseconds (0.12 seconds)
 
 state.timeout = setTimeout(activateHover, 250);
 ```
@@ -835,7 +835,7 @@ For each entity, gather:
 | Constant | File | Purpose |
 |----------|------|---------|
 | `leftMargin`, `rightMargin` | render.js | Canvas edge spacing |
-| `HOVER_DELAY` (250ms) | hedera-map.html | Hover activation delay |
+| `HOVER_DELAY` (120ms) | hedera-map.html | Hover activation delay |
 | `--purple` | theme.css | Primary accent color |
 | `SECTIONS` | render.js | Section definitions |
 | `searchAliases` | hedera-map.html | Search term mappings |

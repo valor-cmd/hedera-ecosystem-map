@@ -146,7 +146,7 @@ export async function runSync({ log = console.log } = {}) {
     const ours = next.filter((r) => r.Section === s.section);
     if (ours.length && listed.length < Math.ceil(ours.length * MIN_SHARE))
       throw new SourceError(`${SITE}: ${s.tab} lists ${listed.length} against ${ours.length} on our map (a drop of more than ${Math.round((1 - MIN_SHARE) * 100)}% is treated as a parse failure)`);
-    const r = (report.sections[s.section] = { tab: s.tab, siteCount: listed.length, added: [], removed: [], logoChanged: [] });
+    const r = (report.sections[s.section] = { tab: s.tab, siteCount: listed.length, added: [], removed: [], logoChanged: [], renamed: [] });
     const listedBy = new Map(listed.map((o) => [norm(o.name), o]));
     // removals
     for (const row of ours) {
@@ -165,6 +165,8 @@ export async function runSync({ log = console.log } = {}) {
       const bytes = await get(url, true);
       const hash = sha(bytes);
       // a recorded logo that hederacouncil.org now serves differently (new file or new bytes)
+      // names follow hederacouncil.org's spelling exactly (owner, 2026-10-12)
+      if (!isNew && row.Entity !== o.name) { r.renamed.push({ from: row.Entity, to: o.name }); row.Entity = o.name; }
       const logoChanged = !isNew && !!row.Logo && !!prev && (prev.url !== url || prev.sha !== hash);
       if (isNew) {
         // reuse what the map already knows about the organization (its website) from any other section
@@ -202,9 +204,9 @@ export async function runSync({ log = console.log } = {}) {
     if (csvChanged) fs.writeFileSync(CSV_PATH, csvOut);
     if (stateChanged) fs.writeFileSync(STATE_PATH, stateOut);
   }
-  report.changed = Object.values(report.sections).some((r) => r.added.length || r.removed.length || r.logoChanged.length);
+  report.changed = Object.values(report.sections).some((r) => r.added.length || r.removed.length || r.logoChanged.length || r.renamed.length);
   for (const [name, r] of Object.entries(report.sections))
-    log(`${name} (${r.tab}): ${r.siteCount} on hederacouncil.org; added [${r.added.map((a) => a.name).join(", ")}], removed [${r.removed.join(", ")}], logo changes [${r.logoChanged.map((c) => c.name).join(", ")}]`);
+    log(`${name} (${r.tab}): ${r.siteCount} on hederacouncil.org; added [${r.added.map((a) => a.name).join(", ")}], removed [${r.removed.join(", ")}], logo changes [${r.logoChanged.map((c) => c.name).join(", ")}], renamed [${r.renamed.map((x) => `${x.from} -> ${x.to}`).join(", ")}]`);
   for (const n of site.notes) log(`note: ${n}`);
   log(`parse: ${site.method}${DRY ? " (dry run, nothing written)" : ""}`);
   if (reportPath) fs.writeFileSync(reportPath, JSON.stringify(report, null, 1) + "\n");
