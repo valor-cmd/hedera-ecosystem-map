@@ -64,9 +64,10 @@ jobs:
             const lines = [`Automated sync of the Hedera Council, Strategic Partners and Community Partners sections from https://hederacouncil.org (${r.method}).`, ""];
             for (const [name, s] of secs) {
               lines.push(`### ${name} (hederacouncil.org tab: ${s.tab}, ${s.siteCount} listed)`);
-              if (!s.added.length && !s.removed.length && !s.logoChanged.length) { lines.push("No change.", ""); continue; }
+              if (!s.added.length && !s.removed.length && !s.logoChanged.length && !(s.renamed ?? []).length) { lines.push("No change.", ""); continue; }
               for (const a of s.added) lines.push(`- Added ${a.name}: logo ${a.logo}${a.website ? `, website ${a.website}` : ". hederacouncil.org does not publish a website, please add one in the CSV"}`);
               for (const x of s.removed) lines.push(`- Removed ${x}: no longer listed on this tab`);
+              for (const x of s.renamed ?? []) lines.push(`- Renamed ${x.from} to ${x.to}, the spelling on hederacouncil.org`);
               for (const c of s.logoChanged) lines.push(`- New logo for ${c.name}: ${c.from} replaced by ${c.to}`);
               lines.push("");
             }

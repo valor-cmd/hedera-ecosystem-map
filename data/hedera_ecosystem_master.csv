@@ -1,11 +1,11 @@
 Entity,Section,Type_or_Role,Tier,Status,Primary_Source,Website,Logo
-abrdn,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://abrdn.com,council/aberdeen-black.svg
+Aberdeen,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://abrdn.com,council/aberdeen-black.svg
 Accenture,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://accenture.com,council/accenture-black.svg
 Arrow,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://arrow.com,council/arrow-black.svg
 Australian Payments Plus,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://www.auspayplus.com.au,council/australian-payments-plus-black.svg
 Avery Dennison,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://averydennison.com,council/avery-dennison-black.svg
 BitGo,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://bitgo.com,council/bitgo-black.svg
-Blockchain for Energy,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://blockchainforenergy.net,council/blockchain-for-energy.svg
+Blockchain For Energy,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://blockchainforenergy.net,council/blockchain-for-energy.svg
 Chainlink Labs,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://chainlinklabs.com,council/chainlink-labs-black.svg
 Dell,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dell.com,council/dell-black.svg
 Dentons,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://dentons.com,council/dentons-black.svg
@@ -16,25 +16,24 @@ FedEx,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://www.fedex.c
 Google,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://google.com,council/google-black.svg
 IBM,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ibm.com,council/ibm-black.svg
 IIT Madras,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://www.iitm.ac.in,council/iit-madras-black.svg
-LG Electronics,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lg.com,council/lg-black.svg
+LG,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lg.com,council/lg-black.svg
 LSE,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://lse.ac.uk,council/lse-black.svg
 Magalu,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://magazineluiza.com.br,council/magalu-black.svg
 McLaren Racing,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://www.mclaren.com,council/mclaren-racing-black.svg
-Mondelez,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://mondelezinternational.com,council/mondelez-black.svg
-Nairobi Securities Exchange,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://nse.co.ke,council/nse-black.svg
+Mondelēz,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://mondelezinternational.com,council/mondelez-black.svg
+NSE,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://nse.co.ke,council/nse-black.svg
 Nomura,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://nomura.com,council/nomura-black.svg
 Repsol,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://repsol.com,council/repsol-logo-white-flat.png
 ServiceNow,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://servicenow.com,council/service-now-black.svg
 Shinhan Bank,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://www.shinhan.com/en/index.jsp#300000000000,council/shinhan-bank-black.svg
 Standard Bank,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://standardbank.com,council/standard-bank-black.svg
-Swirlds Labs,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://swirldslabs.com,council/swirlds-black.svg
+Swirlds,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://swirldslabs.com,council/swirlds-black.svg
 Tata Communications,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://tatacommunications.com,council/tata-black.svg
 Ubisoft,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://ubisoft.com,council/ubisoft-black.svg
 Wipro,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://wipro.com,council/wipro-black.svg
-Zain Group,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://zain.com,council/zain-black.svg
+Zain,Hedera Council,Council Member,Tier 1,Active,hedera.com,https://zain.com,council/zain-black.svg
 Hashgraph,Independent Core Organizations,Core Organization,Tier 1,Active,hashgraph.com,https://www.hashgraph.com,
 Hedera Council,Independent Core Organizations,Core Organization,Tier 1,Active,hedera.com,https://hedera.com/council,
-Hedera Foundation,Independent Core Organizations,Core Organization,Tier 1,Active,hedera.foundation,https://hedera.foundation,
 Hedera Token Service,Native Services,Native Service,Tier 1,Active,hedera.com,https://hedera.com/token-service,
 Hedera Consensus Service,Native Services,Native Service,Tier 1,Active,hedera.com,https://hedera.com/consensus-service,
 Hedera Smart Contract Service,Native Services,Native Service,Tier 1,Active,hedera.com,https://hedera.com/service/smart-contract-service/,

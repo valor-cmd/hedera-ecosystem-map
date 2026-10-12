@@ -799,7 +799,7 @@
     // its row and column neighbors narrow or shorten to make room, every box reflows its logos to its new
     // shape, and the boxes always tile the same outer rectangle. The hovered box always contains its resting
     // box, so the pointer that opened it stays inside it while everything moves.
-    const HOVER_DELAY = 250;    // ms before a section opens (hover intent)
+    const HOVER_DELAY = 120;    // ms before a section opens (hover intent)
     const LEAVE_DELAY = 200;    // ms before the map settles back after the pointer leaves the boxes
     const MOVE_MS = 300;        // expand / collapse animation
     const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
@@ -1045,9 +1045,13 @@
       applyLayout(name);
     }
 
+    // A wait already running for the same target keeps running: restarting it on every mousemove meant a
+    // section opened only once the pointer stood still.
     function schedule(name, delay) {
+      if (hoverMap.pending && hoverMap.pendingName === name) return;
       if (hoverMap.pending) { clearTimeout(hoverMap.pending); hoverMap.pending = null; }
       if (name === hoverMap.hot) return;
+      hoverMap.pendingName = name;
       hoverMap.pending = setTimeout(() => { hoverMap.pending = null; setHot(name); }, delay);
     }
 
@@ -1185,9 +1189,16 @@
 
       // Search aliases for common alternative names
       const searchAliases = {
-        'aberdeen': 'abrdn',
-        'aberdeen standard': 'abrdn',
-        'aberdeen standard investments': 'abrdn',
+        // council names follow hederacouncil.org; the older names still find them
+        'abrdn': 'Aberdeen',
+        'aberdeen standard': 'Aberdeen',
+        'aberdeen standard investments': 'Aberdeen',
+        'lg electronics': 'LG',
+        'nairobi securities exchange': 'NSE',
+        'swirlds labs': 'Swirlds',
+        'zain group': 'Zain',
+        'mondelez': 'Mondelēz',
+        'mondelez international': 'Mondelēz',
         'hash name service': 'HNS',
         'hashname': 'Hashgraph.Name',
         'hash names': 'Hashgraph.Name',
@@ -1224,7 +1235,7 @@
 
       // If no exact match and term is 3+ chars, try partial matching
       if (!match && term.length >= 3) {
-        // Try starts-with match (e.g., "zain" -> "Zain Group")
+        // Try starts-with match (e.g., "deutsche" -> "Deutsche Telekom")
         match = allEntities.find(item =>
           item.entity.toLowerCase().startsWith(term)
         );
